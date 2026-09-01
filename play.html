@@ -1,0 +1,5804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>The Aurelian Conquest</title>
+
+<style>
+
+:root {
+  --bg:#f4f1ea;
+  --panel:#fff;
+  --border:#d8d1c5;
+  --text:#222;
+  --muted:#6b6b6b;
+  --green:#355c4d;
+  --green-hover:#466f5e;
+  --light:#f0d9b5;
+  --dark:#b58863;
+  --last-light:#f5e68b;
+  --last-dark:#d5c257;
+  --selected:#f2c94c;
+  --check:#d9534f;
+  --dot:rgba(20,20,20,.28);
+  --button:#f7f4ee;
+  --button-border:#d5cdc0;
+  --shadow:0 8px 24px rgba(0,0,0,.07);
+}
+
+* {
+  box-sizing:border-box;
+}
+
+body {
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.page {
+  width:min(1420px,calc(100% - 28px));
+  margin:0 auto;
+  padding:12px 0 20px;
+}
+
+.header {
+  text-align:center;
+  margin-bottom:11px;
+}
+
+h1 {
+  margin:0;
+  font-size:36px;
+  line-height:1.08;
+}
+
+.subtitle {
+  margin:3px 0 0;
+  font-size:16px;
+  color:var(--muted);
+}
+
+.app {
+  display:grid;
+  grid-template-columns:290px 600px 320px;
+  gap:16px;
+  justify-content:center;
+  align-items:start;
+}
+
+.panel,
+.board-panel {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+
+.panel {
+  padding:14px;
+}
+
+.board-panel {
+  padding:11px;
+}
+
+.section {
+  padding-bottom:11px;
+  margin-bottom:11px;
+  border-bottom:1px solid #ece7df;
+}
+
+.section:last-child {
+  padding-bottom:0;
+  margin-bottom:0;
+  border-bottom:none;
+}
+
+.panel-title {
+  margin:0 0 10px;
+  font-size:19px;
+}
+
+.label {
+  display:block;
+  margin-bottom:6px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.formation-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+}
+
+button,
+select {
+  font:inherit;
+}
+
+.choice-btn,
+.side-btn,
+.difficulty-btn,
+.action-btn,
+.sound-btn {
+  border:1px solid var(--button-border);
+  background:var(--button);
+  border-radius:9px;
+  cursor:pointer;
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease;
+}
+
+.choice-btn {
+  min-height:52px;
+  padding:7px 5px;
+  font-size:13px;
+  line-height:1.2;
+}
+
+.choice-btn .formation-code {
+  display:block;
+  font-weight:bold;
+  font-size:13px;
+}
+
+.choice-btn .formation-name {
+  display:block;
+  margin-top:2px;
+  font-size:11px;
+}
+
+button:hover {
+  background:#eee9df;
+}
+
+.active {
+  background:var(--green);
+  color:#fff;
+  border-color:var(--green);
+}
+
+.active:hover {
+  background:var(--green-hover);
+}
+
+.three-buttons {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+
+.difficulty-grid {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:5px;
+}
+
+.side-btn,
+.difficulty-btn,
+.action-btn,
+.sound-btn {
+  padding:8px 7px;
+}
+
+.difficulty-btn {
+  font-size:12px;
+}
+
+select {
+  width:100%;
+  padding:8px;
+  border:1px solid var(--button-border);
+  border-radius:8px;
+  background:#fff;
+}
+
+.actions {
+  display:grid;
+  gap:6px;
+}
+
+.primary {
+  background:var(--green);
+  color:#fff;
+  border-color:var(--green);
+}
+
+.primary:hover {
+  background:var(--green-hover);
+}
+
+/* ================================= */
+/* FLOATING HOVER TOOLTIP            */
+/* ================================= */
+
+#hoverTooltip {
+  position:fixed;
+  width:270px;
+  padding:13px 14px;
+  background:#fffdf9;
+  border:1px solid #d6cec0;
+  border-radius:12px;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+  z-index:500;
+  display:none;
+  pointer-events:none;
+}
+
+#hoverTooltip.visible {
+  display:block;
+}
+
+.tooltip-title {
+  margin-bottom:6px;
+  font-size:15px;
+  font-weight:bold;
+  color:var(--green);
+}
+
+.tooltip-description {
+  margin-bottom:9px;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.tooltip-line {
+  margin-top:6px;
+  font-size:11px;
+  line-height:1.4;
+}
+
+.tooltip-line strong {
+  color:#333;
+}
+
+.tooltip-note {
+  margin-top:8px;
+  padding-top:7px;
+  border-top:1px solid #e6dfd4;
+  color:var(--muted);
+  font-size:10px;
+  font-style:italic;
+  line-height:1.35;
+}
+
+/* ================================= */
+
+.board-wrap {
+  width:576px;
+  margin:0 auto;
+}
+
+#board {
+  display:grid;
+  grid-template-columns:repeat(8,72px);
+  grid-template-rows:repeat(8,72px);
+  width:576px;
+  height:576px;
+  border:3px solid #252525;
+  border-radius:8px;
+  overflow:hidden;
+}
+
+.square {
+  position:relative;
+  width:72px;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+}
+
+.light {
+  background:var(--light);
+}
+
+.dark {
+  background:var(--dark);
+}
+
+.last-move.light {
+  background:var(--last-light);
+}
+
+.last-move.dark {
+  background:var(--last-dark);
+}
+
+.selected::after {
+  content:"";
+  position:absolute;
+  inset:4px;
+  border:4px solid var(--selected);
+  border-radius:6px;
+  pointer-events:none;
+}
+
+.check::after {
+  content:"";
+  position:absolute;
+  inset:4px;
+  border:4px solid var(--check);
+  border-radius:6px;
+  pointer-events:none;
+}
+
+.move-dot {
+  position:absolute;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--dot);
+  pointer-events:none;
+}
+
+.piece {
+  position:relative;
+  z-index:2;
+  width:82%;
+  height:82%;
+  object-fit:contain;
+  pointer-events:none;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.15));
+}
+
+.coordinate {
+  position:absolute;
+  font-size:10px;
+  font-weight:bold;
+  opacity:.7;
+  pointer-events:none;
+}
+
+.coord-file {
+  right:4px;
+  bottom:3px;
+}
+
+.coord-rank {
+  left:4px;
+  top:3px;
+}
+
+.preview-bar {
+  margin-top:8px;
+  min-height:31px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.preview-bar strong {
+  color:var(--green);
+}
+
+.box {
+  padding:9px 10px;
+  background:#faf8f4;
+  border:1px solid #e7e0d5;
+  border-radius:10px;
+}
+
+.status-box {
+  min-height:48px;
+  line-height:1.35;
+  font-size:14px;
+}
+
+.engine {
+  margin-top:5px;
+  font-size:11px;
+  color:#1e7a36;
+  font-weight:bold;
+}
+
+.match-line {
+  margin-bottom:4px;
+  font-size:12px;
+  line-height:1.35;
+}
+
+.match-line:last-child {
+  margin-bottom:0;
+}
+
+.material-line {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+}
+
+.material-score {
+  font-size:19px;
+  font-weight:bold;
+  color:var(--green);
+}
+
+.capture-row {
+  margin-top:7px;
+}
+
+.capture-label {
+  font-size:11px;
+  font-weight:bold;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+
+.captured-pieces {
+  min-height:25px;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.captured-piece {
+  width:26px;
+  height:26px;
+  object-fit:contain;
+}
+
+.none {
+  color:#999;
+  font-size:11px;
+}
+
+.move-box {
+  max-height:310px;
+  overflow-y:auto;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+th,
+td {
+  padding:5px 6px;
+  border-bottom:1px solid #e6dfd4;
+  text-align:left;
+}
+
+th {
+  position:sticky;
+  top:0;
+  background:#f2ede4;
+}
+
+.small-note {
+  margin-top:6px;
+  font-size:10px;
+  color:var(--muted);
+  line-height:1.35;
+}
+
+.promotion-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.38);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+
+.promotion-overlay.visible {
+  display:flex;
+}
+
+.promotion-card {
+  width:390px;
+  max-width:calc(100% - 30px);
+  padding:20px;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 18px 50px rgba(0,0,0,.24);
+  text-align:center;
+}
+
+.promotion-card h2 {
+  margin:0 0 5px;
+  font-size:21px;
+}
+
+.promotion-card p {
+  margin:0 0 16px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.promotion-options {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.promotion-option {
+  padding:8px 5px;
+  background:#f8f5ef;
+  border:1px solid var(--button-border);
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.promotion-option:hover {
+  background:#ebe6dd;
+}
+
+.promotion-option img {
+  display:block;
+  width:55px;
+  height:55px;
+  margin:0 auto 3px;
+}
+
+.promotion-option span {
+  font-size:12px;
+  font-weight:bold;
+}
+
+.promotion-cancel {
+  margin-top:12px;
+  padding:7px 15px;
+  border:1px solid var(--button-border);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+}
+
+@media (max-width:1240px) {
+
+  .app {
+    grid-template-columns:270px 560px 290px;
+  }
+
+  .board-wrap,
+  #board {
+    width:560px;
+    height:560px;
+  }
+
+  #board {
+    grid-template-columns:repeat(8,70px);
+    grid-template-rows:repeat(8,70px);
+  }
+
+  .square {
+    width:70px;
+    height:70px;
+  }
+
+}
+
+@media (max-width:1120px) {
+
+  .app {
+    grid-template-columns:1fr;
+  }
+
+  .panel,
+  .board-panel {
+    width:min(700px,100%);
+    margin:0 auto;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="hoverTooltip"></div>
+
+<div class="page">
+
+  <div class="header">
+
+    <h1>The Aurelian Conquest</h1>
+
+    <p class="subtitle">
+      A Strategic Chess Variant
+    </p>
+
+  </div>
+
+
+  <div class="app">
+
+
+    <div class="panel">
+
+
+      <div class="section">
+
+        <h2 class="panel-title">
+          Game Setup
+        </h2>
+
+
+        <div class="label">
+          Your formation
+        </div>
+
+
+        <div
+          id="formationButtons"
+          class="formation-grid">
+        </div>
+
+
+        <div style="height:9px"></div>
+
+
+        <label
+          class="label"
+          for="computerFormationSelect">
+
+          Computer formation
+
+        </label>
+
+
+        <select id="computerFormationSelect">
+
+          <option value="RANDOM">
+            Random formation
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="section">
+
+        <div class="label">
+          Play as
+        </div>
+
+
+        <div class="three-buttons">
+
+          <button
+            id="playWhiteBtn"
+            class="side-btn active"
+            type="button">
+
+            White
+
+          </button>
+
+
+          <button
+            id="playRandomBtn"
+            class="side-btn"
+            type="button">
+
+            Random
+
+          </button>
+
+
+          <button
+            id="playBlackBtn"
+            class="side-btn"
+            type="button">
+
+            Black
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="section">
+
+        <div class="label">
+          Difficulty
+        </div>
+
+
+        <div class="difficulty-grid">
+
+          <button
+            id="difficultyCasual"
+            class="difficulty-btn active"
+            type="button">
+
+            Casual
+
+          </button>
+
+
+          <button
+            id="difficultyBeginner"
+            class="difficulty-btn"
+            type="button">
+
+            Beginner
+
+          </button>
+
+
+          <button
+            id="difficultyIntermediate"
+            class="difficulty-btn"
+            type="button">
+
+            Medium
+
+          </button>
+
+
+          <button
+            id="difficultyHard"
+            class="difficulty-btn"
+            type="button">
+
+            Hard
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="section">
+
+        <div class="label">
+          Sound
+        </div>
+
+
+        <button
+          id="soundButton"
+          class="sound-btn active"
+          type="button"
+          style="width:100%;">
+
+          🔊 Sound On
+
+        </button>
+
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          id="newGameBtn"
+          class="action-btn primary"
+          type="button">
+
+          Start New Game
+
+        </button>
+
+
+        <button
+          id="resetBtn"
+          class="action-btn"
+          type="button">
+
+          Reset Current Game
+
+        </button>
+
+      </div>
+
+
+      <div class="small-note">
+
+        Hover over formations and difficulty settings for guidance.
+
+      </div>
+
+    </div>
+
+
+    <div class="board-panel">
+
+      <div class="board-wrap">
+
+        <div id="board"></div>
+
+        <div
+          id="previewBar"
+          class="preview-bar">
+
+          Formation preview
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
+
+      <div class="section">
+
+        <div class="label">
+          Status
+        </div>
+
+
+        <div
+          id="statusBox"
+          class="box status-box">
+
+          Loading Stockfish...
+
+        </div>
+
+
+        <div
+          id="engineBox"
+          class="engine">
+
+          Engine loading...
+
+        </div>
+
+      </div>
+
+
+      <div class="section">
+
+        <div class="label">
+          Match
+        </div>
+
+
+        <div
+          id="infoBox"
+          class="box">
+        </div>
+
+      </div>
+
+
+      <div class="section">
+
+        <div class="label">
+          Material & Captures
+        </div>
+
+
+        <div class="box">
+
+
+          <div class="material-line">
+
+            <span id="materialText">
+              Material even
+            </span>
+
+
+            <span
+              id="materialScore"
+              class="material-score">
+
+              0
+
+            </span>
+
+          </div>
+
+
+          <div class="capture-row">
+
+            <div
+              id="topCaptureTitle"
+              class="capture-label">
+
+              White captured
+
+            </div>
+
+
+            <div
+              id="topCapturedPieces"
+              class="captured-pieces">
+
+              <span class="none">
+                None
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="capture-row">
+
+            <div
+              id="bottomCaptureTitle"
+              class="capture-label">
+
+              Black captured
+
+            </div>
+
+
+            <div
+              id="bottomCapturedPieces"
+              class="captured-pieces">
+
+              <span class="none">
+                None
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="section">
+
+        <div class="label">
+          Move History
+        </div>
+
+
+        <div
+          id="moveBox"
+          class="box move-box">
+
+
+          <table>
+
+
+            <thead>
+
+              <tr>
+                <th>#</th>
+                <th>White</th>
+                <th>Black</th>
+              </tr>
+
+            </thead>
+
+
+            <tbody id="moveListBody">
+
+              <tr>
+                <td colspan="3">
+                  Game not started.
+                </td>
+              </tr>
+
+            </tbody>
+
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  id="promotionOverlay"
+  class="promotion-overlay">
+
+
+  <div class="promotion-card">
+
+
+    <h2>
+      Promote Your Pawn
+    </h2>
+
+
+    <p>
+      Choose the piece your pawn becomes.
+    </p>
+
+
+    <div
+      id="promotionOptions"
+      class="promotion-options">
+    </div>
+
+
+    <button
+      id="promotionCancel"
+      class="promotion-cancel"
+      type="button">
+
+      Cancel
+
+    </button>
+
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+import { Chess }
+from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/+esm";
+
+
+const FORMATIONS = [
+
+  {
+    code:"RNB",
+    name:"The Bastion"
+  },
+
+  {
+    code:"RBN",
+    name:"The Sentinel"
+  },
+
+  {
+    code:"NRB",
+    name:"The Vanguard"
+  },
+
+  {
+    code:"NBR",
+    name:"The Cavalry"
+  },
+
+  {
+    code:"BRN",
+    name:"The Rampart"
+  },
+
+  {
+    code:"BNR",
+    name:"The Citadel"
+  }
+
+];
+
+
+const FORMATION_GUIDES = {
+
+  RNB: {
+
+    description:
+      "The familiar classical formation and the most natural starting point for traditional chess players.",
+
+    strength:
+      "Balanced development with familiar piece relationships.",
+
+    tip:
+      "Normal opening principles work well here: develop your knights and bishops, fight for the center, and connect your rooks."
+
+  },
+
+
+  RBN: {
+
+    description:
+      "The knights move inward while the bishops take their places beside the corner rooks.",
+
+    strength:
+      "Knights begin with useful routes toward the center and can become active quickly.",
+
+    tip:
+      "Your bishops need deliberate pawn openings from the b- and g-files, so make sure they do not get buried behind your pawns."
+
+  },
+
+
+  NRB: {
+
+    description:
+      "The bishops remain in familiar positions while the knights begin on the outside and the rooks move inward.",
+
+    strength:
+      "Familiar bishop development combined with rooks positioned closer to central files.",
+
+    tip:
+      "Pay special attention to your corner knights. Their path into the battle may take more planning than usual."
+
+  },
+
+
+  NBR: {
+
+    description:
+      "An unconventional formation with knights on the wings and rooks stationed close to the center.",
+
+    strength:
+      "The central rooks can become powerful once the position opens.",
+
+    tip:
+      "Do not rush to activate the rooks too early. Develop your lighter pieces and create safe lanes for them first."
+
+  },
+
+
+  BRN: {
+
+    description:
+      "The bishops guard the outer edges while the knights occupy strong central starting squares and the rooks sit just inside them.",
+
+    strength:
+      "Convenient knight development and potentially active rooks once files begin to open.",
+
+    tip:
+      "Activate the corner bishops early so they can command important diagonals instead of remaining trapped behind the pawn line."
+
+  },
+
+
+  BNR: {
+
+    description:
+      "A compact formation with bishops on the wings, knights inside them, and the rooks closest to the king and queen.",
+
+    strength:
+      "Centralized heavy pieces can become formidable once the position opens.",
+
+    tip:
+      "Free your bishops early and resist exposing the central rooks before your king position is secure."
+
+  }
+
+};
+
+
+const DIFFICULTY_GUIDES = {
+
+  casual: {
+
+    title:
+      "Casual",
+
+    description:
+      "A relaxed opponent designed for learning, experimenting, and getting comfortable with The Aurelian Conquest.",
+
+    behavior:
+      "Plays at low strength and will sometimes choose an ordinary legal move instead of the strongest move.",
+
+    bestFor:
+      "Newer chess players, learning a formation, or playing a low-pressure game."
+
+  },
+
+
+  beginner: {
+
+    title:
+      "Beginner",
+
+    description:
+      "A more consistent opponent that still leaves plenty of opportunities for you to recognize and exploit.",
+
+    behavior:
+      "Generally develops sensibly but will make noticeable strategic and tactical mistakes.",
+
+    bestFor:
+      "Players who know the basic rules and want a fair challenge without being punished for every small error."
+
+  },
+
+
+  intermediate: {
+
+    title:
+      "Medium",
+
+    description:
+      "A solid opponent that begins to demand careful play and better tactical awareness.",
+
+    behavior:
+      "Punishes loose pieces, spots common tactics, and develops coherent plans more consistently.",
+
+    bestFor:
+      "Players who want to test their formation strategy against meaningful resistance."
+
+  },
+
+
+  hard: {
+
+    title:
+      "Hard",
+
+    description:
+      "The strongest computer setting currently available in this version of the game.",
+
+    behavior:
+      "Plays much more accurately, sees tactics more reliably, and gives away very little material for free.",
+
+    bestFor:
+      "Experienced players or anyone who wants the toughest test of their Aurelian strategy."
+
+  }
+
+};
+
+
+const FORMATION_MAP =
+  Object.fromEntries(
+    FORMATIONS.map(
+      formation => [
+        formation.code,
+        formation.name
+      ]
+    )
+  );
+
+
+const DIFFICULTIES = {
+
+  casual:{
+    label:"Casual",
+    skill:0,
+    nodes:120,
+    randomMoveChance:.38
+  },
+
+  beginner:{
+    label:"Beginner",
+    skill:3,
+    nodes:800,
+    randomMoveChance:0
+  },
+
+  intermediate:{
+    label:"Medium",
+    skill:8,
+    nodes:2500,
+    randomMoveChance:0
+  },
+
+  hard:{
+    label:"Hard",
+    skill:12,
+    nodes:6000,
+    randomMoveChance:0
+  }
+
+};
+
+
+const PIECE_VALUES = {
+  p:1,
+  n:3,
+  b:3,
+  r:5,
+  q:9,
+  k:0
+};
+
+
+const INITIAL_COUNTS = {
+  p:8,
+  n:2,
+  b:2,
+  r:2,
+  q:1,
+  k:1
+};
+
+
+const DISPLAY_ORDER = [
+  "q",
+  "r",
+  "b",
+  "n",
+  "p"
+];
+
+
+const PIECE_IMAGES = {
+
+  wp:
+    "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg",
+
+  wr:
+    "https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg",
+
+  wn:
+    "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg",
+
+  wb:
+    "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg",
+
+  wq:
+    "https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg",
+
+  wk:
+    "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg",
+
+  bp:
+    "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg",
+
+  br:
+    "https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg",
+
+  bn:
+    "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg",
+
+  bb:
+    "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg",
+
+  bq:
+    "https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg",
+
+  bk:
+    "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg"
+
+};
+
+
+const PROMOTION_NAMES = {
+
+  q:"Queen",
+  r:"Rook",
+  b:"Bishop",
+  n:"Knight"
+
+};
+
+
+const boardEl =
+  document.getElementById("board");
+
+const formationButtonsEl =
+  document.getElementById("formationButtons");
+
+const hoverTooltip =
+  document.getElementById("hoverTooltip");
+
+const computerFormationSelect =
+  document.getElementById("computerFormationSelect");
+
+const statusBox =
+  document.getElementById("statusBox");
+
+const engineBox =
+  document.getElementById("engineBox");
+
+const infoBox =
+  document.getElementById("infoBox");
+
+const previewBar =
+  document.getElementById("previewBar");
+
+const materialText =
+  document.getElementById("materialText");
+
+const materialScore =
+  document.getElementById("materialScore");
+
+const topCaptureTitle =
+  document.getElementById("topCaptureTitle");
+
+const bottomCaptureTitle =
+  document.getElementById("bottomCaptureTitle");
+
+const topCapturedPieces =
+  document.getElementById("topCapturedPieces");
+
+const bottomCapturedPieces =
+  document.getElementById("bottomCapturedPieces");
+
+const moveListBody =
+  document.getElementById("moveListBody");
+
+const playWhiteBtn =
+  document.getElementById("playWhiteBtn");
+
+const playRandomBtn =
+  document.getElementById("playRandomBtn");
+
+const playBlackBtn =
+  document.getElementById("playBlackBtn");
+
+const difficultyCasual =
+  document.getElementById("difficultyCasual");
+
+const difficultyBeginner =
+  document.getElementById("difficultyBeginner");
+
+const difficultyIntermediate =
+  document.getElementById("difficultyIntermediate");
+
+const difficultyHard =
+  document.getElementById("difficultyHard");
+
+const newGameBtn =
+  document.getElementById("newGameBtn");
+
+const resetBtn =
+  document.getElementById("resetBtn");
+
+const soundButton =
+  document.getElementById("soundButton");
+
+const promotionOverlay =
+  document.getElementById("promotionOverlay");
+
+const promotionOptions =
+  document.getElementById("promotionOptions");
+
+const promotionCancel =
+  document.getElementById("promotionCancel");
+
+
+let playerFormationChoice =
+  "RNB";
+
+let computerFormationChoice =
+  "RANDOM";
+
+let previewPlayerFormation =
+  "RNB";
+
+let previewComputerFormation =
+  randomFormation();
+
+
+let playerColorChoice =
+  "w";
+
+let playerColor =
+  "w";
+
+let actualPlayerColor =
+  null;
+
+
+let actualPlayerFormation =
+  null;
+
+let actualComputerFormation =
+  null;
+
+
+let difficultyKey =
+  "casual";
+
+let engineReady =
+  false;
+
+let engineThinking =
+  false;
+
+let game =
+  null;
+
+let gameStarted =
+  false;
+
+let selectedSquare =
+  null;
+
+let legalMoves =
+  [];
+
+let lastMove =
+  null;
+
+let promotionPending =
+  null;
+
+let soundEnabled =
+  true;
+
+
+const engine =
+  new Worker(
+    "./stockfish-18-lite-single.js"
+  );
+
+
+/* ===================================================== */
+/* FORMATIONS                                            */
+/* ===================================================== */
+
+function randomFormation() {
+
+  return FORMATIONS[
+    Math.floor(
+      Math.random() *
+      FORMATIONS.length
+    )
+  ].code;
+
+}
+
+
+function buildBackRow(setup) {
+
+  return (
+    setup +
+    "QK" +
+    setup
+      .split("")
+      .reverse()
+      .join("")
+  );
+
+}
+
+
+function buildFen(
+  whiteSetup,
+  blackSetup
+) {
+
+  const whiteBack =
+    buildBackRow(
+      whiteSetup
+    );
+
+
+  const blackBack =
+    buildBackRow(
+      blackSetup
+    ).toLowerCase();
+
+
+  return (
+    blackBack +
+    "/pppppppp" +
+    "/8/8/8/8" +
+    "/PPPPPPPP/" +
+    whiteBack +
+    " w - - 0 1"
+  );
+
+}
+
+
+/* ===================================================== */
+/* HOVER TOOLTIP                                         */
+/* ===================================================== */
+
+function positionTooltip(button) {
+
+  const rect =
+    button.getBoundingClientRect();
+
+
+  const tooltipWidth =
+    270;
+
+
+  const gap =
+    12;
+
+
+  let left =
+    rect.left -
+    tooltipWidth -
+    gap;
+
+
+  let top =
+    rect.top;
+
+
+  if (
+    left >=
+    10
+  ) {
+
+    hoverTooltip.style.left =
+      left +
+      "px";
+
+
+    const tooltipHeight =
+      hoverTooltip.offsetHeight;
+
+
+    if (
+      top +
+      tooltipHeight >
+      window.innerHeight -
+      10
+    ) {
+
+      top =
+        window.innerHeight -
+        tooltipHeight -
+        10;
+
+    }
+
+
+    if (
+      top <
+      10
+    ) {
+
+      top =
+        10;
+
+    }
+
+
+    hoverTooltip.style.top =
+      top +
+      "px";
+
+
+    return;
+
+  }
+
+
+  left =
+    Math.max(
+      10,
+      Math.min(
+        rect.left,
+        window.innerWidth -
+        tooltipWidth -
+        10
+      )
+    );
+
+
+  top =
+    rect.bottom +
+    8;
+
+
+  const tooltipHeight =
+    hoverTooltip.offsetHeight;
+
+
+  if (
+    top +
+    tooltipHeight >
+    window.innerHeight -
+    10
+  ) {
+
+    top =
+      rect.top -
+      tooltipHeight -
+      8;
+
+  }
+
+
+  if (
+    top <
+    10
+  ) {
+
+    top =
+      10;
+
+  }
+
+
+  hoverTooltip.style.left =
+    left +
+    "px";
+
+
+  hoverTooltip.style.top =
+    top +
+    "px";
+
+}
+
+
+function showTooltip(
+  button,
+  html
+) {
+
+  hoverTooltip.innerHTML =
+    html;
+
+
+  hoverTooltip.classList.add(
+    "visible"
+  );
+
+
+  positionTooltip(
+    button
+  );
+
+}
+
+
+function hideTooltip() {
+
+  hoverTooltip.classList.remove(
+    "visible"
+  );
+
+}
+
+
+/* ===================================================== */
+/* FORMATION TOOLTIP                                     */
+/* ===================================================== */
+
+function getFormationTooltipHTML(code) {
+
+  if (
+    code ===
+    "RANDOM"
+  ) {
+
+    return (
+
+      "<div class='tooltip-title'>" +
+      "Random Formation" +
+      "</div>" +
+
+      "<div class='tooltip-description'>" +
+      "Let the game choose one of the six formations for you." +
+      "</div>" +
+
+      "<div class='tooltip-line'>" +
+      "<strong>Strength:</strong> " +
+      "Forces you to adapt and explore formations you might not normally select." +
+      "</div>" +
+
+      "<div class='tooltip-line'>" +
+      "<strong>Tip:</strong> " +
+      "Use Random when you want to practice reacting to unfamiliar starting positions." +
+      "</div>" +
+
+      "<div class='tooltip-note'>" +
+      "The preview may change when the game begins." +
+      "</div>"
+
+    );
+
+  }
+
+
+  const guide =
+    FORMATION_GUIDES[
+      code
+    ];
+
+
+  return (
+
+    "<div class='tooltip-title'>" +
+
+    FORMATION_MAP[
+      code
+    ] +
+
+    "</div>" +
+
+
+    "<div class='tooltip-description'>" +
+
+    guide.description +
+
+    "</div>" +
+
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>Strength:</strong> " +
+
+    guide.strength +
+
+    "</div>" +
+
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>Tip:</strong> " +
+
+    guide.tip +
+
+    "</div>"
+
+  );
+
+}
+
+
+function attachFormationTooltip(
+  button,
+  code
+) {
+
+  button.addEventListener(
+
+    "mouseenter",
+
+    function() {
+
+      showTooltip(
+
+        button,
+
+        getFormationTooltipHTML(
+          code
+        )
+
+      );
+
+    }
+
+  );
+
+
+  button.addEventListener(
+
+    "mouseleave",
+
+    hideTooltip
+
+  );
+
+
+  button.addEventListener(
+
+    "focus",
+
+    function() {
+
+      showTooltip(
+
+        button,
+
+        getFormationTooltipHTML(
+          code
+        )
+
+      );
+
+    }
+
+  );
+
+
+  button.addEventListener(
+
+    "blur",
+
+    hideTooltip
+
+  );
+
+}
+
+
+/* ===================================================== */
+/* DIFFICULTY TOOLTIP                                    */
+/* ===================================================== */
+
+function getDifficultyTooltipHTML(key) {
+
+  const guide =
+    DIFFICULTY_GUIDES[
+      key
+    ];
+
+
+  return (
+
+    "<div class='tooltip-title'>" +
+
+    guide.title +
+
+    "</div>" +
+
+
+    "<div class='tooltip-description'>" +
+
+    guide.description +
+
+    "</div>" +
+
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>How it plays:</strong> " +
+
+    guide.behavior +
+
+    "</div>" +
+
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>Best for:</strong> " +
+
+    guide.bestFor +
+
+    "</div>"
+
+  );
+
+}
+
+
+function attachDifficultyTooltip(
+  button,
+  key
+) {
+
+  button.addEventListener(
+
+    "mouseenter",
+
+    function() {
+
+      showTooltip(
+
+        button,
+
+        getDifficultyTooltipHTML(
+          key
+        )
+
+      );
+
+    }
+
+  );
+
+
+  button.addEventListener(
+
+    "mouseleave",
+
+    hideTooltip
+
+  );
+
+
+  button.addEventListener(
+
+    "focus",
+
+    function() {
+
+      showTooltip(
+
+        button,
+
+        getDifficultyTooltipHTML(
+          key
+        )
+
+      );
+
+    }
+
+  );
+
+
+  button.addEventListener(
+
+    "blur",
+
+    hideTooltip
+
+  );
+
+}
+
+
+/* ===================================================== */
+/* SOUND SYSTEM — ORDINARY WAV AUDIO                    */
+/* ===================================================== */
+
+const SAMPLE_RATE =
+  22050;
+
+
+function writeString(
+  view,
+  offset,
+  string
+) {
+
+  for (
+    let i=0;
+    i<string.length;
+    i++
+  ) {
+
+    view.setUint8(
+      offset+i,
+      string.charCodeAt(i)
+    );
+
+  }
+
+}
+
+
+function makeWav(segments) {
+
+  let totalSeconds =
+    0;
+
+
+  segments.forEach(
+    segment => {
+
+      totalSeconds +=
+        segment.duration;
+
+    }
+  );
+
+
+  const sampleCount =
+    Math.floor(
+      SAMPLE_RATE *
+      totalSeconds
+    );
+
+
+  const buffer =
+    new ArrayBuffer(
+      44 +
+      sampleCount * 2
+    );
+
+
+  const view =
+    new DataView(
+      buffer
+    );
+
+
+  writeString(
+    view,
+    0,
+    "RIFF"
+  );
+
+
+  view.setUint32(
+    4,
+    36 +
+    sampleCount * 2,
+    true
+  );
+
+
+  writeString(
+    view,
+    8,
+    "WAVE"
+  );
+
+
+  writeString(
+    view,
+    12,
+    "fmt "
+  );
+
+
+  view.setUint32(
+    16,
+    16,
+    true
+  );
+
+
+  view.setUint16(
+    20,
+    1,
+    true
+  );
+
+
+  view.setUint16(
+    22,
+    1,
+    true
+  );
+
+
+  view.setUint32(
+    24,
+    SAMPLE_RATE,
+    true
+  );
+
+
+  view.setUint32(
+    28,
+    SAMPLE_RATE * 2,
+    true
+  );
+
+
+  view.setUint16(
+    32,
+    2,
+    true
+  );
+
+
+  view.setUint16(
+    34,
+    16,
+    true
+  );
+
+
+  writeString(
+    view,
+    36,
+    "data"
+  );
+
+
+  view.setUint32(
+    40,
+    sampleCount * 2,
+    true
+  );
+
+
+  let sampleIndex =
+    0;
+
+
+  segments.forEach(
+    segment => {
+
+      const segmentSamples =
+        Math.floor(
+          SAMPLE_RATE *
+          segment.duration
+        );
+
+
+      const frequency =
+        segment.frequency ||
+        0;
+
+
+      const volume =
+        segment.volume ??
+        .2;
+
+
+      const type =
+        segment.type ||
+        "sine";
+
+
+      for (
+        let i=0;
+        i<segmentSamples;
+        i++
+      ) {
+
+        const t =
+          i /
+          SAMPLE_RATE;
+
+
+        let wave =
+          0;
+
+
+        if (
+          frequency >
+          0
+        ) {
+
+          const phase =
+            2 *
+            Math.PI *
+            frequency *
+            t;
+
+
+          if (
+            type ===
+            "square"
+          ) {
+
+            wave =
+              Math.sin(
+                phase
+              ) >= 0
+
+                ? 1
+
+                : -1;
+
+          }
+
+          else if (
+            type ===
+            "triangle"
+          ) {
+
+            wave =
+              (
+                2 /
+                Math.PI
+              ) *
+
+              Math.asin(
+                Math.sin(
+                  phase
+                )
+              );
+
+          }
+
+          else {
+
+            wave =
+              Math.sin(
+                phase
+              );
+
+          }
+
+        }
+
+
+        const fade =
+          Math.max(
+            0,
+            1 -
+            i /
+            Math.max(
+              1,
+              segmentSamples
+            )
+          );
+
+
+        const value =
+          Math.max(
+            -1,
+            Math.min(
+              1,
+              wave *
+              volume *
+              fade
+            )
+          );
+
+
+        view.setInt16(
+          44 +
+          sampleIndex * 2,
+          value * 32767,
+          true
+        );
+
+
+        sampleIndex++;
+
+      }
+
+    }
+  );
+
+
+  const bytes =
+    new Uint8Array(
+      buffer
+    );
+
+
+  let binary =
+    "";
+
+
+  const chunkSize =
+    8192;
+
+
+  for (
+    let i=0;
+    i<bytes.length;
+    i+=chunkSize
+  ) {
+
+    binary +=
+      String.fromCharCode(
+
+        ...bytes.subarray(
+
+          i,
+
+          Math.min(
+            i +
+            chunkSize,
+            bytes.length
+          )
+
+        )
+
+      );
+
+  }
+
+
+  return (
+    "data:audio/wav;base64," +
+    btoa(binary)
+  );
+
+}
+
+
+const SOUND_URLS = {
+
+  button:makeWav([
+
+    {
+      frequency:520,
+      duration:.055,
+      volume:.16,
+      type:"sine"
+    }
+
+  ]),
+
+
+  move:makeWav([
+
+    {
+      frequency:230,
+      duration:.07,
+      volume:.18,
+      type:"triangle"
+    },
+
+    {
+      frequency:170,
+      duration:.055,
+      volume:.13,
+      type:"triangle"
+    }
+
+  ]),
+
+
+  capture:makeWav([
+
+    {
+      frequency:130,
+      duration:.09,
+      volume:.20,
+      type:"square"
+    },
+
+    {
+      frequency:85,
+      duration:.10,
+      volume:.17,
+      type:"triangle"
+    }
+
+  ]),
+
+
+  check:makeWav([
+
+    {
+      frequency:440,
+      duration:.10,
+      volume:.18,
+      type:"sine"
+    },
+
+    {
+      frequency:660,
+      duration:.14,
+      volume:.16,
+      type:"sine"
+    }
+
+  ]),
+
+
+  win:makeWav([
+
+    {
+      frequency:392,
+      duration:.13,
+      volume:.16,
+      type:"sine"
+    },
+
+    {
+      frequency:523,
+      duration:.13,
+      volume:.16,
+      type:"sine"
+    },
+
+    {
+      frequency:659,
+      duration:.22,
+      volume:.17,
+      type:"sine"
+    }
+
+  ]),
+
+
+  loss:makeWav([
+
+    {
+      frequency:330,
+      duration:.15,
+      volume:.15,
+      type:"triangle"
+    },
+
+    {
+      frequency:247,
+      duration:.16,
+      volume:.15,
+      type:"triangle"
+    },
+
+    {
+      frequency:196,
+      duration:.23,
+      volume:.16,
+      type:"triangle"
+    }
+
+  ])
+
+};
+
+
+function playSound(name) {
+
+  if (
+    !soundEnabled
+  ) {
+
+    return;
+
+  }
+
+
+  const url =
+    SOUND_URLS[
+      name
+    ];
+
+
+  if (
+    !url
+  ) {
+
+    return;
+
+  }
+
+
+  const audio =
+    new Audio(
+      url
+    );
+
+
+  audio.volume =
+    .75;
+
+
+  audio.play().catch(
+    error => {
+
+      console.log(
+        "Audio playback blocked:",
+        error
+      );
+
+    }
+  );
+
+}
+
+
+function playSoundForMove(move) {
+
+  if (
+    !soundEnabled
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    move.captured
+  ) {
+
+    playSound(
+      "capture"
+    );
+
+  }
+
+  else {
+
+    playSound(
+      "move"
+    );
+
+  }
+
+
+  if (
+    game.isGameOver()
+  ) {
+
+    setTimeout(
+
+      () => {
+
+        let playerWon =
+          false;
+
+
+        if (
+          game.isCheckmate()
+        ) {
+
+          const winner =
+
+            game.turn() ===
+            "w"
+
+              ? "b"
+
+              : "w";
+
+
+          playerWon =
+            winner ===
+            playerColor;
+
+        }
+
+
+        playSound(
+
+          playerWon
+
+            ? "win"
+
+            : "loss"
+
+        );
+
+      },
+
+      120
+
+    );
+
+
+    return;
+
+  }
+
+
+  if (
+    game.inCheck()
+  ) {
+
+    setTimeout(
+
+      () =>
+        playSound(
+          "check"
+        ),
+
+      90
+
+    );
+
+  }
+
+}
+
+
+/* ===================================================== */
+/* CONTROLS                                              */
+/* ===================================================== */
+
+function initializeControls() {
+
+  const randomButton =
+    document.createElement(
+      "button"
+    );
+
+
+  randomButton.type =
+    "button";
+
+
+  randomButton.className =
+    "choice-btn";
+
+
+  randomButton.dataset.code =
+    "RANDOM";
+
+
+  randomButton.innerHTML =
+
+    "<span class='formation-code'>" +
+
+    "Random" +
+
+    "</span>" +
+
+    "<span class='formation-name'>" +
+
+    "Surprise me" +
+
+    "</span>";
+
+
+  attachFormationTooltip(
+    randomButton,
+    "RANDOM"
+  );
+
+
+  randomButton.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      playerFormationChoice =
+        "RANDOM";
+
+
+      previewPlayerFormation =
+        randomFormation();
+
+
+      refreshFormationButtons();
+
+
+      if (
+        !gameStarted
+      ) {
+
+        renderPreview();
+
+      }
+
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  formationButtonsEl.appendChild(
+    randomButton
+  );
+
+
+  FORMATIONS.forEach(
+    function(formation) {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.type =
+        "button";
+
+
+      button.className =
+        "choice-btn";
+
+
+      button.dataset.code =
+        formation.code;
+
+
+      button.innerHTML =
+
+        "<span class='formation-code'>" +
+
+        formation.code +
+
+        "</span>" +
+
+        "<span class='formation-name'>" +
+
+        formation.name +
+
+        "</span>";
+
+
+      attachFormationTooltip(
+        button,
+        formation.code
+      );
+
+
+      button.addEventListener(
+
+        "click",
+
+        function() {
+
+          playSound(
+            "button"
+          );
+
+
+          playerFormationChoice =
+            formation.code;
+
+
+          previewPlayerFormation =
+            formation.code;
+
+
+          refreshFormationButtons();
+
+
+          if (
+            !gameStarted
+          ) {
+
+            renderPreview();
+
+          }
+
+
+          updateInfoPanel();
+
+        }
+
+      );
+
+
+      formationButtonsEl.appendChild(
+        button
+      );
+
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        formation.code;
+
+
+      option.textContent =
+
+        formation.name +
+
+        " (" +
+
+        formation.code +
+
+        ")";
+
+
+      computerFormationSelect.appendChild(
+        option
+      );
+
+    }
+
+  );
+
+
+  computerFormationSelect.addEventListener(
+
+    "change",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      computerFormationChoice =
+        computerFormationSelect.value;
+
+
+      previewComputerFormation =
+
+        computerFormationChoice ===
+        "RANDOM"
+
+          ? randomFormation()
+
+          : computerFormationChoice;
+
+
+      if (
+        !gameStarted
+      ) {
+
+        renderPreview();
+
+      }
+
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  playWhiteBtn.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      playerColorChoice =
+        "w";
+
+
+      playerColor =
+        "w";
+
+
+      refreshSideButtons();
+
+
+      if (
+        !gameStarted
+      ) {
+
+        renderPreview();
+
+      }
+
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  playRandomBtn.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      playerColorChoice =
+        "RANDOM";
+
+
+      playerColor =
+        "w";
+
+
+      refreshSideButtons();
+
+
+      if (
+        !gameStarted
+      ) {
+
+        renderPreview();
+
+      }
+
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  playBlackBtn.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      playerColorChoice =
+        "b";
+
+
+      playerColor =
+        "b";
+
+
+      refreshSideButtons();
+
+
+      if (
+        !gameStarted
+      ) {
+
+        renderPreview();
+
+      }
+
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  attachDifficultyTooltip(
+    difficultyCasual,
+    "casual"
+  );
+
+
+  attachDifficultyTooltip(
+    difficultyBeginner,
+    "beginner"
+  );
+
+
+  attachDifficultyTooltip(
+    difficultyIntermediate,
+    "intermediate"
+  );
+
+
+  attachDifficultyTooltip(
+    difficultyHard,
+    "hard"
+  );
+
+
+  difficultyCasual.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      difficultyKey =
+        "casual";
+
+
+      refreshDifficultyButtons();
+
+      applyDifficulty();
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  difficultyBeginner.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      difficultyKey =
+        "beginner";
+
+
+      refreshDifficultyButtons();
+
+      applyDifficulty();
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  difficultyIntermediate.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      difficultyKey =
+        "intermediate";
+
+
+      refreshDifficultyButtons();
+
+      applyDifficulty();
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  difficultyHard.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      difficultyKey =
+        "hard";
+
+
+      refreshDifficultyButtons();
+
+      applyDifficulty();
+
+      updateInfoPanel();
+
+    }
+
+  );
+
+
+  soundButton.addEventListener(
+
+    "click",
+
+    function() {
+
+      soundEnabled =
+        !soundEnabled;
+
+
+      soundButton.classList.toggle(
+        "active",
+        soundEnabled
+      );
+
+
+      soundButton.textContent =
+
+        soundEnabled
+
+          ? "🔊 Sound On"
+
+          : "🔇 Sound Off";
+
+
+      if (
+        soundEnabled
+      ) {
+
+        playSound(
+          "button"
+        );
+
+      }
+
+    }
+
+  );
+
+
+  newGameBtn.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      hideTooltip();
+
+
+      startNewGame();
+
+    }
+
+  );
+
+
+  resetBtn.addEventListener(
+
+    "click",
+
+    function() {
+
+      playSound(
+        "button"
+      );
+
+
+      hideTooltip();
+
+
+      resetCurrentGame();
+
+    }
+
+  );
+
+
+  promotionCancel.addEventListener(
+    "click",
+    cancelPromotion
+  );
+
+
+  [
+    "q",
+    "r",
+    "b",
+    "n"
+  ].forEach(
+    function(pieceType) {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.type =
+        "button";
+
+
+      button.className =
+        "promotion-option";
+
+
+      const image =
+        document.createElement(
+          "img"
+        );
+
+
+      image.src =
+        PIECE_IMAGES[
+          playerColor +
+          pieceType
+        ];
+
+
+      image.dataset.pieceImage =
+        pieceType;
+
+
+      const label =
+        document.createElement(
+          "span"
+        );
+
+
+      label.textContent =
+        PROMOTION_NAMES[
+          pieceType
+        ];
+
+
+      button.appendChild(
+        image
+      );
+
+
+      button.appendChild(
+        label
+      );
+
+
+      button.addEventListener(
+
+        "click",
+
+        function() {
+
+          playSound(
+            "button"
+          );
+
+
+          choosePromotion(
+            pieceType
+          );
+
+        }
+
+      );
+
+
+      promotionOptions.appendChild(
+        button
+      );
+
+    }
+
+  );
+
+}
+
+
+/* ===================================================== */
+/* BUTTON STATES                                         */
+/* ===================================================== */
+
+function refreshFormationButtons() {
+
+  document
+    .querySelectorAll(
+      "#formationButtons .choice-btn"
+    )
+    .forEach(
+      button => {
+
+        button.classList.toggle(
+
+          "active",
+
+          button.dataset.code ===
+          playerFormationChoice
+
+        );
+
+      }
+    );
+
+}
+
+
+function refreshSideButtons() {
+
+  let activeChoice;
+
+
+  if (
+    gameStarted &&
+    actualPlayerColor
+  ) {
+
+    activeChoice =
+      actualPlayerColor;
+
+  }
+
+  else {
+
+    activeChoice =
+      playerColorChoice;
+
+  }
+
+
+  playWhiteBtn.classList.toggle(
+    "active",
+    activeChoice ===
+    "w"
+  );
+
+
+  playRandomBtn.classList.toggle(
+    "active",
+    activeChoice ===
+    "RANDOM"
+  );
+
+
+  playBlackBtn.classList.toggle(
+    "active",
+    activeChoice ===
+    "b"
+  );
+
+}
+
+
+function refreshDifficultyButtons() {
+
+  difficultyCasual.classList.toggle(
+    "active",
+    difficultyKey ===
+    "casual"
+  );
+
+
+  difficultyBeginner.classList.toggle(
+    "active",
+    difficultyKey ===
+    "beginner"
+  );
+
+
+  difficultyIntermediate.classList.toggle(
+    "active",
+    difficultyKey ===
+    "intermediate"
+  );
+
+
+  difficultyHard.classList.toggle(
+    "active",
+    difficultyKey ===
+    "hard"
+  );
+
+}
+
+
+/* ===================================================== */
+/* PREVIEW                                               */
+/* ===================================================== */
+
+function renderPreview() {
+
+  gameStarted =
+    false;
+
+
+  actualPlayerColor =
+    null;
+
+
+  selectedSquare =
+    null;
+
+
+  legalMoves =
+    [];
+
+
+  lastMove =
+    null;
+
+
+  promotionPending =
+    null;
+
+
+  hidePromotion();
+
+
+  const previewColor =
+
+    playerColorChoice ===
+    "b"
+
+      ? "b"
+
+      : "w";
+
+
+  playerColor =
+    previewColor;
+
+
+  const whiteSetup =
+
+    playerColor ===
+    "w"
+
+      ? previewPlayerFormation
+
+      : previewComputerFormation;
+
+
+  const blackSetup =
+
+    playerColor ===
+    "b"
+
+      ? previewPlayerFormation
+
+      : previewComputerFormation;
+
+
+  game =
+    new Chess(
+
+      buildFen(
+        whiteSetup,
+        blackSetup
+      )
+
+    );
+
+
+  refreshSideButtons();
+
+  drawBoard();
+
+  renderMoveList();
+
+  updateCapturedPieces();
+
+
+  const previewText =
+
+    FORMATION_MAP[
+      previewPlayerFormation
+    ] +
+
+    " (" +
+
+    previewPlayerFormation +
+
+    ")";
+
+
+  previewBar.innerHTML =
+
+    "<strong>Preview:</strong>&nbsp;" +
+
+    previewText +
+
+    (
+      playerFormationChoice ===
+      "RANDOM"
+
+        ? "&nbsp;— Random rerolls when the game starts."
+
+        : ""
+    ) +
+
+    (
+      playerColorChoice ===
+      "RANDOM"
+
+        ? "&nbsp;— Color will be chosen when the game starts."
+
+        : ""
+    );
+
+
+  setStatus(
+
+    "Choose your settings, then click Start New Game."
+
+  );
+
+}
+
+
+/* ===================================================== */
+/* GAME START                                            */
+/* ===================================================== */
+
+function resolvePlayerFormation() {
+
+  return (
+
+    playerFormationChoice ===
+    "RANDOM"
+
+      ? randomFormation()
+
+      : playerFormationChoice
+
+  );
+
+}
+
+
+function resolveComputerFormation() {
+
+  return (
+
+    computerFormationChoice ===
+    "RANDOM"
+
+      ? randomFormation()
+
+      : computerFormationChoice
+
+  );
+
+}
+
+
+function resolvePlayerColor() {
+
+  if (
+    playerColorChoice ===
+    "RANDOM"
+  ) {
+
+    return (
+      Math.random() <
+      .5
+
+        ? "w"
+
+        : "b"
+    );
+
+  }
+
+
+  return (
+    playerColorChoice
+  );
+
+}
+
+
+function startNewGame() {
+
+  if (
+    !engineReady
+  ) {
+
+    setStatus(
+      "Stockfish is still loading."
+    );
+
+
+    return;
+
+  }
+
+
+  actualPlayerFormation =
+    resolvePlayerFormation();
+
+
+  actualComputerFormation =
+    resolveComputerFormation();
+
+
+  actualPlayerColor =
+    resolvePlayerColor();
+
+
+  beginGame();
+
+}
+
+
+function resetCurrentGame() {
+
+  if (
+
+    !actualPlayerFormation ||
+
+    !actualComputerFormation ||
+
+    !actualPlayerColor
+
+  ) {
+
+    startNewGame();
+
+    return;
+
+  }
+
+
+  beginGame();
+
+}
+
+
+function beginGame() {
+
+  engine.postMessage(
+    "stop"
+  );
+
+
+  gameStarted =
+    true;
+
+
+  playerColor =
+    actualPlayerColor;
+
+
+  engineThinking =
+    false;
+
+
+  selectedSquare =
+    null;
+
+
+  legalMoves =
+    [];
+
+
+  lastMove =
+    null;
+
+
+  promotionPending =
+    null;
+
+
+  hidePromotion();
+
+
+  const whiteSetup =
+
+    playerColor ===
+    "w"
+
+      ? actualPlayerFormation
+
+      : actualComputerFormation;
+
+
+  const blackSetup =
+
+    playerColor ===
+    "b"
+
+      ? actualPlayerFormation
+
+      : actualComputerFormation;
+
+
+  game =
+    new Chess(
+
+      buildFen(
+        whiteSetup,
+        blackSetup
+      )
+
+    );
+
+
+  engine.postMessage(
+    "ucinewgame"
+  );
+
+
+  applyDifficulty();
+
+
+  refreshSideButtons();
+
+  drawBoard();
+
+  renderMoveList();
+
+  updateCapturedPieces();
+
+  updateInfoPanel();
+
+  updateStatus();
+
+
+  previewBar.innerHTML =
+
+    "<strong>" +
+
+    FORMATION_MAP[
+      actualPlayerFormation
+    ] +
+
+    " (" +
+
+    actualPlayerFormation +
+
+    ")</strong>" +
+
+    "&nbsp;vs&nbsp;" +
+
+    FORMATION_MAP[
+      actualComputerFormation
+    ] +
+
+    " (" +
+
+    actualComputerFormation +
+
+    ")" +
+
+    "&nbsp;·&nbsp;" +
+
+    (
+      playerColor ===
+      "w"
+
+        ? "You are White"
+
+        : "You are Black"
+    );
+
+
+  if (
+    game.turn() !==
+    playerColor
+  ) {
+
+    setTimeout(
+      requestEngineMove,
+      250
+    );
+
+  }
+
+}
+
+
+function applyDifficulty() {
+
+  if (
+    !engineReady
+  ) {
+
+    return;
+
+  }
+
+
+  const difficulty =
+    DIFFICULTIES[
+      difficultyKey
+    ];
+
+
+  engine.postMessage(
+
+    "setoption name Skill Level value " +
+
+    difficulty.skill
+
+  );
+
+}
+
+
+/* ===================================================== */
+/* BOARD                                                 */
+/* ===================================================== */
+
+function isPlayerTurn() {
+
+  return (
+
+    gameStarted &&
+
+    game &&
+
+    game.turn() ===
+    playerColor &&
+
+    !engineThinking &&
+
+    !promotionPending &&
+
+    !game.isGameOver()
+
+  );
+
+}
+
+
+function drawBoard() {
+
+  boardEl.innerHTML =
+    "";
+
+
+  const orientationWhite =
+    playerColor ===
+    "w";
+
+
+  const files =
+
+    orientationWhite
+
+      ? [
+          "a","b","c","d",
+          "e","f","g","h"
+        ]
+
+      : [
+          "h","g","f","e",
+          "d","c","b","a"
+        ];
+
+
+  const ranks =
+
+    orientationWhite
+
+      ? [
+          8,7,6,5,4,3,2,1
+        ]
+
+      : [
+          1,2,3,4,5,6,7,8
+        ];
+
+
+  const checkedSquare =
+    findCheckedKingSquare();
+
+
+  for (
+    let row=0;
+    row<8;
+    row++
+  ) {
+
+    for (
+      let column=0;
+      column<8;
+      column++
+    ) {
+
+      const file =
+        files[column];
+
+
+      const rank =
+        ranks[row];
+
+
+      const squareName =
+        file +
+        rank;
+
+
+      const square =
+        document.createElement(
+          "div"
+        );
+
+
+      square.className =
+        "square";
+
+
+      square.classList.add(
+
+        (
+          row +
+          column
+        ) % 2 === 0
+
+          ? "light"
+
+          : "dark"
+
+      );
+
+
+      if (
+
+        lastMove &&
+
+        (
+          squareName ===
+          lastMove.from ||
+
+          squareName ===
+          lastMove.to
+        )
+
+      ) {
+
+        square.classList.add(
+          "last-move"
+        );
+
+      }
+
+
+      if (
+        selectedSquare ===
+        squareName
+      ) {
+
+        square.classList.add(
+          "selected"
+        );
+
+      }
+
+
+      if (
+        checkedSquare ===
+        squareName
+      ) {
+
+        square.classList.add(
+          "check"
+        );
+
+      }
+
+
+      if (
+
+        legalMoves.some(
+
+          move =>
+            move.to ===
+            squareName
+
+        )
+
+      ) {
+
+        const dot =
+          document.createElement(
+            "div"
+          );
+
+
+        dot.className =
+          "move-dot";
+
+
+        square.appendChild(
+          dot
+        );
+
+      }
+
+
+      const piece =
+        game.get(
+          squareName
+        );
+
+
+      if (
+        piece
+      ) {
+
+        const image =
+          document.createElement(
+            "img"
+          );
+
+
+        image.className =
+          "piece";
+
+
+        image.src =
+          PIECE_IMAGES[
+            piece.color +
+            piece.type
+          ];
+
+
+        square.appendChild(
+          image
+        );
+
+      }
+
+
+      if (
+        row ===
+        7
+      ) {
+
+        const fileLabel =
+          document.createElement(
+            "span"
+          );
+
+
+        fileLabel.className =
+          "coordinate coord-file";
+
+
+        fileLabel.textContent =
+          file;
+
+
+        square.appendChild(
+          fileLabel
+        );
+
+      }
+
+
+      if (
+        column ===
+        0
+      ) {
+
+        const rankLabel =
+          document.createElement(
+            "span"
+          );
+
+
+        rankLabel.className =
+          "coordinate coord-rank";
+
+
+        rankLabel.textContent =
+          rank;
+
+
+        square.appendChild(
+          rankLabel
+        );
+
+      }
+
+
+      square.addEventListener(
+
+        "click",
+
+        function() {
+
+          handleSquareClick(
+            squareName
+          );
+
+        }
+
+      );
+
+
+      boardEl.appendChild(
+        square
+      );
+
+    }
+
+  }
+
+}
+
+
+/* ===================================================== */
+/* PLAYER MOVES                                          */
+/* ===================================================== */
+
+function handleSquareClick(
+  squareName
+) {
+
+  if (
+    !isPlayerTurn()
+  ) {
+
+    return;
+
+  }
+
+
+  const piece =
+    game.get(
+      squareName
+    );
+
+
+  if (
+    selectedSquare
+  ) {
+
+    const destinationMoves =
+      legalMoves.filter(
+
+        move =>
+          move.to ===
+          squareName
+
+      );
+
+
+    if (
+      destinationMoves.length >
+      0
+    ) {
+
+      const promotionMoves =
+        destinationMoves.filter(
+
+          move =>
+            move.promotion
+
+        );
+
+
+      if (
+        promotionMoves.length >
+        0
+      ) {
+
+        openPromotion(
+
+          selectedSquare,
+
+          squareName
+
+        );
+
+
+        return;
+
+      }
+
+
+      completePlayerMove(
+
+        selectedSquare,
+
+        squareName,
+
+        undefined
+
+      );
+
+
+      return;
+
+    }
+
+
+    if (
+
+      piece &&
+
+      piece.color ===
+      playerColor
+
+    ) {
+
+      selectSquare(
+        squareName
+      );
+
+
+      return;
+
+    }
+
+
+    selectedSquare =
+      null;
+
+
+    legalMoves =
+      [];
+
+
+    drawBoard();
+
+
+    return;
+
+  }
+
+
+  if (
+
+    piece &&
+
+    piece.color ===
+    playerColor
+
+  ) {
+
+    selectSquare(
+      squareName
+    );
+
+  }
+
+}
+
+
+function selectSquare(
+  squareName
+) {
+
+  selectedSquare =
+    squareName;
+
+
+  legalMoves =
+    game.moves({
+
+      square:
+        squareName,
+
+      verbose:
+        true
+
+    });
+
+
+  drawBoard();
+
+}
+
+
+/* ===================================================== */
+/* PROMOTION                                             */
+/* ===================================================== */
+
+function openPromotion(
+  from,
+  to
+) {
+
+  promotionPending = {
+    from,
+    to
+  };
+
+
+  promotionOptions
+    .querySelectorAll(
+      "img"
+    )
+    .forEach(
+
+      image => {
+
+        const type =
+          image.dataset.pieceImage;
+
+
+        image.src =
+          PIECE_IMAGES[
+            playerColor +
+            type
+          ];
+
+      }
+
+    );
+
+
+  promotionOverlay.classList.add(
+    "visible"
+  );
+
+}
+
+
+function hidePromotion() {
+
+  promotionOverlay.classList.remove(
+    "visible"
+  );
+
+}
+
+
+function cancelPromotion() {
+
+  playSound(
+    "button"
+  );
+
+
+  promotionPending =
+    null;
+
+
+  hidePromotion();
+
+}
+
+
+function choosePromotion(
+  pieceType
+) {
+
+  if (
+    !promotionPending
+  ) {
+
+    return;
+
+  }
+
+
+  const from =
+    promotionPending.from;
+
+
+  const to =
+    promotionPending.to;
+
+
+  promotionPending =
+    null;
+
+
+  hidePromotion();
+
+
+  completePlayerMove(
+
+    from,
+
+    to,
+
+    pieceType
+
+  );
+
+}
+
+
+function completePlayerMove(
+  from,
+  to,
+  promotion
+) {
+
+  try {
+
+    const move =
+      game.move({
+        from,
+        to,
+        promotion
+      });
+
+
+    if (
+      !move
+    ) {
+
+      return;
+
+    }
+
+
+    lastMove = {
+      from:move.from,
+      to:move.to
+    };
+
+
+    selectedSquare =
+      null;
+
+
+    legalMoves =
+      [];
+
+
+    afterMove(
+      move
+    );
+
+
+    if (
+      !game.isGameOver()
+    ) {
+
+      setTimeout(
+        requestEngineMove,
+        220
+      );
+
+    }
+
+  }
+
+  catch(
+    error
+  ) {
+
+    console.error(
+      error
+    );
+
+  }
+
+}
+
+
+/* ===================================================== */
+/* ENGINE                                                */
+/* ===================================================== */
+
+function requestEngineMove() {
+
+  if (
+
+    !game ||
+
+    game.isGameOver()
+
+  ) {
+
+    return;
+
+  }
+
+
+  engineThinking =
+    true;
+
+
+  updateStatus();
+
+
+  const difficulty =
+    DIFFICULTIES[
+      difficultyKey
+    ];
+
+
+  if (
+
+    difficulty.randomMoveChance >
+    0 &&
+
+    Math.random() <
+    difficulty.randomMoveChance
+
+  ) {
+
+    const moves =
+      game.moves({
+        verbose:true
+      });
+
+
+    if (
+      moves.length >
+      0
+    ) {
+
+      const randomMove =
+        moves[
+          Math.floor(
+            Math.random() *
+            moves.length
+          )
+        ];
+
+
+      setTimeout(
+
+        function() {
+
+          playCasualRandomMove(
+            randomMove
+          );
+
+        },
+
+        250
+
+      );
+
+
+      return;
+
+    }
+
+  }
+
+
+  engine.postMessage(
+
+    "position fen " +
+    game.fen()
+
+  );
+
+
+  engine.postMessage(
+
+    "go nodes " +
+    difficulty.nodes
+
+  );
+
+}
+
+
+function playCasualRandomMove(
+  moveObject
+) {
+
+  engineThinking =
+    false;
+
+
+  if (
+
+    !game ||
+
+    game.isGameOver()
+
+  ) {
+
+    updateStatus();
+
+    return;
+
+  }
+
+
+  try {
+
+    const move =
+      game.move({
+
+        from:
+          moveObject.from,
+
+        to:
+          moveObject.to,
+
+        promotion:
+          moveObject.promotion
+
+      });
+
+
+    if (
+      !move
+    ) {
+
+      return;
+
+    }
+
+
+    lastMove = {
+      from:move.from,
+      to:move.to
+    };
+
+
+    afterMove(
+      move
+    );
+
+  }
+
+  catch(
+    error
+  ) {
+
+    console.error(
+      error
+    );
+
+  }
+
+}
+
+
+function playEngineMove(
+  moveText
+) {
+
+  engineThinking =
+    false;
+
+
+  if (
+
+    !game ||
+
+    !moveText ||
+
+    moveText ===
+    "(none)"
+
+  ) {
+
+    updateStatus();
+
+    return;
+
+  }
+
+
+  const from =
+    moveText.substring(
+      0,
+      2
+    );
+
+
+  const to =
+    moveText.substring(
+      2,
+      4
+    );
+
+
+  const promotion =
+
+    moveText.length >=
+    5
+
+      ? moveText.substring(
+          4,
+          5
+        )
+
+      : undefined;
+
+
+  try {
+
+    const move =
+      game.move({
+        from,
+        to,
+        promotion
+      });
+
+
+    if (
+      !move
+    ) {
+
+      return;
+
+    }
+
+
+    lastMove = {
+      from:move.from,
+      to:move.to
+    };
+
+
+    afterMove(
+      move
+    );
+
+  }
+
+  catch(
+    error
+  ) {
+
+    console.error(
+      error
+    );
+
+  }
+
+}
+
+
+/* ===================================================== */
+/* AFTER MOVE                                            */
+/* ===================================================== */
+
+function afterMove(
+  move
+) {
+
+  drawBoard();
+
+  renderMoveList();
+
+  updateCapturedPieces();
+
+  updateStatus();
+
+  playSoundForMove(
+    move
+  );
+
+}
+
+
+/* ===================================================== */
+/* MATERIAL / CAPTURES                                   */
+/* ===================================================== */
+
+function countPieces() {
+
+  const counts = {
+
+    w:{
+      p:0,
+      n:0,
+      b:0,
+      r:0,
+      q:0,
+      k:0
+    },
+
+    b:{
+      p:0,
+      n:0,
+      b:0,
+      r:0,
+      q:0,
+      k:0
+    }
+
+  };
+
+
+  game.board().forEach(
+
+    row =>
+
+      row.forEach(
+
+        piece => {
+
+          if (
+            piece
+          ) {
+
+            counts[
+              piece.color
+            ][
+              piece.type
+            ]++;
+
+          }
+
+        }
+
+      )
+
+  );
+
+
+  return counts;
+
+}
+
+
+function getCaptured() {
+
+  const counts =
+    countPieces();
+
+
+  const whiteCaptured =
+    [];
+
+
+  const blackCaptured =
+    [];
+
+
+  DISPLAY_ORDER.forEach(
+
+    type => {
+
+      const missingBlack =
+
+        INITIAL_COUNTS[type] -
+
+        counts.b[type];
+
+
+      const missingWhite =
+
+        INITIAL_COUNTS[type] -
+
+        counts.w[type];
+
+
+      for (
+        let i=0;
+        i<missingBlack;
+        i++
+      ) {
+
+        whiteCaptured.push({
+          color:"b",
+          type
+        });
+
+      }
+
+
+      for (
+        let i=0;
+        i<missingWhite;
+        i++
+      ) {
+
+        blackCaptured.push({
+          color:"w",
+          type
+        });
+
+      }
+
+    }
+
+  );
+
+
+  return {
+    whiteCaptured,
+    blackCaptured
+  };
+
+}
+
+
+function captureValue(
+  pieces
+) {
+
+  return pieces.reduce(
+
+    (
+      total,
+      piece
+    ) =>
+
+      total +
+
+      PIECE_VALUES[
+        piece.type
+      ],
+
+    0
+
+  );
+
+}
+
+
+function renderCaptured(
+  element,
+  pieces
+) {
+
+  element.innerHTML =
+    "";
+
+
+  if (
+    pieces.length ===
+    0
+  ) {
+
+    element.innerHTML =
+      "<span class='none'>None</span>";
+
+
+    return;
+
+  }
+
+
+  pieces.forEach(
+
+    piece => {
+
+      const image =
+        document.createElement(
+          "img"
+        );
+
+
+      image.className =
+        "captured-piece";
+
+
+      image.src =
+        PIECE_IMAGES[
+          piece.color +
+          piece.type
+        ];
+
+
+      element.appendChild(
+        image
+      );
+
+    }
+
+  );
+
+}
+
+
+function updateCapturedPieces() {
+
+  const captured =
+    getCaptured();
+
+
+  const whiteValue =
+    captureValue(
+      captured.whiteCaptured
+    );
+
+
+  const blackValue =
+    captureValue(
+      captured.blackCaptured
+    );
+
+
+  const difference =
+    whiteValue -
+    blackValue;
+
+
+  topCaptureTitle.textContent =
+    "White captured";
+
+
+  bottomCaptureTitle.textContent =
+    "Black captured";
+
+
+  renderCaptured(
+
+    topCapturedPieces,
+
+    captured.whiteCaptured
+
+  );
+
+
+  renderCaptured(
+
+    bottomCapturedPieces,
+
+    captured.blackCaptured
+
+  );
+
+
+  if (
+    difference >
+    0
+  ) {
+
+    materialText.textContent =
+      "White ahead";
+
+
+    materialScore.textContent =
+      "+" +
+      difference;
+
+  }
+
+  else if (
+    difference <
+    0
+  ) {
+
+    materialText.textContent =
+      "Black ahead";
+
+
+    materialScore.textContent =
+      "+" +
+      Math.abs(
+        difference
+      );
+
+  }
+
+  else {
+
+    materialText.textContent =
+      "Material even";
+
+
+    materialScore.textContent =
+      "0";
+
+  }
+
+}
+
+
+/* ===================================================== */
+/* CHECK                                                 */
+/* ===================================================== */
+
+function findCheckedKingSquare() {
+
+  if (
+
+    !game ||
+
+    !game.inCheck()
+
+  ) {
+
+    return null;
+
+  }
+
+
+  const checkedColor =
+    game.turn();
+
+
+  const board =
+    game.board();
+
+
+  for (
+    let row=0;
+    row<8;
+    row++
+  ) {
+
+    for (
+      let column=0;
+      column<8;
+      column++
+    ) {
+
+      const piece =
+        board[row][column];
+
+
+      if (
+
+        piece &&
+
+        piece.type ===
+        "k" &&
+
+        piece.color ===
+        checkedColor
+
+      ) {
+
+        return (
+
+          "abcdefgh"[
+            column
+          ] +
+
+          (
+            8 -
+            row
+          )
+
+        );
+
+      }
+
+    }
+
+  }
+
+
+  return null;
+
+}
+
+
+/* ===================================================== */
+/* MOVE HISTORY                                          */
+/* ===================================================== */
+
+function renderMoveList() {
+
+  if (
+    !gameStarted
+  ) {
+
+    moveListBody.innerHTML =
+
+      "<tr>" +
+
+      "<td colspan='3'>" +
+
+      "Game not started." +
+
+      "</td>" +
+
+      "</tr>";
+
+
+    return;
+
+  }
+
+
+  const history =
+    game.history();
+
+
+  if (
+    history.length ===
+    0
+  ) {
+
+    moveListBody.innerHTML =
+
+      "<tr>" +
+
+      "<td colspan='3'>" +
+
+      "No moves yet." +
+
+      "</td>" +
+
+      "</tr>";
+
+
+    return;
+
+  }
+
+
+  let html =
+    "";
+
+
+  for (
+
+    let i=0;
+
+    i<history.length;
+
+    i+=2
+
+  ) {
+
+    html +=
+
+      "<tr>" +
+
+      "<td>" +
+
+      (
+        i/2 +
+        1
+      ) +
+
+      "</td>" +
+
+      "<td>" +
+
+      (
+        history[i] ||
+        ""
+      ) +
+
+      "</td>" +
+
+      "<td>" +
+
+      (
+        history[i+1] ||
+        ""
+      ) +
+
+      "</td>" +
+
+      "</tr>";
+
+  }
+
+
+  moveListBody.innerHTML =
+    html;
+
+
+  const moveBox =
+    document.getElementById(
+      "moveBox"
+    );
+
+
+  moveBox.scrollTop =
+    moveBox.scrollHeight;
+
+}
+
+
+/* ===================================================== */
+/* STATUS                                                */
+/* ===================================================== */
+
+function updateStatus() {
+
+  if (
+    !gameStarted
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    game.isGameOver()
+  ) {
+
+    if (
+      game.isCheckmate()
+    ) {
+
+      const winner =
+
+        game.turn() ===
+        "w"
+
+          ? "b"
+
+          : "w";
+
+
+      setStatus(
+
+        winner ===
+        playerColor
+
+          ? "Checkmate — you win!"
+
+          : "Checkmate — Stockfish wins."
+
+      );
+
+
+      return;
+
+    }
+
+
+    if (
+      game.isStalemate()
+    ) {
+
+      setStatus(
+        "Draw by stalemate."
+      );
+
+
+      return;
+
+    }
+
+
+    if (
+      game.isThreefoldRepetition()
+    ) {
+
+      setStatus(
+        "Draw by repetition."
+      );
+
+
+      return;
+
+    }
+
+
+    if (
+      game.isInsufficientMaterial()
+    ) {
+
+      setStatus(
+        "Draw by insufficient material."
+      );
+
+
+      return;
+
+    }
+
+
+    setStatus(
+      "Draw."
+    );
+
+
+    return;
+
+  }
+
+
+  if (
+    engineThinking
+  ) {
+
+    setStatus(
+
+      game.inCheck()
+
+        ? "Stockfish is thinking — Stockfish is in check."
+
+        : "Stockfish is thinking..."
+
+    );
+
+
+    return;
+
+  }
+
+
+  if (
+    game.turn() ===
+    playerColor
+  ) {
+
+    setStatus(
+
+      game.inCheck()
+
+        ? "Your move — you are in check."
+
+        : "Your move."
+
+    );
+
+  }
+
+  else {
+
+    setStatus(
+
+      game.inCheck()
+
+        ? "Stockfish to move — Stockfish is in check."
+
+        : "Stockfish to move."
+
+    );
+
+  }
+
+}
+
+
+function setStatus(
+  text
+) {
+
+  statusBox.textContent =
+    text;
+
+}
+
+
+/* ===================================================== */
+/* MATCH INFO                                            */
+/* ===================================================== */
+
+function updateInfoPanel() {
+
+  const difficulty =
+    DIFFICULTIES[
+      difficultyKey
+    ];
+
+
+  let playerFormationText;
+
+
+  if (
+    gameStarted
+  ) {
+
+    playerFormationText =
+
+      FORMATION_MAP[
+        actualPlayerFormation
+      ] +
+
+      " (" +
+
+      actualPlayerFormation +
+
+      ")";
+
+  }
+
+  else if (
+    playerFormationChoice ===
+    "RANDOM"
+  ) {
+
+    playerFormationText =
+      "Random";
+
+  }
+
+  else {
+
+    playerFormationText =
+
+      FORMATION_MAP[
+        playerFormationChoice
+      ] +
+
+      " (" +
+
+      playerFormationChoice +
+
+      ")";
+
+  }
+
+
+  let computerText;
+
+
+  if (
+    gameStarted
+  ) {
+
+    computerText =
+
+      FORMATION_MAP[
+        actualComputerFormation
+      ] +
+
+      " (" +
+
+      actualComputerFormation +
+
+      ")";
+
+  }
+
+  else if (
+    computerFormationChoice ===
+    "RANDOM"
+  ) {
+
+    computerText =
+      "Random";
+
+  }
+
+  else {
+
+    computerText =
+
+      FORMATION_MAP[
+        computerFormationChoice
+      ] +
+
+      " (" +
+
+      computerFormationChoice +
+
+      ")";
+
+  }
+
+
+  let colorText;
+
+
+  if (
+    gameStarted
+  ) {
+
+    colorText =
+
+      playerColor ===
+      "w"
+
+        ? "White"
+
+        : "Black";
+
+  }
+
+  else if (
+    playerColorChoice ===
+    "RANDOM"
+  ) {
+
+    colorText =
+      "Random";
+
+  }
+
+  else {
+
+    colorText =
+
+      playerColorChoice ===
+      "w"
+
+        ? "White"
+
+        : "Black";
+
+  }
+
+
+  infoBox.innerHTML =
+
+    "<div class='match-line'>" +
+
+    "<strong>You:</strong> " +
+
+    playerFormationText +
+
+    " · " +
+
+    colorText +
+
+    "</div>" +
+
+
+    "<div class='match-line'>" +
+
+    "<strong>Computer:</strong> " +
+
+    computerText +
+
+    "</div>" +
+
+
+    "<div class='match-line'>" +
+
+    "<strong>Difficulty:</strong> " +
+
+    difficulty.label +
+
+    "</div>";
+
+}
+
+
+/* ===================================================== */
+/* STOCKFISH                                             */
+/* ===================================================== */
+
+engine.onmessage =
+function(event) {
+
+  const message =
+    event.data;
+
+
+  if (
+    message ===
+    "uciok"
+  ) {
+
+    engine.postMessage(
+      "isready"
+    );
+
+  }
+
+
+  if (
+    message ===
+    "readyok"
+  ) {
+
+    engineReady =
+      true;
+
+
+    applyDifficulty();
+
+
+    engineBox.textContent =
+      "Engine ready";
+
+
+    if (
+      !gameStarted
+    ) {
+
+      setStatus(
+
+        "Choose your settings, then click Start New Game."
+
+      );
+
+    }
+
+
+    return;
+
+  }
+
+
+  if (
+
+    typeof message ===
+    "string" &&
+
+    message.startsWith(
+      "bestmove"
+    )
+
+  ) {
+
+    const move =
+      message
+        .split(" ")[1];
+
+
+    playEngineMove(
+      move
+    );
+
+  }
+
+};
+
+
+engine.onerror =
+function(error) {
+
+  console.error(
+    error
+  );
+
+
+  engineBox.textContent =
+    "Engine failed to load";
+
+
+  setStatus(
+
+    "Stockfish failed to load. Open the page through localhost."
+
+  );
+
+};
+
+
+window.addEventListener(
+
+  "scroll",
+
+  hideTooltip,
+
+  true
+
+);
+
+
+window.addEventListener(
+
+  "resize",
+
+  hideTooltip
+
+);
+
+
+engine.postMessage(
+  "uci"
+);
+
+
+initializeControls();
+
+refreshFormationButtons();
+
+refreshSideButtons();
+
+refreshDifficultyButtons();
+
+updateInfoPanel();
+
+renderPreview();
+
+</script>
+
+</body>
+
+</html>
