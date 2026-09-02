@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>The Aurelian Conquest</title>
 
 <style>
+
 :root {
   --bg:#f4f1ea;
   --panel:#fff;
@@ -28,6 +30,10 @@
 
 * {
   box-sizing:border-box;
+}
+
+html {
+  -webkit-text-size-adjust:100%;
 }
 
 body {
@@ -119,6 +125,7 @@ h1 {
 button,
 select {
   font:inherit;
+  touch-action:manipulation;
 }
 
 .choice-btn,
@@ -215,9 +222,10 @@ select {
   background:var(--green-hover);
 }
 
-/* ============================= */
-/* FLOATING HOVER TOOLTIP        */
-/* ============================= */
+
+/* ===================================================== */
+/* FLOATING HELP TOOLTIP                                 */
+/* ===================================================== */
 
 #hoverTooltip {
   position:fixed;
@@ -227,7 +235,7 @@ select {
   border:1px solid #d6cec0;
   border-radius:12px;
   box-shadow:0 10px 28px rgba(0,0,0,.14);
-  z-index:500;
+  z-index:900;
   display:none;
   pointer-events:none;
 }
@@ -269,9 +277,10 @@ select {
   line-height:1.35;
 }
 
-/* ============================= */
-/* CAPTURE NOTIFICATION          */
-/* ============================= */
+
+/* ===================================================== */
+/* CAPTURE NOTIFICATION                                  */
+/* ===================================================== */
 
 #captureToast {
   position:absolute;
@@ -329,19 +338,27 @@ select {
   object-fit:contain;
 }
 
-/* ============================= */
+
+/* ===================================================== */
+/* RESPONSIVE BOARD                                      */
+/* ===================================================== */
 
 .board-wrap {
-  width:576px;
+  width:100%;
+  max-width:576px;
   margin:0 auto;
 }
 
 #board {
   display:grid;
-  grid-template-columns:repeat(8,72px);
-  grid-template-rows:repeat(8,72px);
-  width:576px;
-  height:576px;
+  grid-template-columns:repeat(8,1fr);
+  grid-template-rows:repeat(8,1fr);
+
+  width:100%;
+  max-width:576px;
+
+  aspect-ratio:1 / 1;
+
   border:3px solid #252525;
   border-radius:8px;
   overflow:hidden;
@@ -349,13 +366,18 @@ select {
 
 .square {
   position:relative;
-  width:72px;
-  height:72px;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   cursor:pointer;
   user-select:none;
+  -webkit-user-select:none;
 }
 
 .light {
@@ -394,8 +416,9 @@ select {
 
 .move-dot {
   position:absolute;
-  width:18px;
-  height:18px;
+  width:25%;
+  aspect-ratio:1 / 1;
+  max-width:18px;
   border-radius:50%;
   background:var(--dot);
   pointer-events:none;
@@ -438,6 +461,7 @@ select {
   text-align:center;
   font-size:13px;
   color:var(--muted);
+  padding:0 4px;
 }
 
 .preview-bar strong {
@@ -520,6 +544,7 @@ select {
 .move-box {
   max-height:310px;
   overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
 table {
@@ -547,6 +572,11 @@ th {
   color:var(--muted);
   line-height:1.35;
 }
+
+
+/* ===================================================== */
+/* PROMOTION                                             */
+/* ===================================================== */
 
 .promotion-overlay {
   position:fixed;
@@ -622,36 +652,33 @@ th {
   cursor:pointer;
 }
 
+
+/* ===================================================== */
+/* TABLET                                                */
+/* ===================================================== */
+
 @media (max-width:1240px) {
+
   .app {
-    grid-template-columns:270px 560px 290px;
+    grid-template-columns:270px minmax(0,560px) 290px;
   }
 
-  .board-wrap,
-  #board {
-    width:560px;
-    height:560px;
-  }
-
-  #board {
-    grid-template-columns:repeat(8,70px);
-    grid-template-rows:repeat(8,70px);
-  }
-
-  .square {
-    width:70px;
-    height:70px;
-  }
 }
 
+
+/* ===================================================== */
+/* STACKED LAYOUT                                        */
+/* ===================================================== */
+
 @media (max-width:1120px) {
+
   .app {
-    grid-template-columns:1fr;
+    grid-template-columns:minmax(0,700px);
   }
 
   .panel,
   .board-panel {
-    width:min(700px,100%);
+    width:100%;
     margin:0 auto;
   }
 
@@ -661,38 +688,197 @@ th {
     right:16px;
     bottom:16px;
   }
+
+}
+
+
+/* ===================================================== */
+/* PHONE                                                 */
+/* ===================================================== */
+
+@media (max-width:700px) {
+
+  .page {
+    width:calc(100% - 16px);
+    padding-top:8px;
+  }
+
+  .header {
+    margin-bottom:8px;
+  }
+
+  h1 {
+    font-size:28px;
+  }
+
+  .subtitle {
+    font-size:14px;
+  }
+
+  .app {
+    gap:10px;
+  }
+
+  .panel {
+    padding:12px;
+    border-radius:13px;
+  }
+
+  .board-panel {
+    padding:7px;
+    border-radius:12px;
+  }
+
+  .section {
+    padding-bottom:9px;
+    margin-bottom:9px;
+  }
+
+  .panel-title {
+    font-size:18px;
+  }
+
+  .choice-btn {
+    min-height:50px;
+  }
+
+  .side-btn,
+  .difficulty-btn,
+  .action-btn,
+  .sound-btn {
+    min-height:40px;
+  }
+
+  .difficulty-grid {
+    gap:4px;
+  }
+
+  .difficulty-btn {
+    padding-left:3px;
+    padding-right:3px;
+    font-size:11px;
+  }
+
+  #board {
+    border-width:2px;
+  }
+
+  .selected::after,
+  .check::after {
+    inset:3px;
+    border-width:3px;
+  }
+
+  .coordinate {
+    font-size:8px;
+  }
+
+  .preview-bar {
+    min-height:27px;
+    font-size:11px;
+    line-height:1.3;
+  }
+
+  .move-box {
+    max-height:240px;
+  }
+
+  /*
+    On touch screens, help cards become a
+    bottom-of-screen information card instead
+    of trying to appear left of the buttons.
+  */
+
+  #hoverTooltip {
+    width:min(330px,calc(100vw - 24px)) !important;
+
+    left:50% !important;
+    right:auto !important;
+
+    top:auto !important;
+    bottom:14px !important;
+
+    transform:translateX(-50%);
+
+    max-height:45vh;
+    overflow:auto;
+  }
+
+}
+
+
+/* ===================================================== */
+/* TOUCH DEVICES                                         */
+/* ===================================================== */
+
+@media (hover:none) and (pointer:coarse) {
+
+  #hoverTooltip {
+    width:min(330px,calc(100vw - 24px)) !important;
+
+    left:50% !important;
+    right:auto !important;
+
+    top:auto !important;
+    bottom:14px !important;
+
+    transform:translateX(-50%);
+
+    max-height:45vh;
+    overflow:auto;
+  }
+
 }
 
 </style>
 </head>
 
+
 <body>
 
 <div id="hoverTooltip"></div>
 
+
 <div class="page">
 
   <div class="header">
+
     <h1>The Aurelian Conquest</h1>
-    <p class="subtitle">A Strategic Chess Variant</p>
+
+    <p class="subtitle">
+      A Strategic Chess Variant
+    </p>
+
   </div>
 
+
   <div class="app">
+
+
+    <!-- LEFT / SETUP PANEL -->
 
     <div class="panel">
 
       <div class="section">
 
-        <h2 class="panel-title">Game Setup</h2>
+        <h2 class="panel-title">
+          Game Setup
+        </h2>
 
-        <div class="label">Your formation</div>
+
+        <div class="label">
+          Your formation
+        </div>
+
 
         <div
           id="formationButtons"
           class="formation-grid">
         </div>
 
+
         <div style="height:9px"></div>
+
 
         <label
           class="label"
@@ -701,6 +887,7 @@ th {
           Computer formation
 
         </label>
+
 
         <select id="computerFormationSelect">
 
@@ -712,9 +899,13 @@ th {
 
       </div>
 
+
       <div class="section">
 
-        <div class="label">Play as</div>
+        <div class="label">
+          Play as
+        </div>
+
 
         <div class="three-buttons">
 
@@ -727,6 +918,7 @@ th {
 
           </button>
 
+
           <button
             id="playRandomBtn"
             class="side-btn"
@@ -735,6 +927,7 @@ th {
             Random
 
           </button>
+
 
           <button
             id="playBlackBtn"
@@ -749,9 +942,13 @@ th {
 
       </div>
 
+
       <div class="section">
 
-        <div class="label">Difficulty</div>
+        <div class="label">
+          Difficulty
+        </div>
+
 
         <div class="difficulty-grid">
 
@@ -764,6 +961,7 @@ th {
 
           </button>
 
+
           <button
             id="difficultyBeginner"
             class="difficulty-btn"
@@ -773,6 +971,7 @@ th {
 
           </button>
 
+
           <button
             id="difficultyIntermediate"
             class="difficulty-btn"
@@ -781,6 +980,7 @@ th {
             Medium
 
           </button>
+
 
           <button
             id="difficultyHard"
@@ -795,9 +995,13 @@ th {
 
       </div>
 
+
       <div class="section">
 
-        <div class="label">Sound</div>
+        <div class="label">
+          Sound
+        </div>
+
 
         <button
           id="soundButton"
@@ -811,6 +1015,7 @@ th {
 
       </div>
 
+
       <div class="actions">
 
         <button
@@ -821,6 +1026,7 @@ th {
           Start New Game
 
         </button>
+
 
         <button
           id="resetBtn"
@@ -833,12 +1039,18 @@ th {
 
       </div>
 
+
       <div class="small-note">
-        Hover over formations and difficulty settings for guidance.
+
+        Hover or tap formations and difficulty settings for guidance.
+
       </div>
 
     </div>
 
+
+
+    <!-- BOARD -->
 
     <div class="board-panel">
 
@@ -856,16 +1068,23 @@ th {
 
       </div>
 
+
       <div id="captureToast"></div>
 
     </div>
 
 
+
+    <!-- RIGHT / STATUS PANEL -->
+
     <div class="panel">
 
       <div class="section">
 
-        <div class="label">Status</div>
+        <div class="label">
+          Status
+        </div>
+
 
         <div
           id="statusBox"
@@ -874,6 +1093,7 @@ th {
           Loading Stockfish...
 
         </div>
+
 
         <div
           id="engineBox"
@@ -885,9 +1105,13 @@ th {
 
       </div>
 
+
       <div class="section">
 
-        <div class="label">Match</div>
+        <div class="label">
+          Match
+        </div>
+
 
         <div
           id="infoBox"
@@ -896,11 +1120,13 @@ th {
 
       </div>
 
+
       <div class="section">
 
         <div class="label">
           Material & Captures
         </div>
+
 
         <div class="box">
 
@@ -920,6 +1146,7 @@ th {
 
           </div>
 
+
           <div class="capture-row">
 
             <div
@@ -930,15 +1157,19 @@ th {
 
             </div>
 
+
             <div
               id="topCapturedPieces"
               class="captured-pieces">
 
-              <span class="none">None</span>
+              <span class="none">
+                None
+              </span>
 
             </div>
 
           </div>
+
 
           <div class="capture-row">
 
@@ -950,11 +1181,14 @@ th {
 
             </div>
 
+
             <div
               id="bottomCapturedPieces"
               class="captured-pieces">
 
-              <span class="none">None</span>
+              <span class="none">
+                None
+              </span>
 
             </div>
 
@@ -964,11 +1198,13 @@ th {
 
       </div>
 
+
       <div class="section">
 
         <div class="label">
           Move History
         </div>
+
 
         <div
           id="moveBox"
@@ -977,12 +1213,15 @@ th {
           <table>
 
             <thead>
+
               <tr>
                 <th>#</th>
                 <th>White</th>
                 <th>Black</th>
               </tr>
+
             </thead>
+
 
             <tbody id="moveListBody">
 
@@ -1007,22 +1246,30 @@ th {
 </div>
 
 
+
+<!-- PROMOTION -->
+
 <div
   id="promotionOverlay"
   class="promotion-overlay">
 
   <div class="promotion-card">
 
-    <h2>Promote Your Pawn</h2>
+    <h2>
+      Promote Your Pawn
+    </h2>
+
 
     <p>
       Choose the piece your pawn becomes.
     </p>
 
+
     <div
       id="promotionOptions"
       class="promotion-options">
     </div>
+
 
     <button
       id="promotionCancel"
@@ -1038,25 +1285,38 @@ th {
 </div>
 
 
+
 <script type="module">
 
 import { Chess }
 from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/+esm";
 
 
+/* ===================================================== */
+/* FORMATIONS                                            */
+/* ===================================================== */
+
 const FORMATIONS = [
+
   { code:"RNB", name:"The Bastion" },
+
   { code:"RBN", name:"The Sentinel" },
+
   { code:"NRB", name:"The Vanguard" },
+
   { code:"NBR", name:"The Cavalry" },
+
   { code:"BRN", name:"The Rampart" },
+
   { code:"BNR", name:"The Citadel" }
+
 ];
 
 
 const FORMATION_GUIDES = {
 
   RNB: {
+
     description:
       "The familiar classical formation and the most natural starting point for traditional chess players.",
 
@@ -1065,9 +1325,12 @@ const FORMATION_GUIDES = {
 
     tip:
       "Normal opening principles work well here: develop your knights and bishops, fight for the center, and connect your rooks."
+
   },
 
+
   RBN: {
+
     description:
       "The knights move inward while the bishops take their places beside the corner rooks.",
 
@@ -1076,9 +1339,12 @@ const FORMATION_GUIDES = {
 
     tip:
       "Your bishops need deliberate pawn openings from the b- and g-files, so make sure they do not get buried behind your pawns."
+
   },
 
+
   NRB: {
+
     description:
       "The bishops remain in familiar positions while the knights begin on the outside and the rooks move inward.",
 
@@ -1087,9 +1353,12 @@ const FORMATION_GUIDES = {
 
     tip:
       "Pay special attention to your corner knights. Their path into the battle may take more planning than usual."
+
   },
 
+
   NBR: {
+
     description:
       "An unconventional formation with knights on the wings and rooks stationed close to the center.",
 
@@ -1098,9 +1367,12 @@ const FORMATION_GUIDES = {
 
     tip:
       "Do not rush to activate the rooks too early. Develop your lighter pieces and create safe lanes for them first."
+
   },
 
+
   BRN: {
+
     description:
       "The bishops guard the outer edges while the knights occupy strong central starting squares and the rooks sit just inside them.",
 
@@ -1109,9 +1381,12 @@ const FORMATION_GUIDES = {
 
     tip:
       "Activate the corner bishops early so they can command important diagonals instead of remaining trapped behind the pawn line."
+
   },
 
+
   BNR: {
+
     description:
       "A compact formation with bishops on the wings, knights inside them, and the rooks closest to the king and queen.",
 
@@ -1120,14 +1395,21 @@ const FORMATION_GUIDES = {
 
     tip:
       "Free your bishops early and resist exposing the central rooks before your king position is secure."
+
   }
 
 };
 
 
+
+/* ===================================================== */
+/* DIFFICULTY                                            */
+/* ===================================================== */
+
 const DIFFICULTY_GUIDES = {
 
   casual: {
+
     title:"Casual",
 
     description:
@@ -1138,9 +1420,12 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Newer chess players, learning a formation, or playing a low-pressure game."
+
   },
 
+
   beginner: {
+
     title:"Beginner",
 
     description:
@@ -1151,9 +1436,12 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Players who know the basic rules and want a fair challenge without being punished for every small error."
+
   },
 
+
   intermediate: {
+
     title:"Medium",
 
     description:
@@ -1164,9 +1452,12 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Players who want to test their formation strategy against meaningful resistance."
+
   },
 
+
   hard: {
+
     title:"Hard",
 
     description:
@@ -1177,6 +1468,7 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Experienced players or anyone who wants the toughest test of their Aurelian strategy."
+
   }
 
 };
@@ -1226,6 +1518,11 @@ const DIFFICULTIES = {
 };
 
 
+
+/* ===================================================== */
+/* PIECES                                                */
+/* ===================================================== */
+
 const PIECE_VALUES = {
   p:1,
   n:3,
@@ -1256,12 +1553,14 @@ const DISPLAY_ORDER = [
 
 
 const PIECE_NAMES = {
+
   p:"Pawn",
   n:"Knight",
   b:"Bishop",
   r:"Rook",
   q:"Queen",
   k:"King"
+
 };
 
 
@@ -1314,17 +1613,25 @@ const PROMOTION_NAMES = {
 };
 
 
-/* ============================= */
-/* CUSTOM SOUND FILES            */
-/* ============================= */
+
+/* ===================================================== */
+/* CUSTOM SOUND FILES                                    */
+/* ===================================================== */
 
 const SOUND_FILES = {
+
   move:"./Move.wav",
+
   capture:"./Capture.wav",
+
   check:"./Check.wav",
+
   checkmate:"./Checkmate.wav",
+
   draw:"./Stalemate.wav",
+
   start:"./Startgame.wav"
+
 };
 
 
@@ -1343,9 +1650,10 @@ Object.values(
 );
 
 
-/* ============================= */
-/* ELEMENTS                      */
-/* ============================= */
+
+/* ===================================================== */
+/* ELEMENTS                                              */
+/* ===================================================== */
 
 const boardEl =
   document.getElementById("board");
@@ -1435,9 +1743,10 @@ const promotionCancel =
   document.getElementById("promotionCancel");
 
 
-/* ============================= */
-/* STATE                         */
-/* ============================= */
+
+/* ===================================================== */
+/* STATE                                                 */
+/* ===================================================== */
 
 let playerFormationChoice =
   "RNB";
@@ -1496,9 +1805,6 @@ let promotionPending =
 let soundEnabled =
   true;
 
-
-/* Capture-toast state */
-
 let captureToastItems =
   [];
 
@@ -1515,16 +1821,33 @@ const engine =
   );
 
 
-/* ============================= */
-/* SOUND                         */
-/* ============================= */
+
+/* ===================================================== */
+/* DEVICE HELPERS                                        */
+/* ===================================================== */
+
+function isTouchStyleDevice() {
+
+  return window.matchMedia(
+    "(hover: none), (pointer: coarse)"
+  ).matches;
+
+}
+
+
+
+/* ===================================================== */
+/* SOUND                                                 */
+/* ===================================================== */
 
 function playSound(name) {
 
   if (
     !soundEnabled
   ) {
+
     return;
+
   }
 
 
@@ -1537,7 +1860,9 @@ function playSound(name) {
   if (
     !file
   ) {
+
     return;
+
   }
 
 
@@ -1563,12 +1888,21 @@ function playSound(name) {
 }
 
 
+/*
+  Current sound behavior remains exactly as before.
+
+  We can revisit the check/move layering after
+  you've finished evaluating it in actual play.
+*/
+
 function playSoundForMove(move) {
 
   if (
     !soundEnabled
   ) {
+
     return;
+
   }
 
 
@@ -1593,6 +1927,7 @@ function playSoundForMove(move) {
       );
 
     }
+
 
     return;
 
@@ -1638,9 +1973,10 @@ function playSoundForMove(move) {
 }
 
 
-/* ============================= */
-/* CAPTURE TOAST                 */
-/* ============================= */
+
+/* ===================================================== */
+/* CAPTURE TOAST                                         */
+/* ===================================================== */
 
 function showComputerCaptureToast(
   pieceType
@@ -1649,7 +1985,9 @@ function showComputerCaptureToast(
   if (
     !pieceType
   ) {
+
     return;
+
   }
 
 
@@ -1676,14 +2014,13 @@ function showComputerCaptureToast(
 
 
   captureToastItems.push({
+
     type:pieceType,
+
     color:playerColor
+
   });
 
-
-  /*
-    Keep the popup from becoming enormous.
-  */
 
   if (
     captureToastItems.length >
@@ -1722,6 +2059,7 @@ function showComputerCaptureToast(
               captureToastItems =
                 [];
 
+
               captureToast.innerHTML =
                 "";
 
@@ -1739,8 +2077,11 @@ function showComputerCaptureToast(
 function renderCaptureToast() {
 
   let html =
+
     "<div class='capture-toast-title'>" +
+
     "Stockfish captured" +
+
     "</div>";
 
 
@@ -1827,70 +2168,171 @@ function clearCaptureToast() {
 }
 
 
-/* ============================= */
-/* FORMATIONS                    */
-/* ============================= */
 
-function randomFormation() {
+/* ===================================================== */
+/* FORMATION HELP                                        */
+/* ===================================================== */
 
-  return FORMATIONS[
-    Math.floor(
-      Math.random() *
-      FORMATIONS.length
-    )
-  ].code;
+function getFormationTooltipHTML(code) {
 
-}
+  if (
+    code ===
+    "RANDOM"
+  ) {
 
+    return (
 
-function buildBackRow(setup) {
+      "<div class='tooltip-title'>" +
 
-  return (
-    setup +
-    "QK" +
-    setup
-      .split("")
-      .reverse()
-      .join("")
-  );
+      "Random Formation" +
 
-}
+      "</div>" +
 
+      "<div class='tooltip-description'>" +
 
-function buildFen(
-  whiteSetup,
-  blackSetup
-) {
+      "Let the game choose one of the six formations for you." +
 
-  const whiteBack =
-    buildBackRow(
-      whiteSetup
+      "</div>" +
+
+      "<div class='tooltip-line'>" +
+
+      "<strong>Strength:</strong> " +
+
+      "Forces you to adapt and explore formations you might not normally select." +
+
+      "</div>" +
+
+      "<div class='tooltip-line'>" +
+
+      "<strong>Tip:</strong> " +
+
+      "Use Random when you want to practice reacting to unfamiliar starting positions." +
+
+      "</div>" +
+
+      "<div class='tooltip-note'>" +
+
+      "The preview may change when the game begins." +
+
+      "</div>"
+
     );
 
+  }
 
-  const blackBack =
-    buildBackRow(
-      blackSetup
-    ).toLowerCase();
+
+  const guide =
+    FORMATION_GUIDES[
+      code
+    ];
 
 
   return (
-    blackBack +
-    "/pppppppp" +
-    "/8/8/8/8" +
-    "/PPPPPPPP/" +
-    whiteBack +
-    " w - - 0 1"
+
+    "<div class='tooltip-title'>" +
+
+    FORMATION_MAP[
+      code
+    ] +
+
+    "</div>" +
+
+    "<div class='tooltip-description'>" +
+
+    guide.description +
+
+    "</div>" +
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>Strength:</strong> " +
+
+    guide.strength +
+
+    "</div>" +
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>Tip:</strong> " +
+
+    guide.tip +
+
+    "</div>"
+
   );
 
 }
 
 
-/* ============================= */
-/* TOOLTIP                       */
-/* ============================= */
+
+/* ===================================================== */
+/* DIFFICULTY HELP                                       */
+/* ===================================================== */
+
+function getDifficultyTooltipHTML(key) {
+
+  const guide =
+    DIFFICULTY_GUIDES[
+      key
+    ];
+
+
+  return (
+
+    "<div class='tooltip-title'>" +
+
+    guide.title +
+
+    "</div>" +
+
+    "<div class='tooltip-description'>" +
+
+    guide.description +
+
+    "</div>" +
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>How it plays:</strong> " +
+
+    guide.behavior +
+
+    "</div>" +
+
+    "<div class='tooltip-line'>" +
+
+    "<strong>Best for:</strong> " +
+
+    guide.bestFor +
+
+    "</div>"
+
+  );
+
+}
+
+
+
+/* ===================================================== */
+/* TOOLTIP POSITIONING                                   */
+/* ===================================================== */
 
 function positionTooltip(button) {
+
+  /*
+    Mobile/touch positioning is handled by CSS.
+  */
+
+  if (
+    isTouchStyleDevice() ||
+    window.innerWidth <=
+    700
+  ) {
+
+    return;
+
+  }
+
 
   const rect =
     button.getBoundingClientRect();
@@ -2015,6 +2457,7 @@ function positionTooltip(button) {
     left +
     "px";
 
+
   hoverTooltip.style.top =
     top +
     "px";
@@ -2052,78 +2495,10 @@ function hideTooltip() {
 }
 
 
-/* ============================= */
-/* FORMATION TOOLTIP             */
-/* ============================= */
 
-function getFormationTooltipHTML(code) {
-
-  if (
-    code ===
-    "RANDOM"
-  ) {
-
-    return (
-
-      "<div class='tooltip-title'>" +
-      "Random Formation" +
-      "</div>" +
-
-      "<div class='tooltip-description'>" +
-      "Let the game choose one of the six formations for you." +
-      "</div>" +
-
-      "<div class='tooltip-line'>" +
-      "<strong>Strength:</strong> " +
-      "Forces you to adapt and explore formations you might not normally select." +
-      "</div>" +
-
-      "<div class='tooltip-line'>" +
-      "<strong>Tip:</strong> " +
-      "Use Random when you want to practice reacting to unfamiliar starting positions." +
-      "</div>" +
-
-      "<div class='tooltip-note'>" +
-      "The preview may change when the game begins." +
-      "</div>"
-
-    );
-
-  }
-
-
-  const guide =
-    FORMATION_GUIDES[
-      code
-    ];
-
-
-  return (
-
-    "<div class='tooltip-title'>" +
-    FORMATION_MAP[
-      code
-    ] +
-    "</div>" +
-
-    "<div class='tooltip-description'>" +
-    guide.description +
-    "</div>" +
-
-    "<div class='tooltip-line'>" +
-    "<strong>Strength:</strong> " +
-    guide.strength +
-    "</div>" +
-
-    "<div class='tooltip-line'>" +
-    "<strong>Tip:</strong> " +
-    guide.tip +
-    "</div>"
-
-  );
-
-}
-
+/* ===================================================== */
+/* TOOLTIP ATTACHMENTS                                   */
+/* ===================================================== */
 
 function attachFormationTooltip(
   button,
@@ -2134,12 +2509,18 @@ function attachFormationTooltip(
     "mouseenter",
     function() {
 
-      showTooltip(
-        button,
-        getFormationTooltipHTML(
-          code
-        )
-      );
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        showTooltip(
+          button,
+          getFormationTooltipHTML(
+            code
+          )
+        );
+
+      }
 
     }
   );
@@ -2147,7 +2528,17 @@ function attachFormationTooltip(
 
   button.addEventListener(
     "mouseleave",
-    hideTooltip
+    function() {
+
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        hideTooltip();
+
+      }
+
+    }
   );
 
 
@@ -2155,12 +2546,18 @@ function attachFormationTooltip(
     "focus",
     function() {
 
-      showTooltip(
-        button,
-        getFormationTooltipHTML(
-          code
-        )
-      );
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        showTooltip(
+          button,
+          getFormationTooltipHTML(
+            code
+          )
+        );
+
+      }
 
     }
   );
@@ -2168,44 +2565,41 @@ function attachFormationTooltip(
 
   button.addEventListener(
     "blur",
-    hideTooltip
+    function() {
+
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        hideTooltip();
+
+      }
+
+    }
   );
 
-}
+
+  button.addEventListener(
+    "click",
+    function(event) {
+
+      if (
+        isTouchStyleDevice()
+      ) {
+
+        event.stopPropagation();
 
 
-/* ============================= */
-/* DIFFICULTY TOOLTIP            */
-/* ============================= */
+        showTooltip(
+          button,
+          getFormationTooltipHTML(
+            code
+          )
+        );
 
-function getDifficultyTooltipHTML(key) {
+      }
 
-  const guide =
-    DIFFICULTY_GUIDES[
-      key
-    ];
-
-
-  return (
-
-    "<div class='tooltip-title'>" +
-    guide.title +
-    "</div>" +
-
-    "<div class='tooltip-description'>" +
-    guide.description +
-    "</div>" +
-
-    "<div class='tooltip-line'>" +
-    "<strong>How it plays:</strong> " +
-    guide.behavior +
-    "</div>" +
-
-    "<div class='tooltip-line'>" +
-    "<strong>Best for:</strong> " +
-    guide.bestFor +
-    "</div>"
-
+    }
   );
 
 }
@@ -2220,12 +2614,18 @@ function attachDifficultyTooltip(
     "mouseenter",
     function() {
 
-      showTooltip(
-        button,
-        getDifficultyTooltipHTML(
-          key
-        )
-      );
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        showTooltip(
+          button,
+          getDifficultyTooltipHTML(
+            key
+          )
+        );
+
+      }
 
     }
   );
@@ -2233,7 +2633,17 @@ function attachDifficultyTooltip(
 
   button.addEventListener(
     "mouseleave",
-    hideTooltip
+    function() {
+
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        hideTooltip();
+
+      }
+
+    }
   );
 
 
@@ -2241,12 +2651,18 @@ function attachDifficultyTooltip(
     "focus",
     function() {
 
-      showTooltip(
-        button,
-        getDifficultyTooltipHTML(
-          key
-        )
-      );
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        showTooltip(
+          button,
+          getDifficultyTooltipHTML(
+            key
+          )
+        );
+
+      }
 
     }
   );
@@ -2254,15 +2670,110 @@ function attachDifficultyTooltip(
 
   button.addEventListener(
     "blur",
-    hideTooltip
+    function() {
+
+      if (
+        !isTouchStyleDevice()
+      ) {
+
+        hideTooltip();
+
+      }
+
+    }
+  );
+
+
+  button.addEventListener(
+    "click",
+    function(event) {
+
+      if (
+        isTouchStyleDevice()
+      ) {
+
+        event.stopPropagation();
+
+
+        showTooltip(
+          button,
+          getDifficultyTooltipHTML(
+            key
+          )
+        );
+
+      }
+
+    }
   );
 
 }
 
 
-/* ============================= */
-/* CONTROLS                      */
-/* ============================= */
+
+/* ===================================================== */
+/* FORMATION LOGIC                                       */
+/* ===================================================== */
+
+function randomFormation() {
+
+  return FORMATIONS[
+    Math.floor(
+      Math.random() *
+      FORMATIONS.length
+    )
+  ].code;
+
+}
+
+
+function buildBackRow(setup) {
+
+  return (
+    setup +
+    "QK" +
+    setup
+      .split("")
+      .reverse()
+      .join("")
+  );
+
+}
+
+
+function buildFen(
+  whiteSetup,
+  blackSetup
+) {
+
+  const whiteBack =
+    buildBackRow(
+      whiteSetup
+    );
+
+
+  const blackBack =
+    buildBackRow(
+      blackSetup
+    ).toLowerCase();
+
+
+  return (
+    blackBack +
+    "/pppppppp" +
+    "/8/8/8/8" +
+    "/PPPPPPPP/" +
+    whiteBack +
+    " w - - 0 1"
+  );
+
+}
+
+
+
+/* ===================================================== */
+/* CONTROL SETUP                                         */
+/* ===================================================== */
 
 function initializeControls() {
 
@@ -2287,11 +2798,15 @@ function initializeControls() {
   randomButton.innerHTML =
 
     "<span class='formation-code'>" +
+
     "Random" +
+
     "</span>" +
 
     "<span class='formation-name'>" +
+
     "Surprise me" +
+
     "</span>";
 
 
@@ -2324,7 +2839,9 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
+
         renderPreview();
+
       }
 
 
@@ -2363,11 +2880,15 @@ function initializeControls() {
       button.innerHTML =
 
         "<span class='formation-code'>" +
+
         formation.code +
+
         "</span>" +
 
         "<span class='formation-name'>" +
+
         formation.name +
+
         "</span>";
 
 
@@ -2400,7 +2921,9 @@ function initializeControls() {
           if (
             !gameStarted
           ) {
+
             renderPreview();
+
           }
 
 
@@ -2426,9 +2949,13 @@ function initializeControls() {
 
 
       option.textContent =
+
         formation.name +
+
         " (" +
+
         formation.code +
+
         ")";
 
 
@@ -2454,16 +2981,21 @@ function initializeControls() {
 
 
       previewComputerFormation =
+
         computerFormationChoice ===
         "RANDOM"
+
           ? randomFormation()
+
           : computerFormationChoice;
 
 
       if (
         !gameStarted
       ) {
+
         renderPreview();
+
       }
 
 
@@ -2496,7 +3028,9 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
+
         renderPreview();
+
       }
 
 
@@ -2529,7 +3063,9 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
+
         renderPreview();
+
       }
 
 
@@ -2562,7 +3098,9 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
+
         renderPreview();
+
       }
 
 
@@ -2610,7 +3148,9 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
+
       applyDifficulty();
+
       updateInfoPanel();
 
     }
@@ -2631,7 +3171,9 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
+
       applyDifficulty();
+
       updateInfoPanel();
 
     }
@@ -2652,7 +3194,9 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
+
       applyDifficulty();
+
       updateInfoPanel();
 
     }
@@ -2673,7 +3217,9 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
+
       applyDifficulty();
+
       updateInfoPanel();
 
     }
@@ -2695,8 +3241,11 @@ function initializeControls() {
 
 
       soundButton.textContent =
+
         soundEnabled
+
           ? "🔊 Sound On"
+
           : "🔇 Sound Off";
 
 
@@ -2755,6 +3304,7 @@ function initializeControls() {
       playSound(
         "check"
       );
+
 
       cancelPromotion();
 
@@ -2831,6 +3381,7 @@ function initializeControls() {
             "check"
           );
 
+
           choosePromotion(
             pieceType
           );
@@ -2849,9 +3400,10 @@ function initializeControls() {
 }
 
 
-/* ============================= */
-/* BUTTON STATES                 */
-/* ============================= */
+
+/* ===================================================== */
+/* BUTTON STATES                                         */
+/* ===================================================== */
 
 function refreshFormationButtons() {
 
@@ -2928,17 +3480,20 @@ function refreshDifficultyButtons() {
     "casual"
   );
 
+
   difficultyBeginner.classList.toggle(
     "active",
     difficultyKey ===
     "beginner"
   );
 
+
   difficultyIntermediate.classList.toggle(
     "active",
     difficultyKey ===
     "intermediate"
   );
+
 
   difficultyHard.classList.toggle(
     "active",
@@ -2949,9 +3504,10 @@ function refreshDifficultyButtons() {
 }
 
 
-/* ============================= */
-/* PREVIEW                       */
-/* ============================= */
+
+/* ===================================================== */
+/* PREVIEW                                               */
+/* ===================================================== */
 
 function renderPreview() {
 
@@ -2966,11 +3522,14 @@ function renderPreview() {
   selectedSquare =
     null;
 
+
   legalMoves =
     [];
 
+
   lastMove =
     null;
+
 
   promotionPending =
     null;
@@ -2982,9 +3541,12 @@ function renderPreview() {
 
 
   const previewColor =
+
     playerColorChoice ===
     "b"
+
       ? "b"
+
       : "w";
 
 
@@ -2993,16 +3555,22 @@ function renderPreview() {
 
 
   const whiteSetup =
+
     playerColor ===
     "w"
+
       ? previewPlayerFormation
+
       : previewComputerFormation;
 
 
   const blackSetup =
+
     playerColor ===
     "b"
+
       ? previewPlayerFormation
+
       : previewComputerFormation;
 
 
@@ -3025,30 +3593,39 @@ function renderPreview() {
 
 
   const previewText =
+
     FORMATION_MAP[
       previewPlayerFormation
     ] +
+
     " (" +
+
     previewPlayerFormation +
+
     ")";
 
 
   previewBar.innerHTML =
 
     "<strong>Preview:</strong>&nbsp;" +
+
     previewText +
 
     (
       playerFormationChoice ===
       "RANDOM"
+
         ? "&nbsp;— Random rerolls when the game starts."
+
         : ""
     ) +
 
     (
       playerColorChoice ===
       "RANDOM"
+
         ? "&nbsp;— Color will be chosen when the game starts."
+
         : ""
     );
 
@@ -3060,17 +3637,22 @@ function renderPreview() {
 }
 
 
-/* ============================= */
-/* GAME START                    */
-/* ============================= */
+
+/* ===================================================== */
+/* GAME START                                            */
+/* ===================================================== */
 
 function resolvePlayerFormation() {
 
   return (
+
     playerFormationChoice ===
     "RANDOM"
+
       ? randomFormation()
+
       : playerFormationChoice
+
   );
 
 }
@@ -3079,10 +3661,14 @@ function resolvePlayerFormation() {
 function resolveComputerFormation() {
 
   return (
+
     computerFormationChoice ===
     "RANDOM"
+
       ? randomFormation()
+
       : computerFormationChoice
+
   );
 
 }
@@ -3096,10 +3682,14 @@ function resolvePlayerColor() {
   ) {
 
     return (
+
       Math.random() <
       .5
+
         ? "w"
+
         : "b"
+
     );
 
   }
@@ -3119,6 +3709,7 @@ function startNewGame() {
     setStatus(
       "Stockfish is still loading."
     );
+
 
     return;
 
@@ -3151,6 +3742,7 @@ function resetCurrentGame() {
   ) {
 
     startNewGame();
+
 
     return;
 
@@ -3187,11 +3779,14 @@ function beginGame() {
   selectedSquare =
     null;
 
+
   legalMoves =
     [];
 
+
   lastMove =
     null;
+
 
   promotionPending =
     null;
@@ -3201,16 +3796,22 @@ function beginGame() {
 
 
   const whiteSetup =
+
     playerColor ===
     "w"
+
       ? actualPlayerFormation
+
       : actualComputerFormation;
 
 
   const blackSetup =
+
     playerColor ===
     "b"
+
       ? actualPlayerFormation
+
       : actualComputerFormation;
 
 
@@ -3274,7 +3875,9 @@ function beginGame() {
     (
       playerColor ===
       "w"
+
         ? "You are White"
+
         : "You are Black"
     );
 
@@ -3311,7 +3914,9 @@ function applyDifficulty() {
   if (
     !engineReady
   ) {
+
     return;
+
   }
 
 
@@ -3322,27 +3927,38 @@ function applyDifficulty() {
 
 
   engine.postMessage(
+
     "setoption name Skill Level value " +
+
     difficulty.skill
+
   );
 
 }
 
 
-/* ============================= */
-/* BOARD                         */
-/* ============================= */
+
+/* ===================================================== */
+/* BOARD                                                 */
+/* ===================================================== */
 
 function isPlayerTurn() {
 
   return (
+
     gameStarted &&
+
     game &&
+
     game.turn() ===
     playerColor &&
+
     !engineThinking &&
+
     !promotionPending &&
+
     !game.isGameOver()
+
   );
 
 }
@@ -3360,15 +3976,31 @@ function drawBoard() {
 
 
   const files =
+
     orientationWhite
-      ? ["a","b","c","d","e","f","g","h"]
-      : ["h","g","f","e","d","c","b","a"];
+
+      ? [
+          "a","b","c","d",
+          "e","f","g","h"
+        ]
+
+      : [
+          "h","g","f","e",
+          "d","c","b","a"
+        ];
 
 
   const ranks =
+
     orientationWhite
-      ? [8,7,6,5,4,3,2,1]
-      : [1,2,3,4,5,6,7,8];
+
+      ? [
+          8,7,6,5,4,3,2,1
+        ]
+
+      : [
+          1,2,3,4,5,6,7,8
+        ];
 
 
   const checkedSquare =
@@ -3411,13 +4043,17 @@ function drawBoard() {
 
 
       square.classList.add(
+
         (
           row +
           column
         ) % 2 ===
         0
+
           ? "light"
+
           : "dark"
+
       );
 
 
@@ -3596,18 +4232,24 @@ function drawBoard() {
 }
 
 
-/* ============================= */
-/* PLAYER MOVES                  */
-/* ============================= */
+
+/* ===================================================== */
+/* PLAYER MOVES                                          */
+/* ===================================================== */
 
 function handleSquareClick(
   squareName
 ) {
 
+  hideTooltip();
+
+
   if (
     !isPlayerTurn()
   ) {
+
     return;
+
   }
 
 
@@ -3651,6 +4293,7 @@ function handleSquareClick(
           squareName
         );
 
+
         return;
 
       }
@@ -3678,6 +4321,7 @@ function handleSquareClick(
         squareName
       );
 
+
       return;
 
     }
@@ -3692,6 +4336,7 @@ function handleSquareClick(
 
 
     drawBoard();
+
 
     return;
 
@@ -3723,10 +4368,13 @@ function selectSquare(
 
   legalMoves =
     game.moves({
+
       square:
         squareName,
+
       verbose:
         true
+
     });
 
 
@@ -3735,9 +4383,10 @@ function selectSquare(
 }
 
 
-/* ============================= */
-/* PROMOTION                     */
-/* ============================= */
+
+/* ===================================================== */
+/* PROMOTION                                             */
+/* ===================================================== */
 
 function openPromotion(
   from,
@@ -3805,7 +4454,9 @@ function choosePromotion(
   if (
     !promotionPending
   ) {
+
     return;
+
   }
 
 
@@ -3852,7 +4503,9 @@ function completePlayerMove(
     if (
       !move
     ) {
+
       return;
+
     }
 
 
@@ -3901,9 +4554,10 @@ function completePlayerMove(
 }
 
 
-/* ============================= */
-/* ENGINE                        */
-/* ============================= */
+
+/* ===================================================== */
+/* ENGINE                                                */
+/* ===================================================== */
 
 function requestEngineMove() {
 
@@ -3911,7 +4565,9 @@ function requestEngineMove() {
     !game ||
     game.isGameOver()
   ) {
+
     return;
+
   }
 
 
@@ -3975,14 +4631,20 @@ function requestEngineMove() {
 
 
   engine.postMessage(
+
     "position fen " +
+
     game.fen()
+
   );
 
 
   engine.postMessage(
+
     "go nodes " +
+
     difficulty.nodes
+
   );
 
 }
@@ -4003,6 +4665,7 @@ function playCasualRandomMove(
 
     updateStatus();
 
+
     return;
 
   }
@@ -4012,25 +4675,36 @@ function playCasualRandomMove(
 
     const move =
       game.move({
+
         from:
           moveObject.from,
+
         to:
           moveObject.to,
+
         promotion:
           moveObject.promotion
+
       });
 
 
     if (
       !move
     ) {
+
       return;
+
     }
 
 
     lastMove = {
-      from:move.from,
-      to:move.to
+
+      from:
+        move.from,
+
+      to:
+        move.to
+
     };
 
 
@@ -4070,6 +4744,7 @@ function playEngineMove(
 
     updateStatus();
 
+
     return;
 
   }
@@ -4090,12 +4765,15 @@ function playEngineMove(
 
 
   const promotion =
+
     moveText.length >=
     5
+
       ? moveText.substring(
           4,
           5
         )
+
       : undefined;
 
 
@@ -4112,13 +4790,20 @@ function playEngineMove(
     if (
       !move
     ) {
+
       return;
+
     }
 
 
     lastMove = {
-      from:move.from,
-      to:move.to
+
+      from:
+        move.from,
+
+      to:
+        move.to
+
     };
 
 
@@ -4141,19 +4826,14 @@ function playEngineMove(
 }
 
 
-/* ============================= */
-/* AFTER MOVE                    */
-/* ============================= */
+
+/* ===================================================== */
+/* AFTER MOVE                                            */
+/* ===================================================== */
 
 function afterMove(
   move
 ) {
-
-  /*
-    If Stockfish made the move and captured
-    one of the player's pieces, show the
-    temporary capture notification.
-  */
 
   if (
     move.captured &&
@@ -4183,9 +4863,10 @@ function afterMove(
 }
 
 
-/* ============================= */
-/* MATERIAL / CAPTURES           */
-/* ============================= */
+
+/* ===================================================== */
+/* MATERIAL / CAPTURES                                   */
+/* ===================================================== */
 
 function countPieces() {
 
@@ -4257,13 +4938,25 @@ function getCaptured() {
     type => {
 
       const missingBlack =
-        INITIAL_COUNTS[type] -
-        counts.b[type];
+
+        INITIAL_COUNTS[
+          type
+        ] -
+
+        counts.b[
+          type
+        ];
 
 
       const missingWhite =
-        INITIAL_COUNTS[type] -
-        counts.w[type];
+
+        INITIAL_COUNTS[
+          type
+        ] -
+
+        counts.w[
+          type
+        ];
 
 
       for (
@@ -4314,10 +5007,13 @@ function captureValue(
       total,
       piece
     ) =>
+
       total +
+
       PIECE_VALUES[
         piece.type
       ],
+
     0
   );
 
@@ -4340,6 +5036,7 @@ function renderCaptured(
 
     element.innerHTML =
       "<span class='none'>None</span>";
+
 
     return;
 
@@ -4465,9 +5162,10 @@ function updateCapturedPieces() {
 }
 
 
-/* ============================= */
-/* CHECK                         */
-/* ============================= */
+
+/* ===================================================== */
+/* CHECK                                                 */
+/* ===================================================== */
 
 function findCheckedKingSquare() {
 
@@ -4475,7 +5173,9 @@ function findCheckedKingSquare() {
     !game ||
     !game.inCheck()
   ) {
+
     return null;
+
   }
 
 
@@ -4500,7 +5200,11 @@ function findCheckedKingSquare() {
     ) {
 
       const piece =
-        board[row][column];
+        board[
+          row
+        ][
+          column
+        ];
 
 
       if (
@@ -4512,13 +5216,16 @@ function findCheckedKingSquare() {
       ) {
 
         return (
+
           "abcdefgh"[
             column
           ] +
+
           (
             8 -
             row
           )
+
         );
 
       }
@@ -4533,9 +5240,10 @@ function findCheckedKingSquare() {
 }
 
 
-/* ============================= */
-/* MOVE HISTORY                  */
-/* ============================= */
+
+/* ===================================================== */
+/* MOVE HISTORY                                          */
+/* ===================================================== */
 
 function renderMoveList() {
 
@@ -4544,11 +5252,17 @@ function renderMoveList() {
   ) {
 
     moveListBody.innerHTML =
+
       "<tr>" +
+
       "<td colspan='3'>" +
+
       "Game not started." +
+
       "</td>" +
+
       "</tr>";
+
 
     return;
 
@@ -4565,11 +5279,17 @@ function renderMoveList() {
   ) {
 
     moveListBody.innerHTML =
+
       "<tr>" +
+
       "<td colspan='3'>" +
+
       "No moves yet." +
+
       "</td>" +
+
       "</tr>";
+
 
     return;
 
@@ -4587,27 +5307,38 @@ function renderMoveList() {
   ) {
 
     html +=
+
       "<tr>" +
 
       "<td>" +
+
       (
         i/2 +
         1
       ) +
+
       "</td>" +
 
       "<td>" +
+
       (
-        history[i] ||
+        history[
+          i
+        ] ||
         ""
       ) +
+
       "</td>" +
 
       "<td>" +
+
       (
-        history[i+1] ||
+        history[
+          i+1
+        ] ||
         ""
       ) +
+
       "</td>" +
 
       "</tr>";
@@ -4631,16 +5362,19 @@ function renderMoveList() {
 }
 
 
-/* ============================= */
-/* STATUS                        */
-/* ============================= */
+
+/* ===================================================== */
+/* STATUS                                                */
+/* ===================================================== */
 
 function updateStatus() {
 
   if (
     !gameStarted
   ) {
+
     return;
+
   }
 
 
@@ -4653,17 +5387,24 @@ function updateStatus() {
     ) {
 
       const winner =
+
         game.turn() ===
         "w"
+
           ? "b"
+
           : "w";
 
 
       setStatus(
+
         winner ===
         playerColor
+
           ? "Checkmate — you win!"
+
           : "Checkmate — Stockfish wins."
+
       );
 
 
@@ -4680,6 +5421,7 @@ function updateStatus() {
         "Draw by stalemate."
       );
 
+
       return;
 
     }
@@ -4692,6 +5434,7 @@ function updateStatus() {
       setStatus(
         "Draw by repetition."
       );
+
 
       return;
 
@@ -4706,6 +5449,7 @@ function updateStatus() {
         "Draw by insufficient material."
       );
 
+
       return;
 
     }
@@ -4714,6 +5458,7 @@ function updateStatus() {
     setStatus(
       "Draw."
     );
+
 
     return;
 
@@ -4725,10 +5470,15 @@ function updateStatus() {
   ) {
 
     setStatus(
+
       game.inCheck()
+
         ? "Stockfish is thinking — Stockfish is in check."
+
         : "Stockfish is thinking..."
+
     );
+
 
     return;
 
@@ -4741,9 +5491,13 @@ function updateStatus() {
   ) {
 
     setStatus(
+
       game.inCheck()
+
         ? "Your move — you are in check."
+
         : "Your move."
+
     );
 
   }
@@ -4751,9 +5505,13 @@ function updateStatus() {
   else {
 
     setStatus(
+
       game.inCheck()
+
         ? "Stockfish to move — Stockfish is in check."
+
         : "Stockfish to move."
+
     );
 
   }
@@ -4771,9 +5529,10 @@ function setStatus(
 }
 
 
-/* ============================= */
-/* MATCH INFO                    */
-/* ============================= */
+
+/* ===================================================== */
+/* MATCH INFO                                            */
+/* ===================================================== */
 
 function updateInfoPanel() {
 
@@ -4791,11 +5550,15 @@ function updateInfoPanel() {
   ) {
 
     playerFormationText =
+
       FORMATION_MAP[
         actualPlayerFormation
       ] +
+
       " (" +
+
       actualPlayerFormation +
+
       ")";
 
   }
@@ -4813,11 +5576,15 @@ function updateInfoPanel() {
   else {
 
     playerFormationText =
+
       FORMATION_MAP[
         playerFormationChoice
       ] +
+
       " (" +
+
       playerFormationChoice +
+
       ")";
 
   }
@@ -4831,11 +5598,15 @@ function updateInfoPanel() {
   ) {
 
     computerText =
+
       FORMATION_MAP[
         actualComputerFormation
       ] +
+
       " (" +
+
       actualComputerFormation +
+
       ")";
 
   }
@@ -4853,11 +5624,15 @@ function updateInfoPanel() {
   else {
 
     computerText =
+
       FORMATION_MAP[
         computerFormationChoice
       ] +
+
       " (" +
+
       computerFormationChoice +
+
       ")";
 
   }
@@ -4871,9 +5646,12 @@ function updateInfoPanel() {
   ) {
 
     colorText =
+
       playerColor ===
       "w"
+
         ? "White"
+
         : "Black";
 
   }
@@ -4891,9 +5669,12 @@ function updateInfoPanel() {
   else {
 
     colorText =
+
       playerColorChoice ===
       "w"
+
         ? "White"
+
         : "Black";
 
   }
@@ -4904,8 +5685,11 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>You:</strong> " +
+
     playerFormationText +
+
     " · " +
+
     colorText +
 
     "</div>" +
@@ -4913,6 +5697,7 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>Computer:</strong> " +
+
     computerText +
 
     "</div>" +
@@ -4920,6 +5705,7 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>Difficulty:</strong> " +
+
     difficulty.label +
 
     "</div>";
@@ -4927,9 +5713,10 @@ function updateInfoPanel() {
 }
 
 
-/* ============================= */
-/* STOCKFISH                     */
-/* ============================= */
+
+/* ===================================================== */
+/* STOCKFISH                                             */
+/* ===================================================== */
 
 engine.onmessage =
 function(event) {
@@ -5023,6 +5810,39 @@ function(error) {
 };
 
 
+
+/* ===================================================== */
+/* GLOBAL EVENTS                                         */
+/* ===================================================== */
+
+document.addEventListener(
+  "click",
+  function(event) {
+
+    if (
+      isTouchStyleDevice()
+    ) {
+
+      const helpButton =
+        event.target.closest(
+          ".choice-btn, .difficulty-btn"
+        );
+
+
+      if (
+        !helpButton
+      ) {
+
+        hideTooltip();
+
+      }
+
+    }
+
+  }
+);
+
+
 window.addEventListener(
   "scroll",
   hideTooltip,
@@ -5035,6 +5855,11 @@ window.addEventListener(
   hideTooltip
 );
 
+
+
+/* ===================================================== */
+/* STARTUP                                               */
+/* ===================================================== */
 
 engine.postMessage(
   "uci"
