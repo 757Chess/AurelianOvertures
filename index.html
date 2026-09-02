@@ -1,18 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Aurelian Conquest</title>
 
 <style>
-
 :root {
   --bg:#f4f1ea;
   --panel:#fff;
@@ -89,6 +82,8 @@ h1 {
 
 .board-panel {
   padding:11px;
+  position:relative;
+  overflow:visible;
 }
 
 .section {
@@ -220,9 +215,9 @@ select {
   background:var(--green-hover);
 }
 
-/* ================================= */
-/* FLOATING HOVER TOOLTIP            */
-/* ================================= */
+/* ============================= */
+/* FLOATING HOVER TOOLTIP        */
+/* ============================= */
 
 #hoverTooltip {
   position:fixed;
@@ -274,7 +269,67 @@ select {
   line-height:1.35;
 }
 
-/* ================================= */
+/* ============================= */
+/* CAPTURE NOTIFICATION          */
+/* ============================= */
+
+#captureToast {
+  position:absolute;
+  top:calc(100% + 8px);
+  right:12px;
+  min-width:185px;
+  max-width:260px;
+  padding:10px 12px;
+  background:#fffdf9;
+  border:1px solid #d6cec0;
+  border-radius:11px;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+  z-index:450;
+  opacity:0;
+  transform:translateY(-5px);
+  visibility:hidden;
+  pointer-events:none;
+  transition:
+    opacity .22s ease,
+    transform .22s ease,
+    visibility .22s;
+}
+
+#captureToast.visible {
+  opacity:1;
+  transform:translateY(0);
+  visibility:visible;
+}
+
+.capture-toast-title {
+  color:var(--green);
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.capture-toast-row {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-height:28px;
+  padding:2px 0;
+  font-size:12px;
+}
+
+.capture-toast-row + .capture-toast-row {
+  border-top:1px solid #eee7dc;
+  margin-top:2px;
+  padding-top:4px;
+}
+
+.capture-toast-piece {
+  width:30px;
+  height:30px;
+  object-fit:contain;
+}
+
+/* ============================= */
 
 .board-wrap {
   width:576px;
@@ -568,7 +623,6 @@ th {
 }
 
 @media (max-width:1240px) {
-
   .app {
     grid-template-columns:270px 560px 290px;
   }
@@ -588,11 +642,9 @@ th {
     width:70px;
     height:70px;
   }
-
 }
 
 @media (max-width:1120px) {
-
   .app {
     grid-template-columns:1fr;
   }
@@ -603,10 +655,15 @@ th {
     margin:0 auto;
   }
 
+  #captureToast {
+    position:fixed;
+    top:auto;
+    right:16px;
+    bottom:16px;
+  }
 }
 
 </style>
-
 </head>
 
 <body>
@@ -616,42 +673,26 @@ th {
 <div class="page">
 
   <div class="header">
-
     <h1>The Aurelian Conquest</h1>
-
-    <p class="subtitle">
-      A Strategic Chess Variant
-    </p>
-
+    <p class="subtitle">A Strategic Chess Variant</p>
   </div>
-
 
   <div class="app">
 
-
     <div class="panel">
-
 
       <div class="section">
 
-        <h2 class="panel-title">
-          Game Setup
-        </h2>
+        <h2 class="panel-title">Game Setup</h2>
 
-
-        <div class="label">
-          Your formation
-        </div>
-
+        <div class="label">Your formation</div>
 
         <div
           id="formationButtons"
           class="formation-grid">
         </div>
 
-
         <div style="height:9px"></div>
-
 
         <label
           class="label"
@@ -660,7 +701,6 @@ th {
           Computer formation
 
         </label>
-
 
         <select id="computerFormationSelect">
 
@@ -672,13 +712,9 @@ th {
 
       </div>
 
-
       <div class="section">
 
-        <div class="label">
-          Play as
-        </div>
-
+        <div class="label">Play as</div>
 
         <div class="three-buttons">
 
@@ -691,7 +727,6 @@ th {
 
           </button>
 
-
           <button
             id="playRandomBtn"
             class="side-btn"
@@ -700,7 +735,6 @@ th {
             Random
 
           </button>
-
 
           <button
             id="playBlackBtn"
@@ -715,13 +749,9 @@ th {
 
       </div>
 
-
       <div class="section">
 
-        <div class="label">
-          Difficulty
-        </div>
-
+        <div class="label">Difficulty</div>
 
         <div class="difficulty-grid">
 
@@ -734,7 +764,6 @@ th {
 
           </button>
 
-
           <button
             id="difficultyBeginner"
             class="difficulty-btn"
@@ -744,7 +773,6 @@ th {
 
           </button>
 
-
           <button
             id="difficultyIntermediate"
             class="difficulty-btn"
@@ -753,7 +781,6 @@ th {
             Medium
 
           </button>
-
 
           <button
             id="difficultyHard"
@@ -768,13 +795,9 @@ th {
 
       </div>
 
-
       <div class="section">
 
-        <div class="label">
-          Sound
-        </div>
-
+        <div class="label">Sound</div>
 
         <button
           id="soundButton"
@@ -788,7 +811,6 @@ th {
 
       </div>
 
-
       <div class="actions">
 
         <button
@@ -799,7 +821,6 @@ th {
           Start New Game
 
         </button>
-
 
         <button
           id="resetBtn"
@@ -812,11 +833,8 @@ th {
 
       </div>
 
-
       <div class="small-note">
-
         Hover over formations and difficulty settings for guidance.
-
       </div>
 
     </div>
@@ -838,18 +856,16 @@ th {
 
       </div>
 
+      <div id="captureToast"></div>
+
     </div>
 
 
     <div class="panel">
 
-
       <div class="section">
 
-        <div class="label">
-          Status
-        </div>
-
+        <div class="label">Status</div>
 
         <div
           id="statusBox"
@@ -858,7 +874,6 @@ th {
           Loading Stockfish...
 
         </div>
-
 
         <div
           id="engineBox"
@@ -870,13 +885,9 @@ th {
 
       </div>
 
-
       <div class="section">
 
-        <div class="label">
-          Match
-        </div>
-
+        <div class="label">Match</div>
 
         <div
           id="infoBox"
@@ -885,23 +896,19 @@ th {
 
       </div>
 
-
       <div class="section">
 
         <div class="label">
           Material & Captures
         </div>
 
-
         <div class="box">
-
 
           <div class="material-line">
 
             <span id="materialText">
               Material even
             </span>
-
 
             <span
               id="materialScore"
@@ -913,7 +920,6 @@ th {
 
           </div>
 
-
           <div class="capture-row">
 
             <div
@@ -924,19 +930,15 @@ th {
 
             </div>
 
-
             <div
               id="topCapturedPieces"
               class="captured-pieces">
 
-              <span class="none">
-                None
-              </span>
+              <span class="none">None</span>
 
             </div>
 
           </div>
-
 
           <div class="capture-row">
 
@@ -948,14 +950,11 @@ th {
 
             </div>
 
-
             <div
               id="bottomCapturedPieces"
               class="captured-pieces">
 
-              <span class="none">
-                None
-              </span>
+              <span class="none">None</span>
 
             </div>
 
@@ -965,32 +964,25 @@ th {
 
       </div>
 
-
       <div class="section">
 
         <div class="label">
           Move History
         </div>
 
-
         <div
           id="moveBox"
           class="box move-box">
 
-
           <table>
 
-
             <thead>
-
               <tr>
                 <th>#</th>
                 <th>White</th>
                 <th>Black</th>
               </tr>
-
             </thead>
-
 
             <tbody id="moveListBody">
 
@@ -1001,7 +993,6 @@ th {
               </tr>
 
             </tbody>
-
 
           </table>
 
@@ -1020,25 +1011,18 @@ th {
   id="promotionOverlay"
   class="promotion-overlay">
 
-
   <div class="promotion-card">
 
-
-    <h2>
-      Promote Your Pawn
-    </h2>
-
+    <h2>Promote Your Pawn</h2>
 
     <p>
       Choose the piece your pawn becomes.
     </p>
 
-
     <div
       id="promotionOptions"
       class="promotion-options">
     </div>
-
 
     <button
       id="promotionCancel"
@@ -1048,7 +1032,6 @@ th {
       Cancel
 
     </button>
-
 
   </div>
 
@@ -1062,44 +1045,18 @@ from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/+esm";
 
 
 const FORMATIONS = [
-
-  {
-    code:"RNB",
-    name:"The Bastion"
-  },
-
-  {
-    code:"RBN",
-    name:"The Sentinel"
-  },
-
-  {
-    code:"NRB",
-    name:"The Vanguard"
-  },
-
-  {
-    code:"NBR",
-    name:"The Cavalry"
-  },
-
-  {
-    code:"BRN",
-    name:"The Rampart"
-  },
-
-  {
-    code:"BNR",
-    name:"The Citadel"
-  }
-
+  { code:"RNB", name:"The Bastion" },
+  { code:"RBN", name:"The Sentinel" },
+  { code:"NRB", name:"The Vanguard" },
+  { code:"NBR", name:"The Cavalry" },
+  { code:"BRN", name:"The Rampart" },
+  { code:"BNR", name:"The Citadel" }
 ];
 
 
 const FORMATION_GUIDES = {
 
   RNB: {
-
     description:
       "The familiar classical formation and the most natural starting point for traditional chess players.",
 
@@ -1108,12 +1065,9 @@ const FORMATION_GUIDES = {
 
     tip:
       "Normal opening principles work well here: develop your knights and bishops, fight for the center, and connect your rooks."
-
   },
 
-
   RBN: {
-
     description:
       "The knights move inward while the bishops take their places beside the corner rooks.",
 
@@ -1122,12 +1076,9 @@ const FORMATION_GUIDES = {
 
     tip:
       "Your bishops need deliberate pawn openings from the b- and g-files, so make sure they do not get buried behind your pawns."
-
   },
 
-
   NRB: {
-
     description:
       "The bishops remain in familiar positions while the knights begin on the outside and the rooks move inward.",
 
@@ -1136,12 +1087,9 @@ const FORMATION_GUIDES = {
 
     tip:
       "Pay special attention to your corner knights. Their path into the battle may take more planning than usual."
-
   },
 
-
   NBR: {
-
     description:
       "An unconventional formation with knights on the wings and rooks stationed close to the center.",
 
@@ -1150,12 +1098,9 @@ const FORMATION_GUIDES = {
 
     tip:
       "Do not rush to activate the rooks too early. Develop your lighter pieces and create safe lanes for them first."
-
   },
 
-
   BRN: {
-
     description:
       "The bishops guard the outer edges while the knights occupy strong central starting squares and the rooks sit just inside them.",
 
@@ -1164,12 +1109,9 @@ const FORMATION_GUIDES = {
 
     tip:
       "Activate the corner bishops early so they can command important diagonals instead of remaining trapped behind the pawn line."
-
   },
 
-
   BNR: {
-
     description:
       "A compact formation with bishops on the wings, knights inside them, and the rooks closest to the king and queen.",
 
@@ -1178,7 +1120,6 @@ const FORMATION_GUIDES = {
 
     tip:
       "Free your bishops early and resist exposing the central rooks before your king position is secure."
-
   }
 
 };
@@ -1187,9 +1128,7 @@ const FORMATION_GUIDES = {
 const DIFFICULTY_GUIDES = {
 
   casual: {
-
-    title:
-      "Casual",
+    title:"Casual",
 
     description:
       "A relaxed opponent designed for learning, experimenting, and getting comfortable with The Aurelian Conquest.",
@@ -1199,14 +1138,10 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Newer chess players, learning a formation, or playing a low-pressure game."
-
   },
 
-
   beginner: {
-
-    title:
-      "Beginner",
+    title:"Beginner",
 
     description:
       "A more consistent opponent that still leaves plenty of opportunities for you to recognize and exploit.",
@@ -1216,14 +1151,10 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Players who know the basic rules and want a fair challenge without being punished for every small error."
-
   },
 
-
   intermediate: {
-
-    title:
-      "Medium",
+    title:"Medium",
 
     description:
       "A solid opponent that begins to demand careful play and better tactical awareness.",
@@ -1233,14 +1164,10 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Players who want to test their formation strategy against meaningful resistance."
-
   },
 
-
   hard: {
-
-    title:
-      "Hard",
+    title:"Hard",
 
     description:
       "The strongest computer setting currently available in this version of the game.",
@@ -1250,7 +1177,6 @@ const DIFFICULTY_GUIDES = {
 
     bestFor:
       "Experienced players or anyone who wants the toughest test of their Aurelian strategy."
-
   }
 
 };
@@ -1329,6 +1255,16 @@ const DISPLAY_ORDER = [
 ];
 
 
+const PIECE_NAMES = {
+  p:"Pawn",
+  n:"Knight",
+  b:"Bishop",
+  r:"Rook",
+  q:"Queen",
+  k:"King"
+};
+
+
 const PIECE_IMAGES = {
 
   wp:
@@ -1371,14 +1307,45 @@ const PIECE_IMAGES = {
 
 
 const PROMOTION_NAMES = {
-
   q:"Queen",
   r:"Rook",
   b:"Bishop",
   n:"Knight"
-
 };
 
+
+/* ============================= */
+/* CUSTOM SOUND FILES            */
+/* ============================= */
+
+const SOUND_FILES = {
+  move:"./Move.wav",
+  capture:"./Capture.wav",
+  check:"./Check.wav",
+  checkmate:"./Checkmate.wav",
+  draw:"./Stalemate.wav",
+  start:"./Startgame.wav"
+};
+
+
+Object.values(
+  SOUND_FILES
+).forEach(
+  file => {
+
+    const audio =
+      new Audio(file);
+
+    audio.preload =
+      "auto";
+
+  }
+);
+
+
+/* ============================= */
+/* ELEMENTS                      */
+/* ============================= */
 
 const boardEl =
   document.getElementById("board");
@@ -1388,6 +1355,9 @@ const formationButtonsEl =
 
 const hoverTooltip =
   document.getElementById("hoverTooltip");
+
+const captureToast =
+  document.getElementById("captureToast");
 
 const computerFormationSelect =
   document.getElementById("computerFormationSelect");
@@ -1465,6 +1435,10 @@ const promotionCancel =
   document.getElementById("promotionCancel");
 
 
+/* ============================= */
+/* STATE                         */
+/* ============================= */
+
 let playerFormationChoice =
   "RNB";
 
@@ -1477,7 +1451,6 @@ let previewPlayerFormation =
 let previewComputerFormation =
   randomFormation();
 
-
 let playerColorChoice =
   "w";
 
@@ -1487,13 +1460,11 @@ let playerColor =
 let actualPlayerColor =
   null;
 
-
 let actualPlayerFormation =
   null;
 
 let actualComputerFormation =
   null;
-
 
 let difficultyKey =
   "casual";
@@ -1526,15 +1497,339 @@ let soundEnabled =
   true;
 
 
+/* Capture-toast state */
+
+let captureToastItems =
+  [];
+
+let captureToastTimer =
+  null;
+
+let captureToastClearTimer =
+  null;
+
+
 const engine =
   new Worker(
     "./stockfish-18-lite-single.js"
   );
 
 
-/* ===================================================== */
-/* FORMATIONS                                            */
-/* ===================================================== */
+/* ============================= */
+/* SOUND                         */
+/* ============================= */
+
+function playSound(name) {
+
+  if (
+    !soundEnabled
+  ) {
+    return;
+  }
+
+
+  const file =
+    SOUND_FILES[
+      name
+    ];
+
+
+  if (
+    !file
+  ) {
+    return;
+  }
+
+
+  const audio =
+    new Audio(file);
+
+
+  audio.volume =
+    1;
+
+
+  audio.play().catch(
+    error => {
+
+      console.log(
+        "Audio playback blocked:",
+        error
+      );
+
+    }
+  );
+
+}
+
+
+function playSoundForMove(move) {
+
+  if (
+    !soundEnabled
+  ) {
+    return;
+  }
+
+
+  if (
+    game.isGameOver()
+  ) {
+
+    if (
+      game.isCheckmate()
+    ) {
+
+      playSound(
+        "checkmate"
+      );
+
+    }
+
+    else {
+
+      playSound(
+        "draw"
+      );
+
+    }
+
+    return;
+
+  }
+
+
+  if (
+    move.captured
+  ) {
+
+    playSound(
+      "capture"
+    );
+
+  }
+
+  else {
+
+    playSound(
+      "move"
+    );
+
+  }
+
+
+  if (
+    game.inCheck()
+  ) {
+
+    setTimeout(
+      () => {
+
+        playSound(
+          "check"
+        );
+
+      },
+      120
+    );
+
+  }
+
+}
+
+
+/* ============================= */
+/* CAPTURE TOAST                 */
+/* ============================= */
+
+function showComputerCaptureToast(
+  pieceType
+) {
+
+  if (
+    !pieceType
+  ) {
+    return;
+  }
+
+
+  if (
+    captureToastTimer
+  ) {
+
+    clearTimeout(
+      captureToastTimer
+    );
+
+  }
+
+
+  if (
+    captureToastClearTimer
+  ) {
+
+    clearTimeout(
+      captureToastClearTimer
+    );
+
+  }
+
+
+  captureToastItems.push({
+    type:pieceType,
+    color:playerColor
+  });
+
+
+  /*
+    Keep the popup from becoming enormous.
+  */
+
+  if (
+    captureToastItems.length >
+    4
+  ) {
+
+    captureToastItems =
+      captureToastItems.slice(
+        -4
+      );
+
+  }
+
+
+  renderCaptureToast();
+
+
+  captureToast.classList.add(
+    "visible"
+  );
+
+
+  captureToastTimer =
+    setTimeout(
+      () => {
+
+        captureToast.classList.remove(
+          "visible"
+        );
+
+
+        captureToastClearTimer =
+          setTimeout(
+            () => {
+
+              captureToastItems =
+                [];
+
+              captureToast.innerHTML =
+                "";
+
+            },
+            250
+          );
+
+      },
+      2900
+    );
+
+}
+
+
+function renderCaptureToast() {
+
+  let html =
+    "<div class='capture-toast-title'>" +
+    "Stockfish captured" +
+    "</div>";
+
+
+  captureToastItems.forEach(
+    item => {
+
+      html +=
+
+        "<div class='capture-toast-row'>" +
+
+        "<img class='capture-toast-piece' " +
+
+        "src='" +
+
+        PIECE_IMAGES[
+          item.color +
+          item.type
+        ] +
+
+        "' alt=''>" +
+
+        "<span>" +
+
+        PIECE_NAMES[
+          item.type
+        ] +
+
+        "</span>" +
+
+        "</div>";
+
+    }
+  );
+
+
+  captureToast.innerHTML =
+    html;
+
+}
+
+
+function clearCaptureToast() {
+
+  if (
+    captureToastTimer
+  ) {
+
+    clearTimeout(
+      captureToastTimer
+    );
+
+  }
+
+
+  if (
+    captureToastClearTimer
+  ) {
+
+    clearTimeout(
+      captureToastClearTimer
+    );
+
+  }
+
+
+  captureToastTimer =
+    null;
+
+  captureToastClearTimer =
+    null;
+
+  captureToastItems =
+    [];
+
+
+  captureToast.classList.remove(
+    "visible"
+  );
+
+
+  captureToast.innerHTML =
+    "";
+
+}
+
+
+/* ============================= */
+/* FORMATIONS                    */
+/* ============================= */
 
 function randomFormation() {
 
@@ -1591,9 +1886,9 @@ function buildFen(
 }
 
 
-/* ===================================================== */
-/* HOVER TOOLTIP                                         */
-/* ===================================================== */
+/* ============================= */
+/* TOOLTIP                       */
+/* ============================= */
 
 function positionTooltip(button) {
 
@@ -1720,7 +2015,6 @@ function positionTooltip(button) {
     left +
     "px";
 
-
   hoverTooltip.style.top =
     top +
     "px";
@@ -1758,9 +2052,9 @@ function hideTooltip() {
 }
 
 
-/* ===================================================== */
-/* FORMATION TOOLTIP                                     */
-/* ===================================================== */
+/* ============================= */
+/* FORMATION TOOLTIP             */
+/* ============================= */
 
 function getFormationTooltipHTML(code) {
 
@@ -1807,36 +2101,23 @@ function getFormationTooltipHTML(code) {
   return (
 
     "<div class='tooltip-title'>" +
-
     FORMATION_MAP[
       code
     ] +
-
     "</div>" +
-
 
     "<div class='tooltip-description'>" +
-
     guide.description +
-
     "</div>" +
 
-
     "<div class='tooltip-line'>" +
-
     "<strong>Strength:</strong> " +
-
     guide.strength +
-
     "</div>" +
 
-
     "<div class='tooltip-line'>" +
-
     "<strong>Tip:</strong> " +
-
     guide.tip +
-
     "</div>"
 
   );
@@ -1850,70 +2131,52 @@ function attachFormationTooltip(
 ) {
 
   button.addEventListener(
-
     "mouseenter",
-
     function() {
 
       showTooltip(
-
         button,
-
         getFormationTooltipHTML(
           code
         )
-
       );
 
     }
-
   );
 
 
   button.addEventListener(
-
     "mouseleave",
-
     hideTooltip
-
   );
 
 
   button.addEventListener(
-
     "focus",
-
     function() {
 
       showTooltip(
-
         button,
-
         getFormationTooltipHTML(
           code
         )
-
       );
 
     }
-
   );
 
 
   button.addEventListener(
-
     "blur",
-
     hideTooltip
-
   );
 
 }
 
 
-/* ===================================================== */
-/* DIFFICULTY TOOLTIP                                    */
-/* ===================================================== */
+/* ============================= */
+/* DIFFICULTY TOOLTIP            */
+/* ============================= */
 
 function getDifficultyTooltipHTML(key) {
 
@@ -1926,34 +2189,21 @@ function getDifficultyTooltipHTML(key) {
   return (
 
     "<div class='tooltip-title'>" +
-
     guide.title +
-
     "</div>" +
-
 
     "<div class='tooltip-description'>" +
-
     guide.description +
-
     "</div>" +
 
-
     "<div class='tooltip-line'>" +
-
     "<strong>How it plays:</strong> " +
-
     guide.behavior +
-
     "</div>" +
 
-
     "<div class='tooltip-line'>" +
-
     "<strong>Best for:</strong> " +
-
     guide.bestFor +
-
     "</div>"
 
   );
@@ -1967,699 +2217,52 @@ function attachDifficultyTooltip(
 ) {
 
   button.addEventListener(
-
     "mouseenter",
-
     function() {
 
       showTooltip(
-
         button,
-
         getDifficultyTooltipHTML(
           key
         )
-
       );
 
     }
-
   );
 
 
   button.addEventListener(
-
     "mouseleave",
-
     hideTooltip
-
   );
 
 
   button.addEventListener(
-
     "focus",
-
     function() {
 
       showTooltip(
-
         button,
-
         getDifficultyTooltipHTML(
           key
         )
-
       );
 
     }
-
   );
 
 
   button.addEventListener(
-
     "blur",
-
     hideTooltip
-
   );
 
 }
 
 
-/* ===================================================== */
-/* SOUND SYSTEM — ORDINARY WAV AUDIO                    */
-/* ===================================================== */
-
-const SAMPLE_RATE =
-  22050;
-
-
-function writeString(
-  view,
-  offset,
-  string
-) {
-
-  for (
-    let i=0;
-    i<string.length;
-    i++
-  ) {
-
-    view.setUint8(
-      offset+i,
-      string.charCodeAt(i)
-    );
-
-  }
-
-}
-
-
-function makeWav(segments) {
-
-  let totalSeconds =
-    0;
-
-
-  segments.forEach(
-    segment => {
-
-      totalSeconds +=
-        segment.duration;
-
-    }
-  );
-
-
-  const sampleCount =
-    Math.floor(
-      SAMPLE_RATE *
-      totalSeconds
-    );
-
-
-  const buffer =
-    new ArrayBuffer(
-      44 +
-      sampleCount * 2
-    );
-
-
-  const view =
-    new DataView(
-      buffer
-    );
-
-
-  writeString(
-    view,
-    0,
-    "RIFF"
-  );
-
-
-  view.setUint32(
-    4,
-    36 +
-    sampleCount * 2,
-    true
-  );
-
-
-  writeString(
-    view,
-    8,
-    "WAVE"
-  );
-
-
-  writeString(
-    view,
-    12,
-    "fmt "
-  );
-
-
-  view.setUint32(
-    16,
-    16,
-    true
-  );
-
-
-  view.setUint16(
-    20,
-    1,
-    true
-  );
-
-
-  view.setUint16(
-    22,
-    1,
-    true
-  );
-
-
-  view.setUint32(
-    24,
-    SAMPLE_RATE,
-    true
-  );
-
-
-  view.setUint32(
-    28,
-    SAMPLE_RATE * 2,
-    true
-  );
-
-
-  view.setUint16(
-    32,
-    2,
-    true
-  );
-
-
-  view.setUint16(
-    34,
-    16,
-    true
-  );
-
-
-  writeString(
-    view,
-    36,
-    "data"
-  );
-
-
-  view.setUint32(
-    40,
-    sampleCount * 2,
-    true
-  );
-
-
-  let sampleIndex =
-    0;
-
-
-  segments.forEach(
-    segment => {
-
-      const segmentSamples =
-        Math.floor(
-          SAMPLE_RATE *
-          segment.duration
-        );
-
-
-      const frequency =
-        segment.frequency ||
-        0;
-
-
-      const volume =
-        segment.volume ??
-        .2;
-
-
-      const type =
-        segment.type ||
-        "sine";
-
-
-      for (
-        let i=0;
-        i<segmentSamples;
-        i++
-      ) {
-
-        const t =
-          i /
-          SAMPLE_RATE;
-
-
-        let wave =
-          0;
-
-
-        if (
-          frequency >
-          0
-        ) {
-
-          const phase =
-            2 *
-            Math.PI *
-            frequency *
-            t;
-
-
-          if (
-            type ===
-            "square"
-          ) {
-
-            wave =
-              Math.sin(
-                phase
-              ) >= 0
-
-                ? 1
-
-                : -1;
-
-          }
-
-          else if (
-            type ===
-            "triangle"
-          ) {
-
-            wave =
-              (
-                2 /
-                Math.PI
-              ) *
-
-              Math.asin(
-                Math.sin(
-                  phase
-                )
-              );
-
-          }
-
-          else {
-
-            wave =
-              Math.sin(
-                phase
-              );
-
-          }
-
-        }
-
-
-        const fade =
-          Math.max(
-            0,
-            1 -
-            i /
-            Math.max(
-              1,
-              segmentSamples
-            )
-          );
-
-
-        const value =
-          Math.max(
-            -1,
-            Math.min(
-              1,
-              wave *
-              volume *
-              fade
-            )
-          );
-
-
-        view.setInt16(
-          44 +
-          sampleIndex * 2,
-          value * 32767,
-          true
-        );
-
-
-        sampleIndex++;
-
-      }
-
-    }
-  );
-
-
-  const bytes =
-    new Uint8Array(
-      buffer
-    );
-
-
-  let binary =
-    "";
-
-
-  const chunkSize =
-    8192;
-
-
-  for (
-    let i=0;
-    i<bytes.length;
-    i+=chunkSize
-  ) {
-
-    binary +=
-      String.fromCharCode(
-
-        ...bytes.subarray(
-
-          i,
-
-          Math.min(
-            i +
-            chunkSize,
-            bytes.length
-          )
-
-        )
-
-      );
-
-  }
-
-
-  return (
-    "data:audio/wav;base64," +
-    btoa(binary)
-  );
-
-}
-
-
-const SOUND_URLS = {
-
-  button:makeWav([
-
-    {
-      frequency:520,
-      duration:.055,
-      volume:.16,
-      type:"sine"
-    }
-
-  ]),
-
-
-  move:makeWav([
-
-    {
-      frequency:230,
-      duration:.07,
-      volume:.18,
-      type:"triangle"
-    },
-
-    {
-      frequency:170,
-      duration:.055,
-      volume:.13,
-      type:"triangle"
-    }
-
-  ]),
-
-
-  capture:makeWav([
-
-    {
-      frequency:130,
-      duration:.09,
-      volume:.20,
-      type:"square"
-    },
-
-    {
-      frequency:85,
-      duration:.10,
-      volume:.17,
-      type:"triangle"
-    }
-
-  ]),
-
-
-  check:makeWav([
-
-    {
-      frequency:440,
-      duration:.10,
-      volume:.18,
-      type:"sine"
-    },
-
-    {
-      frequency:660,
-      duration:.14,
-      volume:.16,
-      type:"sine"
-    }
-
-  ]),
-
-
-  win:makeWav([
-
-    {
-      frequency:392,
-      duration:.13,
-      volume:.16,
-      type:"sine"
-    },
-
-    {
-      frequency:523,
-      duration:.13,
-      volume:.16,
-      type:"sine"
-    },
-
-    {
-      frequency:659,
-      duration:.22,
-      volume:.17,
-      type:"sine"
-    }
-
-  ]),
-
-
-  loss:makeWav([
-
-    {
-      frequency:330,
-      duration:.15,
-      volume:.15,
-      type:"triangle"
-    },
-
-    {
-      frequency:247,
-      duration:.16,
-      volume:.15,
-      type:"triangle"
-    },
-
-    {
-      frequency:196,
-      duration:.23,
-      volume:.16,
-      type:"triangle"
-    }
-
-  ])
-
-};
-
-
-function playSound(name) {
-
-  if (
-    !soundEnabled
-  ) {
-
-    return;
-
-  }
-
-
-  const url =
-    SOUND_URLS[
-      name
-    ];
-
-
-  if (
-    !url
-  ) {
-
-    return;
-
-  }
-
-
-  const audio =
-    new Audio(
-      url
-    );
-
-
-  audio.volume =
-    .75;
-
-
-  audio.play().catch(
-    error => {
-
-      console.log(
-        "Audio playback blocked:",
-        error
-      );
-
-    }
-  );
-
-}
-
-
-function playSoundForMove(move) {
-
-  if (
-    !soundEnabled
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-    move.captured
-  ) {
-
-    playSound(
-      "capture"
-    );
-
-  }
-
-  else {
-
-    playSound(
-      "move"
-    );
-
-  }
-
-
-  if (
-    game.isGameOver()
-  ) {
-
-    setTimeout(
-
-      () => {
-
-        let playerWon =
-          false;
-
-
-        if (
-          game.isCheckmate()
-        ) {
-
-          const winner =
-
-            game.turn() ===
-            "w"
-
-              ? "b"
-
-              : "w";
-
-
-          playerWon =
-            winner ===
-            playerColor;
-
-        }
-
-
-        playSound(
-
-          playerWon
-
-            ? "win"
-
-            : "loss"
-
-        );
-
-      },
-
-      120
-
-    );
-
-
-    return;
-
-  }
-
-
-  if (
-    game.inCheck()
-  ) {
-
-    setTimeout(
-
-      () =>
-        playSound(
-          "check"
-        ),
-
-      90
-
-    );
-
-  }
-
-}
-
-
-/* ===================================================== */
-/* CONTROLS                                              */
-/* ===================================================== */
+/* ============================= */
+/* CONTROLS                      */
+/* ============================= */
 
 function initializeControls() {
 
@@ -2684,15 +2287,11 @@ function initializeControls() {
   randomButton.innerHTML =
 
     "<span class='formation-code'>" +
-
     "Random" +
-
     "</span>" +
 
     "<span class='formation-name'>" +
-
     "Surprise me" +
-
     "</span>";
 
 
@@ -2703,13 +2302,11 @@ function initializeControls() {
 
 
   randomButton.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -2727,16 +2324,13 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
-
         renderPreview();
-
       }
 
 
       updateInfoPanel();
 
     }
-
   );
 
 
@@ -2769,15 +2363,11 @@ function initializeControls() {
       button.innerHTML =
 
         "<span class='formation-code'>" +
-
         formation.code +
-
         "</span>" +
 
         "<span class='formation-name'>" +
-
         formation.name +
-
         "</span>";
 
 
@@ -2788,13 +2378,11 @@ function initializeControls() {
 
 
       button.addEventListener(
-
         "click",
-
         function() {
 
           playSound(
-            "button"
+            "check"
           );
 
 
@@ -2812,16 +2400,13 @@ function initializeControls() {
           if (
             !gameStarted
           ) {
-
             renderPreview();
-
           }
 
 
           updateInfoPanel();
 
         }
-
       );
 
 
@@ -2841,13 +2426,9 @@ function initializeControls() {
 
 
       option.textContent =
-
         formation.name +
-
         " (" +
-
         formation.code +
-
         ")";
 
 
@@ -2856,18 +2437,15 @@ function initializeControls() {
       );
 
     }
-
   );
 
 
   computerFormationSelect.addEventListener(
-
     "change",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -2876,39 +2454,31 @@ function initializeControls() {
 
 
       previewComputerFormation =
-
         computerFormationChoice ===
         "RANDOM"
-
           ? randomFormation()
-
           : computerFormationChoice;
 
 
       if (
         !gameStarted
       ) {
-
         renderPreview();
-
       }
 
 
       updateInfoPanel();
 
     }
-
   );
 
 
   playWhiteBtn.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -2926,27 +2496,22 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
-
         renderPreview();
-
       }
 
 
       updateInfoPanel();
 
     }
-
   );
 
 
   playRandomBtn.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -2964,27 +2529,22 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
-
         renderPreview();
-
       }
 
 
       updateInfoPanel();
 
     }
-
   );
 
 
   playBlackBtn.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -3002,16 +2562,13 @@ function initializeControls() {
       if (
         !gameStarted
       ) {
-
         renderPreview();
-
       }
 
 
       updateInfoPanel();
 
     }
-
   );
 
 
@@ -3040,13 +2597,11 @@ function initializeControls() {
 
 
   difficultyCasual.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -3055,24 +2610,19 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
-
       applyDifficulty();
-
       updateInfoPanel();
 
     }
-
   );
 
 
   difficultyBeginner.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -3081,24 +2631,19 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
-
       applyDifficulty();
-
       updateInfoPanel();
 
     }
-
   );
 
 
   difficultyIntermediate.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -3107,24 +2652,19 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
-
       applyDifficulty();
-
       updateInfoPanel();
 
     }
-
   );
 
 
   difficultyHard.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
@@ -3133,20 +2673,15 @@ function initializeControls() {
 
 
       refreshDifficultyButtons();
-
       applyDifficulty();
-
       updateInfoPanel();
 
     }
-
   );
 
 
   soundButton.addEventListener(
-
     "click",
-
     function() {
 
       soundEnabled =
@@ -3160,11 +2695,8 @@ function initializeControls() {
 
 
       soundButton.textContent =
-
         soundEnabled
-
           ? "🔊 Sound On"
-
           : "🔇 Sound Off";
 
 
@@ -3173,61 +2705,60 @@ function initializeControls() {
       ) {
 
         playSound(
-          "button"
+          "check"
         );
 
       }
 
     }
-
   );
 
 
   newGameBtn.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
       hideTooltip();
-
 
       startNewGame();
 
     }
-
   );
 
 
   resetBtn.addEventListener(
-
     "click",
-
     function() {
 
       playSound(
-        "button"
+        "check"
       );
 
 
       hideTooltip();
 
-
       resetCurrentGame();
 
     }
-
   );
 
 
   promotionCancel.addEventListener(
     "click",
-    cancelPromotion
+    function() {
+
+      playSound(
+        "check"
+      );
+
+      cancelPromotion();
+
+    }
   );
 
 
@@ -3293,22 +2824,18 @@ function initializeControls() {
 
 
       button.addEventListener(
-
         "click",
-
         function() {
 
           playSound(
-            "button"
+            "check"
           );
-
 
           choosePromotion(
             pieceType
           );
 
         }
-
       );
 
 
@@ -3317,15 +2844,14 @@ function initializeControls() {
       );
 
     }
-
   );
 
 }
 
 
-/* ===================================================== */
-/* BUTTON STATES                                         */
-/* ===================================================== */
+/* ============================= */
+/* BUTTON STATES                 */
+/* ============================= */
 
 function refreshFormationButtons() {
 
@@ -3337,12 +2863,9 @@ function refreshFormationButtons() {
       button => {
 
         button.classList.toggle(
-
           "active",
-
           button.dataset.code ===
           playerFormationChoice
-
         );
 
       }
@@ -3405,20 +2928,17 @@ function refreshDifficultyButtons() {
     "casual"
   );
 
-
   difficultyBeginner.classList.toggle(
     "active",
     difficultyKey ===
     "beginner"
   );
 
-
   difficultyIntermediate.classList.toggle(
     "active",
     difficultyKey ===
     "intermediate"
   );
-
 
   difficultyHard.classList.toggle(
     "active",
@@ -3429,9 +2949,9 @@ function refreshDifficultyButtons() {
 }
 
 
-/* ===================================================== */
-/* PREVIEW                                               */
-/* ===================================================== */
+/* ============================= */
+/* PREVIEW                       */
+/* ============================= */
 
 function renderPreview() {
 
@@ -3446,14 +2966,11 @@ function renderPreview() {
   selectedSquare =
     null;
 
-
   legalMoves =
     [];
 
-
   lastMove =
     null;
-
 
   promotionPending =
     null;
@@ -3461,14 +2978,13 @@ function renderPreview() {
 
   hidePromotion();
 
+  clearCaptureToast();
+
 
   const previewColor =
-
     playerColorChoice ===
     "b"
-
       ? "b"
-
       : "w";
 
 
@@ -3477,33 +2993,25 @@ function renderPreview() {
 
 
   const whiteSetup =
-
     playerColor ===
     "w"
-
       ? previewPlayerFormation
-
       : previewComputerFormation;
 
 
   const blackSetup =
-
     playerColor ===
     "b"
-
       ? previewPlayerFormation
-
       : previewComputerFormation;
 
 
   game =
     new Chess(
-
       buildFen(
         whiteSetup,
         blackSetup
       )
-
     );
 
 
@@ -3517,67 +3025,52 @@ function renderPreview() {
 
 
   const previewText =
-
     FORMATION_MAP[
       previewPlayerFormation
     ] +
-
     " (" +
-
     previewPlayerFormation +
-
     ")";
 
 
   previewBar.innerHTML =
 
     "<strong>Preview:</strong>&nbsp;" +
-
     previewText +
 
     (
       playerFormationChoice ===
       "RANDOM"
-
         ? "&nbsp;— Random rerolls when the game starts."
-
         : ""
     ) +
 
     (
       playerColorChoice ===
       "RANDOM"
-
         ? "&nbsp;— Color will be chosen when the game starts."
-
         : ""
     );
 
 
   setStatus(
-
     "Choose your settings, then click Start New Game."
-
   );
 
 }
 
 
-/* ===================================================== */
-/* GAME START                                            */
-/* ===================================================== */
+/* ============================= */
+/* GAME START                    */
+/* ============================= */
 
 function resolvePlayerFormation() {
 
   return (
-
     playerFormationChoice ===
     "RANDOM"
-
       ? randomFormation()
-
       : playerFormationChoice
-
   );
 
 }
@@ -3586,14 +3079,10 @@ function resolvePlayerFormation() {
 function resolveComputerFormation() {
 
   return (
-
     computerFormationChoice ===
     "RANDOM"
-
       ? randomFormation()
-
       : computerFormationChoice
-
   );
 
 }
@@ -3609,18 +3098,14 @@ function resolvePlayerColor() {
     return (
       Math.random() <
       .5
-
         ? "w"
-
         : "b"
     );
 
   }
 
 
-  return (
-    playerColorChoice
-  );
+  return playerColorChoice;
 
 }
 
@@ -3634,7 +3119,6 @@ function startNewGame() {
     setStatus(
       "Stockfish is still loading."
     );
-
 
     return;
 
@@ -3661,13 +3145,9 @@ function startNewGame() {
 function resetCurrentGame() {
 
   if (
-
     !actualPlayerFormation ||
-
     !actualComputerFormation ||
-
     !actualPlayerColor
-
   ) {
 
     startNewGame();
@@ -3689,6 +3169,9 @@ function beginGame() {
   );
 
 
+  clearCaptureToast();
+
+
   gameStarted =
     true;
 
@@ -3704,14 +3187,11 @@ function beginGame() {
   selectedSquare =
     null;
 
-
   legalMoves =
     [];
 
-
   lastMove =
     null;
-
 
   promotionPending =
     null;
@@ -3721,33 +3201,25 @@ function beginGame() {
 
 
   const whiteSetup =
-
     playerColor ===
     "w"
-
       ? actualPlayerFormation
-
       : actualComputerFormation;
 
 
   const blackSetup =
-
     playerColor ===
     "b"
-
       ? actualPlayerFormation
-
       : actualComputerFormation;
 
 
   game =
     new Chess(
-
       buildFen(
         whiteSetup,
         blackSetup
       )
-
     );
 
 
@@ -3757,7 +3229,6 @@ function beginGame() {
 
 
   applyDifficulty();
-
 
   refreshSideButtons();
 
@@ -3803,11 +3274,21 @@ function beginGame() {
     (
       playerColor ===
       "w"
-
         ? "You are White"
-
         : "You are Black"
     );
+
+
+  setTimeout(
+    () => {
+
+      playSound(
+        "start"
+      );
+
+    },
+    70
+  );
 
 
   if (
@@ -3817,7 +3298,7 @@ function beginGame() {
 
     setTimeout(
       requestEngineMove,
-      250
+      300
     );
 
   }
@@ -3830,9 +3311,7 @@ function applyDifficulty() {
   if (
     !engineReady
   ) {
-
     return;
-
   }
 
 
@@ -3843,37 +3322,27 @@ function applyDifficulty() {
 
 
   engine.postMessage(
-
     "setoption name Skill Level value " +
-
     difficulty.skill
-
   );
 
 }
 
 
-/* ===================================================== */
-/* BOARD                                                 */
-/* ===================================================== */
+/* ============================= */
+/* BOARD                         */
+/* ============================= */
 
 function isPlayerTurn() {
 
   return (
-
     gameStarted &&
-
     game &&
-
     game.turn() ===
     playerColor &&
-
     !engineThinking &&
-
     !promotionPending &&
-
     !game.isGameOver()
-
   );
 
 }
@@ -3891,31 +3360,15 @@ function drawBoard() {
 
 
   const files =
-
     orientationWhite
-
-      ? [
-          "a","b","c","d",
-          "e","f","g","h"
-        ]
-
-      : [
-          "h","g","f","e",
-          "d","c","b","a"
-        ];
+      ? ["a","b","c","d","e","f","g","h"]
+      : ["h","g","f","e","d","c","b","a"];
 
 
   const ranks =
-
     orientationWhite
-
-      ? [
-          8,7,6,5,4,3,2,1
-        ]
-
-      : [
-          1,2,3,4,5,6,7,8
-        ];
+      ? [8,7,6,5,4,3,2,1]
+      : [1,2,3,4,5,6,7,8];
 
 
   const checkedSquare =
@@ -3958,31 +3411,24 @@ function drawBoard() {
 
 
       square.classList.add(
-
         (
           row +
           column
-        ) % 2 === 0
-
+        ) % 2 ===
+        0
           ? "light"
-
           : "dark"
-
       );
 
 
       if (
-
         lastMove &&
-
         (
           squareName ===
           lastMove.from ||
-
           squareName ===
           lastMove.to
         )
-
       ) {
 
         square.classList.add(
@@ -4017,15 +3463,11 @@ function drawBoard() {
 
 
       if (
-
         legalMoves.some(
-
           move =>
             move.to ===
             squareName
-
         )
-
       ) {
 
         const dot =
@@ -4132,9 +3574,7 @@ function drawBoard() {
 
 
       square.addEventListener(
-
         "click",
-
         function() {
 
           handleSquareClick(
@@ -4142,7 +3582,6 @@ function drawBoard() {
           );
 
         }
-
       );
 
 
@@ -4157,9 +3596,9 @@ function drawBoard() {
 }
 
 
-/* ===================================================== */
-/* PLAYER MOVES                                          */
-/* ===================================================== */
+/* ============================= */
+/* PLAYER MOVES                  */
+/* ============================= */
 
 function handleSquareClick(
   squareName
@@ -4168,9 +3607,7 @@ function handleSquareClick(
   if (
     !isPlayerTurn()
   ) {
-
     return;
-
   }
 
 
@@ -4186,11 +3623,9 @@ function handleSquareClick(
 
     const destinationMoves =
       legalMoves.filter(
-
         move =>
           move.to ===
           squareName
-
       );
 
 
@@ -4201,10 +3636,8 @@ function handleSquareClick(
 
       const promotionMoves =
         destinationMoves.filter(
-
           move =>
             move.promotion
-
         );
 
 
@@ -4214,13 +3647,9 @@ function handleSquareClick(
       ) {
 
         openPromotion(
-
           selectedSquare,
-
           squareName
-
         );
-
 
         return;
 
@@ -4228,13 +3657,9 @@ function handleSquareClick(
 
 
       completePlayerMove(
-
         selectedSquare,
-
         squareName,
-
         undefined
-
       );
 
 
@@ -4244,18 +3669,14 @@ function handleSquareClick(
 
 
     if (
-
       piece &&
-
       piece.color ===
       playerColor
-
     ) {
 
       selectSquare(
         squareName
       );
-
 
       return;
 
@@ -4272,19 +3693,15 @@ function handleSquareClick(
 
     drawBoard();
 
-
     return;
 
   }
 
 
   if (
-
     piece &&
-
     piece.color ===
     playerColor
-
   ) {
 
     selectSquare(
@@ -4306,13 +3723,10 @@ function selectSquare(
 
   legalMoves =
     game.moves({
-
       square:
         squareName,
-
       verbose:
         true
-
     });
 
 
@@ -4321,9 +3735,9 @@ function selectSquare(
 }
 
 
-/* ===================================================== */
-/* PROMOTION                                             */
-/* ===================================================== */
+/* ============================= */
+/* PROMOTION                     */
+/* ============================= */
 
 function openPromotion(
   from,
@@ -4341,7 +3755,6 @@ function openPromotion(
       "img"
     )
     .forEach(
-
       image => {
 
         const type =
@@ -4355,7 +3768,6 @@ function openPromotion(
           ];
 
       }
-
     );
 
 
@@ -4377,11 +3789,6 @@ function hidePromotion() {
 
 function cancelPromotion() {
 
-  playSound(
-    "button"
-  );
-
-
   promotionPending =
     null;
 
@@ -4398,9 +3805,7 @@ function choosePromotion(
   if (
     !promotionPending
   ) {
-
     return;
-
   }
 
 
@@ -4420,13 +3825,9 @@ function choosePromotion(
 
 
   completePlayerMove(
-
     from,
-
     to,
-
     pieceType
-
   );
 
 }
@@ -4451,9 +3852,7 @@ function completePlayerMove(
     if (
       !move
     ) {
-
       return;
-
     }
 
 
@@ -4502,22 +3901,17 @@ function completePlayerMove(
 }
 
 
-/* ===================================================== */
-/* ENGINE                                                */
-/* ===================================================== */
+/* ============================= */
+/* ENGINE                        */
+/* ============================= */
 
 function requestEngineMove() {
 
   if (
-
     !game ||
-
     game.isGameOver()
-
   ) {
-
     return;
-
   }
 
 
@@ -4535,13 +3929,10 @@ function requestEngineMove() {
 
 
   if (
-
     difficulty.randomMoveChance >
     0 &&
-
     Math.random() <
     difficulty.randomMoveChance
-
   ) {
 
     const moves =
@@ -4565,7 +3956,6 @@ function requestEngineMove() {
 
 
       setTimeout(
-
         function() {
 
           playCasualRandomMove(
@@ -4573,9 +3963,7 @@ function requestEngineMove() {
           );
 
         },
-
         250
-
       );
 
 
@@ -4587,18 +3975,14 @@ function requestEngineMove() {
 
 
   engine.postMessage(
-
     "position fen " +
     game.fen()
-
   );
 
 
   engine.postMessage(
-
     "go nodes " +
     difficulty.nodes
-
   );
 
 }
@@ -4613,11 +3997,8 @@ function playCasualRandomMove(
 
 
   if (
-
     !game ||
-
     game.isGameOver()
-
   ) {
 
     updateStatus();
@@ -4631,25 +4012,19 @@ function playCasualRandomMove(
 
     const move =
       game.move({
-
         from:
           moveObject.from,
-
         to:
           moveObject.to,
-
         promotion:
           moveObject.promotion
-
       });
 
 
     if (
       !move
     ) {
-
       return;
-
     }
 
 
@@ -4687,14 +4062,10 @@ function playEngineMove(
 
 
   if (
-
     !game ||
-
     !moveText ||
-
     moveText ===
     "(none)"
-
   ) {
 
     updateStatus();
@@ -4719,15 +4090,12 @@ function playEngineMove(
 
 
   const promotion =
-
     moveText.length >=
     5
-
       ? moveText.substring(
           4,
           5
         )
-
       : undefined;
 
 
@@ -4744,9 +4112,7 @@ function playEngineMove(
     if (
       !move
     ) {
-
       return;
-
     }
 
 
@@ -4775,13 +4141,32 @@ function playEngineMove(
 }
 
 
-/* ===================================================== */
-/* AFTER MOVE                                            */
-/* ===================================================== */
+/* ============================= */
+/* AFTER MOVE                    */
+/* ============================= */
 
 function afterMove(
   move
 ) {
+
+  /*
+    If Stockfish made the move and captured
+    one of the player's pieces, show the
+    temporary capture notification.
+  */
+
+  if (
+    move.captured &&
+    move.color !==
+    playerColor
+  ) {
+
+    showComputerCaptureToast(
+      move.captured
+    );
+
+  }
+
 
   drawBoard();
 
@@ -4798,9 +4183,9 @@ function afterMove(
 }
 
 
-/* ===================================================== */
-/* MATERIAL / CAPTURES                                   */
-/* ===================================================== */
+/* ============================= */
+/* MATERIAL / CAPTURES           */
+/* ============================= */
 
 function countPieces() {
 
@@ -4828,11 +4213,8 @@ function countPieces() {
 
 
   game.board().forEach(
-
     row =>
-
       row.forEach(
-
         piece => {
 
           if (
@@ -4848,9 +4230,7 @@ function countPieces() {
           }
 
         }
-
       )
-
   );
 
 
@@ -4874,20 +4254,15 @@ function getCaptured() {
 
 
   DISPLAY_ORDER.forEach(
-
     type => {
 
       const missingBlack =
-
         INITIAL_COUNTS[type] -
-
         counts.b[type];
 
 
       const missingWhite =
-
         INITIAL_COUNTS[type] -
-
         counts.w[type];
 
 
@@ -4919,7 +4294,6 @@ function getCaptured() {
       }
 
     }
-
   );
 
 
@@ -4936,20 +4310,15 @@ function captureValue(
 ) {
 
   return pieces.reduce(
-
     (
       total,
       piece
     ) =>
-
       total +
-
       PIECE_VALUES[
         piece.type
       ],
-
     0
-
   );
 
 }
@@ -4972,14 +4341,12 @@ function renderCaptured(
     element.innerHTML =
       "<span class='none'>None</span>";
 
-
     return;
 
   }
 
 
   pieces.forEach(
-
     piece => {
 
       const image =
@@ -5004,7 +4371,6 @@ function renderCaptured(
       );
 
     }
-
   );
 
 }
@@ -5042,20 +4408,14 @@ function updateCapturedPieces() {
 
 
   renderCaptured(
-
     topCapturedPieces,
-
     captured.whiteCaptured
-
   );
 
 
   renderCaptured(
-
     bottomCapturedPieces,
-
     captured.blackCaptured
-
   );
 
 
@@ -5105,22 +4465,17 @@ function updateCapturedPieces() {
 }
 
 
-/* ===================================================== */
-/* CHECK                                                 */
-/* ===================================================== */
+/* ============================= */
+/* CHECK                         */
+/* ============================= */
 
 function findCheckedKingSquare() {
 
   if (
-
     !game ||
-
     !game.inCheck()
-
   ) {
-
     return null;
-
   }
 
 
@@ -5149,28 +4504,21 @@ function findCheckedKingSquare() {
 
 
       if (
-
         piece &&
-
         piece.type ===
         "k" &&
-
         piece.color ===
         checkedColor
-
       ) {
 
         return (
-
           "abcdefgh"[
             column
           ] +
-
           (
             8 -
             row
           )
-
         );
 
       }
@@ -5185,9 +4533,9 @@ function findCheckedKingSquare() {
 }
 
 
-/* ===================================================== */
-/* MOVE HISTORY                                          */
-/* ===================================================== */
+/* ============================= */
+/* MOVE HISTORY                  */
+/* ============================= */
 
 function renderMoveList() {
 
@@ -5196,17 +4544,11 @@ function renderMoveList() {
   ) {
 
     moveListBody.innerHTML =
-
       "<tr>" +
-
       "<td colspan='3'>" +
-
       "Game not started." +
-
       "</td>" +
-
       "</tr>";
-
 
     return;
 
@@ -5223,17 +4565,11 @@ function renderMoveList() {
   ) {
 
     moveListBody.innerHTML =
-
       "<tr>" +
-
       "<td colspan='3'>" +
-
       "No moves yet." +
-
       "</td>" +
-
       "</tr>";
-
 
     return;
 
@@ -5245,44 +4581,33 @@ function renderMoveList() {
 
 
   for (
-
     let i=0;
-
     i<history.length;
-
     i+=2
-
   ) {
 
     html +=
-
       "<tr>" +
 
       "<td>" +
-
       (
         i/2 +
         1
       ) +
-
       "</td>" +
 
       "<td>" +
-
       (
         history[i] ||
         ""
       ) +
-
       "</td>" +
 
       "<td>" +
-
       (
         history[i+1] ||
         ""
       ) +
-
       "</td>" +
 
       "</tr>";
@@ -5306,18 +4631,16 @@ function renderMoveList() {
 }
 
 
-/* ===================================================== */
-/* STATUS                                                */
-/* ===================================================== */
+/* ============================= */
+/* STATUS                        */
+/* ============================= */
 
 function updateStatus() {
 
   if (
     !gameStarted
   ) {
-
     return;
-
   }
 
 
@@ -5330,24 +4653,17 @@ function updateStatus() {
     ) {
 
       const winner =
-
         game.turn() ===
         "w"
-
           ? "b"
-
           : "w";
 
 
       setStatus(
-
         winner ===
         playerColor
-
           ? "Checkmate — you win!"
-
           : "Checkmate — Stockfish wins."
-
       );
 
 
@@ -5364,7 +4680,6 @@ function updateStatus() {
         "Draw by stalemate."
       );
 
-
       return;
 
     }
@@ -5377,7 +4692,6 @@ function updateStatus() {
       setStatus(
         "Draw by repetition."
       );
-
 
       return;
 
@@ -5392,7 +4706,6 @@ function updateStatus() {
         "Draw by insufficient material."
       );
 
-
       return;
 
     }
@@ -5401,7 +4714,6 @@ function updateStatus() {
     setStatus(
       "Draw."
     );
-
 
     return;
 
@@ -5413,15 +4725,10 @@ function updateStatus() {
   ) {
 
     setStatus(
-
       game.inCheck()
-
         ? "Stockfish is thinking — Stockfish is in check."
-
         : "Stockfish is thinking..."
-
     );
-
 
     return;
 
@@ -5434,13 +4741,9 @@ function updateStatus() {
   ) {
 
     setStatus(
-
       game.inCheck()
-
         ? "Your move — you are in check."
-
         : "Your move."
-
     );
 
   }
@@ -5448,13 +4751,9 @@ function updateStatus() {
   else {
 
     setStatus(
-
       game.inCheck()
-
         ? "Stockfish to move — Stockfish is in check."
-
         : "Stockfish to move."
-
     );
 
   }
@@ -5472,9 +4771,9 @@ function setStatus(
 }
 
 
-/* ===================================================== */
-/* MATCH INFO                                            */
-/* ===================================================== */
+/* ============================= */
+/* MATCH INFO                    */
+/* ============================= */
 
 function updateInfoPanel() {
 
@@ -5492,15 +4791,11 @@ function updateInfoPanel() {
   ) {
 
     playerFormationText =
-
       FORMATION_MAP[
         actualPlayerFormation
       ] +
-
       " (" +
-
       actualPlayerFormation +
-
       ")";
 
   }
@@ -5518,15 +4813,11 @@ function updateInfoPanel() {
   else {
 
     playerFormationText =
-
       FORMATION_MAP[
         playerFormationChoice
       ] +
-
       " (" +
-
       playerFormationChoice +
-
       ")";
 
   }
@@ -5540,15 +4831,11 @@ function updateInfoPanel() {
   ) {
 
     computerText =
-
       FORMATION_MAP[
         actualComputerFormation
       ] +
-
       " (" +
-
       actualComputerFormation +
-
       ")";
 
   }
@@ -5566,15 +4853,11 @@ function updateInfoPanel() {
   else {
 
     computerText =
-
       FORMATION_MAP[
         computerFormationChoice
       ] +
-
       " (" +
-
       computerFormationChoice +
-
       ")";
 
   }
@@ -5588,12 +4871,9 @@ function updateInfoPanel() {
   ) {
 
     colorText =
-
       playerColor ===
       "w"
-
         ? "White"
-
         : "Black";
 
   }
@@ -5611,12 +4891,9 @@ function updateInfoPanel() {
   else {
 
     colorText =
-
       playerColorChoice ===
       "w"
-
         ? "White"
-
         : "Black";
 
   }
@@ -5627,29 +4904,22 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>You:</strong> " +
-
     playerFormationText +
-
     " · " +
-
     colorText +
 
     "</div>" +
 
-
     "<div class='match-line'>" +
 
     "<strong>Computer:</strong> " +
-
     computerText +
 
     "</div>" +
 
-
     "<div class='match-line'>" +
 
     "<strong>Difficulty:</strong> " +
-
     difficulty.label +
 
     "</div>";
@@ -5657,9 +4927,9 @@ function updateInfoPanel() {
 }
 
 
-/* ===================================================== */
-/* STOCKFISH                                             */
-/* ===================================================== */
+/* ============================= */
+/* STOCKFISH                     */
+/* ============================= */
 
 engine.onmessage =
 function(event) {
@@ -5701,9 +4971,7 @@ function(event) {
     ) {
 
       setStatus(
-
         "Choose your settings, then click Start New Game."
-
       );
 
     }
@@ -5715,14 +4983,11 @@ function(event) {
 
 
   if (
-
     typeof message ===
     "string" &&
-
     message.startsWith(
       "bestmove"
     )
-
   ) {
 
     const move =
@@ -5752,31 +5017,22 @@ function(error) {
 
 
   setStatus(
-
     "Stockfish failed to load. Open the page through localhost."
-
   );
 
 };
 
 
 window.addEventListener(
-
   "scroll",
-
   hideTooltip,
-
   true
-
 );
 
 
 window.addEventListener(
-
   "resize",
-
   hideTooltip
-
 );
 
 
@@ -5800,5 +5056,4 @@ renderPreview();
 </script>
 
 </body>
-
 </html>
