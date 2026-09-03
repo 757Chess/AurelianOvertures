@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The Aurelian Conquest</title>
+<title>The Aurelian Chess Overtures</title>
 
 <style>
 
@@ -869,7 +869,7 @@ th {
 
   <div class="header">
 
-    <h1>The Aurelian Conquest</h1>
+    <h1>The Aurelian Chess Overtures</h1>
 
     <p class="subtitle">
       A Strategic Chess Variant
@@ -1474,7 +1474,7 @@ const DIFFICULTY_GUIDES = {
     title:"Casual",
 
     description:
-      "A relaxed opponent designed for learning, experimenting, and getting comfortable with The Aurelian Conquest.",
+      "A relaxed opponent designed for learning, experimenting, and getting comfortable with The Aurelian Chess Overtures.",
 
     behavior:
       "Plays at low strength and will sometimes choose an ordinary legal move instead of the strongest move.",
@@ -3926,11 +3926,6 @@ function endCurrentGame() {
   clearCaptureToast();
 
 
-  /*
-    If the player selected Random while the game
-    was active, create a fresh preview formation.
-  */
-
   if (
     playerFormationChoice ===
     "RANDOM"
@@ -6128,11 +6123,6 @@ function(event) {
       message
         .split(" ")[1];
 
-
-    /*
-      Ignore a late Stockfish response if the
-      player has already ended the game.
-    */
 
     if (
       !gameStarted
