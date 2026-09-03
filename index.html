@@ -116,10 +116,24 @@ h1 {
   font-size:14px;
 }
 
+
+/* ===================================================== */
+/* FORMATION CONTROLS                                    */
+/* ===================================================== */
+
 .formation-grid {
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:6px;
+}
+
+.random-formation-wrap {
+  margin-top:7px;
+}
+
+.random-formation-btn {
+  width:100%;
+  min-height:44px;
 }
 
 button,
@@ -159,6 +173,14 @@ select {
 .choice-btn .formation-name {
   display:block;
   margin-top:2px;
+  font-size:11px;
+}
+
+.random-formation-btn .formation-code {
+  font-size:13px;
+}
+
+.random-formation-btn .formation-name {
   font-size:11px;
 }
 
@@ -207,9 +229,19 @@ select {
   background:#fff;
 }
 
-.actions {
+
+/* ===================================================== */
+/* GAME ACTIONS                                          */
+/* ===================================================== */
+
+.game-actions {
   display:grid;
+  grid-template-columns:1fr 1fr;
   gap:6px;
+}
+
+.reset-action {
+  grid-column:1 / -1;
 }
 
 .primary {
@@ -340,7 +372,7 @@ select {
 
 
 /* ===================================================== */
-/* RESPONSIVE BOARD                                      */
+/* BOARD                                                 */
 /* ===================================================== */
 
 .board-wrap {
@@ -353,12 +385,9 @@ select {
   display:grid;
   grid-template-columns:repeat(8,1fr);
   grid-template-rows:repeat(8,1fr);
-
   width:100%;
   max-width:576px;
-
   aspect-ratio:1 / 1;
-
   border:3px solid #252525;
   border-radius:8px;
   overflow:hidden;
@@ -370,11 +399,9 @@ select {
   height:100%;
   min-width:0;
   min-height:0;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;
@@ -739,7 +766,21 @@ th {
   }
 
   .choice-btn {
-    min-height:50px;
+    min-height:48px;
+    padding-left:3px;
+    padding-right:3px;
+  }
+
+  .choice-btn .formation-code {
+    font-size:12px;
+  }
+
+  .choice-btn .formation-name {
+    font-size:10px;
+  }
+
+  .random-formation-btn {
+    min-height:42px;
   }
 
   .side-btn,
@@ -783,23 +824,13 @@ th {
     max-height:240px;
   }
 
-  /*
-    On touch screens, help cards become a
-    bottom-of-screen information card instead
-    of trying to appear left of the buttons.
-  */
-
   #hoverTooltip {
     width:min(330px,calc(100vw - 24px)) !important;
-
     left:50% !important;
     right:auto !important;
-
     top:auto !important;
     bottom:14px !important;
-
     transform:translateX(-50%);
-
     max-height:45vh;
     overflow:auto;
   }
@@ -815,15 +846,11 @@ th {
 
   #hoverTooltip {
     width:min(330px,calc(100vw - 24px)) !important;
-
     left:50% !important;
     right:auto !important;
-
     top:auto !important;
     bottom:14px !important;
-
     transform:translateX(-50%);
-
     max-height:45vh;
     overflow:auto;
   }
@@ -832,7 +859,6 @@ th {
 
 </style>
 </head>
-
 
 <body>
 
@@ -855,7 +881,7 @@ th {
   <div class="app">
 
 
-    <!-- LEFT / SETUP PANEL -->
+    <!-- SETUP PANEL -->
 
     <div class="panel">
 
@@ -874,6 +900,26 @@ th {
         <div
           id="formationButtons"
           class="formation-grid">
+        </div>
+
+
+        <div class="random-formation-wrap">
+
+          <button
+            id="randomFormationBtn"
+            class="choice-btn random-formation-btn"
+            type="button">
+
+            <span class="formation-code">
+              🎲 Random Formation
+            </span>
+
+            <span class="formation-name">
+              Surprise me
+            </span>
+
+          </button>
+
         </div>
 
 
@@ -1016,7 +1062,7 @@ th {
       </div>
 
 
-      <div class="actions">
+      <div class="game-actions">
 
         <button
           id="newGameBtn"
@@ -1029,8 +1075,18 @@ th {
 
 
         <button
-          id="resetBtn"
+          id="endGameBtn"
           class="action-btn"
+          type="button">
+
+          End Game
+
+        </button>
+
+
+        <button
+          id="resetBtn"
+          class="action-btn reset-action"
           type="button">
 
           Reset Current Game
@@ -1075,7 +1131,7 @@ th {
 
 
 
-    <!-- RIGHT / STATUS PANEL -->
+    <!-- STATUS PANEL -->
 
     <div class="panel">
 
@@ -1135,6 +1191,7 @@ th {
             <span id="materialText">
               Material even
             </span>
+
 
             <span
               id="materialScore"
@@ -1215,9 +1272,11 @@ th {
             <thead>
 
               <tr>
+
                 <th>#</th>
                 <th>White</th>
                 <th>Black</th>
+
               </tr>
 
             </thead>
@@ -1226,9 +1285,11 @@ th {
             <tbody id="moveListBody">
 
               <tr>
+
                 <td colspan="3">
                   Game not started.
                 </td>
+
               </tr>
 
             </tbody>
@@ -1615,8 +1676,12 @@ const PROMOTION_NAMES = {
 
 
 /* ===================================================== */
-/* CUSTOM SOUND FILES                                    */
+/* SOUND                                                 */
 /* ===================================================== */
+
+const MENU_CLICK_VOLUME =
+  .28;
+
 
 const SOUND_FILES = {
 
@@ -1630,7 +1695,9 @@ const SOUND_FILES = {
 
   draw:"./Stalemate.wav",
 
-  start:"./Startgame.wav"
+  start:"./Startgame.wav",
+
+  invalid:"./Invalidmove.wav"
 
 };
 
@@ -1660,6 +1727,9 @@ const boardEl =
 
 const formationButtonsEl =
   document.getElementById("formationButtons");
+
+const randomFormationBtn =
+  document.getElementById("randomFormationBtn");
 
 const hoverTooltip =
   document.getElementById("hoverTooltip");
@@ -1727,6 +1797,9 @@ const difficultyHard =
 const newGameBtn =
   document.getElementById("newGameBtn");
 
+const endGameBtn =
+  document.getElementById("endGameBtn");
+
 const resetBtn =
   document.getElementById("resetBtn");
 
@@ -1784,6 +1857,9 @@ let engineReady =
 let engineThinking =
   false;
 
+let engineMoveTimer =
+  null;
+
 let game =
   null;
 
@@ -1840,7 +1916,10 @@ function isTouchStyleDevice() {
 /* SOUND                                                 */
 /* ===================================================== */
 
-function playSound(name) {
+function playSound(
+  name,
+  volume = 1
+) {
 
   if (
     !soundEnabled
@@ -1871,7 +1950,13 @@ function playSound(name) {
 
 
   audio.volume =
-    1;
+    Math.max(
+      0,
+      Math.min(
+        1,
+        volume
+      )
+    );
 
 
   audio.play().catch(
@@ -1888,12 +1973,15 @@ function playSound(name) {
 }
 
 
-/*
-  Current sound behavior remains exactly as before.
+function playMenuClick() {
 
-  We can revisit the check/move layering after
-  you've finished evaluating it in actual play.
-*/
+  playSound(
+    "check",
+    MENU_CLICK_VOLUME
+  );
+
+}
+
 
 function playSoundForMove(move) {
 
@@ -1969,6 +2057,84 @@ function playSoundForMove(move) {
     );
 
   }
+
+}
+
+
+
+/* ===================================================== */
+/* ENGINE DELAY                                          */
+/* ===================================================== */
+
+function randomEngineDelay() {
+
+  return (
+    1500 +
+    Math.random() *
+    3000
+  );
+
+}
+
+
+function clearEngineMoveTimer() {
+
+  if (
+    engineMoveTimer
+  ) {
+
+    clearTimeout(
+      engineMoveTimer
+    );
+
+
+    engineMoveTimer =
+      null;
+
+  }
+
+}
+
+
+function scheduleEngineMove() {
+
+  if (
+    !game ||
+    game.isGameOver()
+  ) {
+
+    return;
+
+  }
+
+
+  clearEngineMoveTimer();
+
+
+  engineThinking =
+    true;
+
+
+  updateStatus();
+
+
+  const delay =
+    randomEngineDelay();
+
+
+  engineMoveTimer =
+    setTimeout(
+      function() {
+
+        engineMoveTimer =
+          null;
+
+
+        requestEngineMove();
+
+      },
+      delay
+    );
 
 }
 
@@ -2318,10 +2484,6 @@ function getDifficultyTooltipHTML(key) {
 /* ===================================================== */
 
 function positionTooltip(button) {
-
-  /*
-    Mobile/touch positioning is handled by CSS.
-  */
 
   if (
     isTouchStyleDevice() ||
@@ -2772,89 +2934,44 @@ function buildFen(
 
 
 /* ===================================================== */
+/* PREVIEW CHANGE HELPER                                 */
+/* ===================================================== */
+
+function shouldReturnToPreview() {
+
+  return (
+    !gameStarted ||
+    (
+      game &&
+      game.isGameOver()
+    )
+  );
+
+}
+
+
+function refreshPreviewAfterSetupChange() {
+
+  if (
+    shouldReturnToPreview()
+  ) {
+
+    renderPreview();
+
+  }
+
+}
+
+
+
+/* ===================================================== */
 /* CONTROL SETUP                                         */
 /* ===================================================== */
 
 function initializeControls() {
 
-  const randomButton =
-    document.createElement(
-      "button"
-    );
 
-
-  randomButton.type =
-    "button";
-
-
-  randomButton.className =
-    "choice-btn";
-
-
-  randomButton.dataset.code =
-    "RANDOM";
-
-
-  randomButton.innerHTML =
-
-    "<span class='formation-code'>" +
-
-    "Random" +
-
-    "</span>" +
-
-    "<span class='formation-name'>" +
-
-    "Surprise me" +
-
-    "</span>";
-
-
-  attachFormationTooltip(
-    randomButton,
-    "RANDOM"
-  );
-
-
-  randomButton.addEventListener(
-    "click",
-    function() {
-
-      playSound(
-        "check"
-      );
-
-
-      playerFormationChoice =
-        "RANDOM";
-
-
-      previewPlayerFormation =
-        randomFormation();
-
-
-      refreshFormationButtons();
-
-
-      if (
-        !gameStarted
-      ) {
-
-        renderPreview();
-
-      }
-
-
-      updateInfoPanel();
-
-    }
-  );
-
-
-  formationButtonsEl.appendChild(
-    randomButton
-  );
-
+  /* ---------- SIX FORMATIONS ---------- */
 
   FORMATIONS.forEach(
     function(formation) {
@@ -2902,9 +3019,7 @@ function initializeControls() {
         "click",
         function() {
 
-          playSound(
-            "check"
-          );
+          playMenuClick();
 
 
           playerFormationChoice =
@@ -2917,15 +3032,7 @@ function initializeControls() {
 
           refreshFormationButtons();
 
-
-          if (
-            !gameStarted
-          ) {
-
-            renderPreview();
-
-          }
-
+          refreshPreviewAfterSetupChange();
 
           updateInfoPanel();
 
@@ -2967,13 +3074,50 @@ function initializeControls() {
   );
 
 
+  /* ---------- RANDOM FORMATION ---------- */
+
+  randomFormationBtn.dataset.code =
+    "RANDOM";
+
+
+  attachFormationTooltip(
+    randomFormationBtn,
+    "RANDOM"
+  );
+
+
+  randomFormationBtn.addEventListener(
+    "click",
+    function() {
+
+      playMenuClick();
+
+
+      playerFormationChoice =
+        "RANDOM";
+
+
+      previewPlayerFormation =
+        randomFormation();
+
+
+      refreshFormationButtons();
+
+      refreshPreviewAfterSetupChange();
+
+      updateInfoPanel();
+
+    }
+  );
+
+
+  /* ---------- COMPUTER FORMATION ---------- */
+
   computerFormationSelect.addEventListener(
     "change",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       computerFormationChoice =
@@ -2990,14 +3134,7 @@ function initializeControls() {
           : computerFormationChoice;
 
 
-      if (
-        !gameStarted
-      ) {
-
-        renderPreview();
-
-      }
-
+      refreshPreviewAfterSetupChange();
 
       updateInfoPanel();
 
@@ -3005,13 +3142,13 @@ function initializeControls() {
   );
 
 
+  /* ---------- COLOR ---------- */
+
   playWhiteBtn.addEventListener(
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       playerColorChoice =
@@ -3024,15 +3161,7 @@ function initializeControls() {
 
       refreshSideButtons();
 
-
-      if (
-        !gameStarted
-      ) {
-
-        renderPreview();
-
-      }
-
+      refreshPreviewAfterSetupChange();
 
       updateInfoPanel();
 
@@ -3044,9 +3173,7 @@ function initializeControls() {
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       playerColorChoice =
@@ -3059,15 +3186,7 @@ function initializeControls() {
 
       refreshSideButtons();
 
-
-      if (
-        !gameStarted
-      ) {
-
-        renderPreview();
-
-      }
-
+      refreshPreviewAfterSetupChange();
 
       updateInfoPanel();
 
@@ -3079,9 +3198,7 @@ function initializeControls() {
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       playerColorChoice =
@@ -3094,21 +3211,15 @@ function initializeControls() {
 
       refreshSideButtons();
 
-
-      if (
-        !gameStarted
-      ) {
-
-        renderPreview();
-
-      }
-
+      refreshPreviewAfterSetupChange();
 
       updateInfoPanel();
 
     }
   );
 
+
+  /* ---------- DIFFICULTY ---------- */
 
   attachDifficultyTooltip(
     difficultyCasual,
@@ -3138,9 +3249,7 @@ function initializeControls() {
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       difficultyKey =
@@ -3161,9 +3270,7 @@ function initializeControls() {
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       difficultyKey =
@@ -3184,9 +3291,7 @@ function initializeControls() {
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       difficultyKey =
@@ -3207,9 +3312,7 @@ function initializeControls() {
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
+      playMenuClick();
 
 
       difficultyKey =
@@ -3225,6 +3328,8 @@ function initializeControls() {
     }
   );
 
+
+  /* ---------- SOUND ---------- */
 
   soundButton.addEventListener(
     "click",
@@ -3253,9 +3358,7 @@ function initializeControls() {
         soundEnabled
       ) {
 
-        playSound(
-          "check"
-        );
+        playMenuClick();
 
       }
 
@@ -3263,14 +3366,13 @@ function initializeControls() {
   );
 
 
+  /* ---------- GAME BUTTONS ---------- */
+
   newGameBtn.addEventListener(
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
-
+      playMenuClick();
 
       hideTooltip();
 
@@ -3280,14 +3382,25 @@ function initializeControls() {
   );
 
 
+  endGameBtn.addEventListener(
+    "click",
+    function() {
+
+      playMenuClick();
+
+      hideTooltip();
+
+      endCurrentGame();
+
+    }
+  );
+
+
   resetBtn.addEventListener(
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
-
+      playMenuClick();
 
       hideTooltip();
 
@@ -3297,14 +3410,13 @@ function initializeControls() {
   );
 
 
+  /* ---------- PROMOTION ---------- */
+
   promotionCancel.addEventListener(
     "click",
     function() {
 
-      playSound(
-        "check"
-      );
-
+      playMenuClick();
 
       cancelPromotion();
 
@@ -3377,9 +3489,7 @@ function initializeControls() {
         "click",
         function() {
 
-          playSound(
-            "check"
-          );
+          playMenuClick();
 
 
           choosePromotion(
@@ -3422,6 +3532,13 @@ function refreshFormationButtons() {
 
       }
     );
+
+
+  randomFormationBtn.classList.toggle(
+    "active",
+    playerFormationChoice ===
+    "RANDOM"
+  );
 
 }
 
@@ -3511,11 +3628,31 @@ function refreshDifficultyButtons() {
 
 function renderPreview() {
 
+  clearEngineMoveTimer();
+
+
+  engine.postMessage(
+    "stop"
+  );
+
+
+  engineThinking =
+    false;
+
+
   gameStarted =
     false;
 
 
   actualPlayerColor =
+    null;
+
+
+  actualPlayerFormation =
+    null;
+
+
+  actualComputerFormation =
     null;
 
 
@@ -3583,6 +3720,8 @@ function renderPreview() {
     );
 
 
+  refreshFormationButtons();
+
   refreshSideButtons();
 
   drawBoard();
@@ -3590,6 +3729,8 @@ function renderPreview() {
   renderMoveList();
 
   updateCapturedPieces();
+
+  updateInfoPanel();
 
 
   const previewText =
@@ -3639,7 +3780,7 @@ function renderPreview() {
 
 
 /* ===================================================== */
-/* GAME START                                            */
+/* GAME START / END                                      */
 /* ===================================================== */
 
 function resolvePlayerFormation() {
@@ -3754,7 +3895,73 @@ function resetCurrentGame() {
 }
 
 
+function endCurrentGame() {
+
+  clearEngineMoveTimer();
+
+
+  engine.postMessage(
+    "stop"
+  );
+
+
+  engineThinking =
+    false;
+
+
+  selectedSquare =
+    null;
+
+
+  legalMoves =
+    [];
+
+
+  promotionPending =
+    null;
+
+
+  hidePromotion();
+
+  clearCaptureToast();
+
+
+  /*
+    If the player selected Random while the game
+    was active, create a fresh preview formation.
+  */
+
+  if (
+    playerFormationChoice ===
+    "RANDOM"
+  ) {
+
+    previewPlayerFormation =
+      randomFormation();
+
+  }
+
+
+  if (
+    computerFormationChoice ===
+    "RANDOM"
+  ) {
+
+    previewComputerFormation =
+      randomFormation();
+
+  }
+
+
+  renderPreview();
+
+}
+
+
 function beginGame() {
+
+  clearEngineMoveTimer();
+
 
   engine.postMessage(
     "stop"
@@ -3831,6 +4038,8 @@ function beginGame() {
 
   applyDifficulty();
 
+  refreshFormationButtons();
+
   refreshSideButtons();
 
   drawBoard();
@@ -3899,10 +4108,7 @@ function beginGame() {
     playerColor
   ) {
 
-    setTimeout(
-      requestEngineMove,
-      300
-    );
+    scheduleEngineMove();
 
   }
 
@@ -4040,6 +4246,10 @@ function drawBoard() {
 
       square.className =
         "square";
+
+
+      square.dataset.square =
+        squareName;
 
 
       square.classList.add(
@@ -4234,6 +4444,148 @@ function drawBoard() {
 
 
 /* ===================================================== */
+/* INVALID MOVE ANIMATION                                */
+/* ===================================================== */
+
+function animateInvalidMove(
+  fromSquare,
+  toSquare
+) {
+
+  const fromEl =
+    boardEl.querySelector(
+      `[data-square="${fromSquare}"]`
+    );
+
+
+  const toEl =
+    boardEl.querySelector(
+      `[data-square="${toSquare}"]`
+    );
+
+
+  if (
+    !fromEl ||
+    !toEl
+  ) {
+
+    playSound(
+      "invalid"
+    );
+
+
+    return;
+
+  }
+
+
+  const pieceImage =
+    fromEl.querySelector(
+      ".piece"
+    );
+
+
+  if (
+    !pieceImage
+  ) {
+
+    playSound(
+      "invalid"
+    );
+
+
+    return;
+
+  }
+
+
+  const fromRect =
+    fromEl.getBoundingClientRect();
+
+
+  const toRect =
+    toEl.getBoundingClientRect();
+
+
+  const deltaX =
+
+    (
+      toRect.left +
+      toRect.width /
+      2
+    ) -
+
+    (
+      fromRect.left +
+      fromRect.width /
+      2
+    );
+
+
+  const deltaY =
+
+    (
+      toRect.top +
+      toRect.height /
+      2
+    ) -
+
+    (
+      fromRect.top +
+      fromRect.height /
+      2
+    );
+
+
+  playSound(
+    "invalid"
+  );
+
+
+  pieceImage.animate(
+
+    [
+
+      {
+        transform:
+          "translate(0px, 0px)"
+      },
+
+      {
+        transform:
+          `translate(${deltaX}px, ${deltaY}px)`,
+        offset:.48
+      },
+
+      {
+        transform:
+          `translate(${deltaX}px, ${deltaY}px)`,
+        offset:.58
+      },
+
+      {
+        transform:
+          "translate(0px, 0px)"
+      }
+
+    ],
+
+    {
+
+      duration:360,
+
+      easing:
+        "ease-in-out"
+
+    }
+
+  );
+
+}
+
+
+
+/* ===================================================== */
 /* PLAYER MOVES                                          */
 /* ===================================================== */
 
@@ -4327,15 +4679,10 @@ function handleSquareClick(
     }
 
 
-    selectedSquare =
-      null;
-
-
-    legalMoves =
-      [];
-
-
-    drawBoard();
+    animateInvalidMove(
+      selectedSquare,
+      squareName
+    );
 
 
     return;
@@ -4504,6 +4851,11 @@ function completePlayerMove(
       !move
     ) {
 
+      playSound(
+        "invalid"
+      );
+
+
       return;
 
     }
@@ -4532,10 +4884,7 @@ function completePlayerMove(
       !game.isGameOver()
     ) {
 
-      setTimeout(
-        requestEngineMove,
-        220
-      );
+      scheduleEngineMove();
 
     }
 
@@ -4544,6 +4893,11 @@ function completePlayerMove(
   catch(
     error
   ) {
+
+    playSound(
+      "invalid"
+    );
+
 
     console.error(
       error
@@ -4566,16 +4920,16 @@ function requestEngineMove() {
     game.isGameOver()
   ) {
 
+    engineThinking =
+      false;
+
+
+    updateStatus();
+
+
     return;
 
   }
-
-
-  engineThinking =
-    true;
-
-
-  updateStatus();
 
 
   const difficulty =
@@ -4611,15 +4965,8 @@ function requestEngineMove() {
         ];
 
 
-      setTimeout(
-        function() {
-
-          playCasualRandomMove(
-            randomMove
-          );
-
-        },
-        250
+      playCasualRandomMove(
+        randomMove
       );
 
 
@@ -5780,6 +6127,20 @@ function(event) {
     const move =
       message
         .split(" ")[1];
+
+
+    /*
+      Ignore a late Stockfish response if the
+      player has already ended the game.
+    */
+
+    if (
+      !gameStarted
+    ) {
+
+      return;
+
+    }
 
 
     playEngineMove(
