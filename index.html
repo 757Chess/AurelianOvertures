@@ -797,7 +797,7 @@ th {
   .difficulty-btn {
     padding-left:3px;
     padding-right:3px;
-    font-size:11px;
+    font-size:10px;
   }
 
   #board {
@@ -999,41 +999,41 @@ th {
         <div class="difficulty-grid">
 
           <button
-            id="difficultyCasual"
+            id="difficultyRelaxed"
             class="difficulty-btn active"
             type="button">
 
-            Casual
+            Relaxed
 
           </button>
 
 
           <button
-            id="difficultyBeginner"
+            id="difficultyStandard"
             class="difficulty-btn"
             type="button">
 
-            Beginner
+            Standard
 
           </button>
 
 
           <button
-            id="difficultyIntermediate"
+            id="difficultyChallenging"
             class="difficulty-btn"
             type="button">
 
-            Medium
+            Challenging
 
           </button>
 
 
           <button
-            id="difficultyHard"
+            id="difficultyRuthless"
             class="difficulty-btn"
             type="button">
 
-            Hard
+            Ruthless
 
           </button>
 
@@ -1471,55 +1471,55 @@ const DIFFICULTY_GUIDES = {
 
   casual: {
 
-    title:"Casual",
+    title:"Relaxed",
 
     description:
-      "A relaxed opponent designed for learning, experimenting, and getting comfortable with The Aurelian Chess Overtures.",
+      "A forgiving opponent designed for experimenting with formations and enjoying a lower-pressure game.",
 
     behavior:
-      "Plays at low strength and will sometimes choose an ordinary legal move instead of the strongest move.",
+      "Uses low engine strength and will sometimes choose an ordinary legal move instead of the strongest move.",
 
     bestFor:
-      "Newer chess players, learning a formation, or playing a low-pressure game."
+      "Exploring unfamiliar positions, testing ideas, or playing without constant tactical pressure."
 
   },
 
 
   beginner: {
 
-    title:"Beginner",
+    title:"Standard",
 
     description:
-      "A more consistent opponent that still leaves plenty of opportunities for you to recognize and exploit.",
+      "A steady opponent that generally plays sensible chess while still leaving opportunities to exploit.",
 
     behavior:
-      "Generally develops sensibly but will make noticeable strategic and tactical mistakes.",
+      "Develops coherently but will make strategic and tactical mistakes that can be punished.",
 
     bestFor:
-      "Players who know the basic rules and want a fair challenge without being punished for every small error."
+      "A balanced game that offers resistance without demanding near-perfect play."
 
   },
 
 
   intermediate: {
 
-    title:"Medium",
+    title:"Challenging",
 
     description:
-      "A solid opponent that begins to demand careful play and better tactical awareness.",
+      "A stronger opponent that demands careful play and better tactical awareness.",
 
     behavior:
-      "Punishes loose pieces, spots common tactics, and develops coherent plans more consistently.",
+      "Punishes loose pieces, spots common tactics, and follows coherent plans more consistently.",
 
     bestFor:
-      "Players who want to test their formation strategy against meaningful resistance."
+      "Testing formation strategy against meaningful resistance."
 
   },
 
 
   hard: {
 
-    title:"Hard",
+    title:"Ruthless",
 
     description:
       "The strongest computer setting currently available in this version of the game.",
@@ -1528,7 +1528,7 @@ const DIFFICULTY_GUIDES = {
       "Plays much more accurately, sees tactics more reliably, and gives away very little material for free.",
 
     bestFor:
-      "Experienced players or anyone who wants the toughest test of their Aurelian strategy."
+      "Players who want the toughest available test of their strategy."
 
   }
 
@@ -1549,28 +1549,28 @@ const FORMATION_MAP =
 const DIFFICULTIES = {
 
   casual:{
-    label:"Casual",
+    label:"Relaxed",
     skill:0,
     nodes:120,
     randomMoveChance:.38
   },
 
   beginner:{
-    label:"Beginner",
+    label:"Standard",
     skill:3,
     nodes:800,
     randomMoveChance:0
   },
 
   intermediate:{
-    label:"Medium",
+    label:"Challenging",
     skill:8,
     nodes:2500,
     randomMoveChance:0
   },
 
   hard:{
-    label:"Hard",
+    label:"Ruthless",
     skill:12,
     nodes:6000,
     randomMoveChance:0
@@ -1697,7 +1697,9 @@ const SOUND_FILES = {
 
   start:"./Startgame.wav",
 
-  invalid:"./Invalidmove.wav"
+  invalid:"./Invalidmove.wav",
+
+  stacking:"./stackingpieces.wav"
 
 };
 
@@ -1782,17 +1784,17 @@ const playRandomBtn =
 const playBlackBtn =
   document.getElementById("playBlackBtn");
 
-const difficultyCasual =
-  document.getElementById("difficultyCasual");
+const difficultyRelaxed =
+  document.getElementById("difficultyRelaxed");
 
-const difficultyBeginner =
-  document.getElementById("difficultyBeginner");
+const difficultyStandard =
+  document.getElementById("difficultyStandard");
 
-const difficultyIntermediate =
-  document.getElementById("difficultyIntermediate");
+const difficultyChallenging =
+  document.getElementById("difficultyChallenging");
 
-const difficultyHard =
-  document.getElementById("difficultyHard");
+const difficultyRuthless =
+  document.getElementById("difficultyRuthless");
 
 const newGameBtn =
   document.getElementById("newGameBtn");
@@ -1889,6 +1891,9 @@ let captureToastTimer =
 
 let captureToastClearTimer =
   null;
+
+let formationAnimationTimers =
+  [];
 
 
 const engine =
@@ -2057,6 +2062,187 @@ function playSoundForMove(move) {
     );
 
   }
+
+}
+
+
+
+/* ===================================================== */
+/* FORMATION ASSEMBLY ANIMATION                          */
+/* ===================================================== */
+
+function clearFormationAnimationTimers() {
+
+  formationAnimationTimers.forEach(
+    timer => {
+
+      clearTimeout(
+        timer
+      );
+
+    }
+  );
+
+
+  formationAnimationTimers =
+    [];
+
+}
+
+
+function animateFormationAssembly() {
+
+  if (
+    gameStarted
+  ) {
+
+    return;
+
+  }
+
+
+  clearFormationAnimationTimers();
+
+
+  const rank =
+
+    playerColor ===
+    "w"
+
+      ? "1"
+
+      : "8";
+
+
+  const squares = [
+    "a" + rank,
+    "b" + rank,
+    "c" + rank,
+    "f" + rank,
+    "g" + rank,
+    "h" + rank
+  ];
+
+
+  const pieceImages =
+    [];
+
+
+  squares.forEach(
+    squareName => {
+
+      const square =
+        boardEl.querySelector(
+          `[data-square="${squareName}"]`
+        );
+
+
+      if (
+        !square
+      ) {
+
+        return;
+
+      }
+
+
+      const pieceImage =
+        square.querySelector(
+          ".piece"
+        );
+
+
+      if (
+        pieceImage
+      ) {
+
+        pieceImage.style.opacity =
+          "0";
+
+
+        pieceImage.style.transform =
+          "translateY(-18px) scale(.9)";
+
+
+        pieceImages.push(
+          pieceImage
+        );
+
+      }
+
+    }
+  );
+
+
+  playSound(
+    "stacking"
+  );
+
+
+  pieceImages.forEach(
+    (
+      pieceImage,
+      index
+    ) => {
+
+      const timer =
+        setTimeout(
+          () => {
+
+            pieceImage.style.opacity =
+              "1";
+
+
+            pieceImage.animate(
+
+              [
+
+                {
+                  opacity:0,
+                  transform:
+                    "translateY(-18px) scale(.9)"
+                },
+
+                {
+                  opacity:1,
+                  transform:
+                    "translateY(3px) scale(1.03)",
+                  offset:.78
+                },
+
+                {
+                  opacity:1,
+                  transform:
+                    "translateY(0px) scale(1)"
+                }
+
+              ],
+
+              {
+
+                duration:145,
+
+                easing:
+                  "ease-out",
+
+                fill:
+                  "forwards"
+
+              }
+
+            );
+
+          },
+          index * 75
+        );
+
+
+      formationAnimationTimers.push(
+        timer
+      );
+
+    }
+  );
 
 }
 
@@ -2950,13 +3136,32 @@ function shouldReturnToPreview() {
 }
 
 
-function refreshPreviewAfterSetupChange() {
+function refreshPreviewAfterSetupChange(
+  animateFormation = false
+) {
 
   if (
     shouldReturnToPreview()
   ) {
 
     renderPreview();
+
+
+    if (
+      animateFormation
+    ) {
+
+      requestAnimationFrame(
+        () => {
+
+          requestAnimationFrame(
+            animateFormationAssembly
+          );
+
+        }
+      );
+
+    }
 
   }
 
@@ -3032,7 +3237,11 @@ function initializeControls() {
 
           refreshFormationButtons();
 
-          refreshPreviewAfterSetupChange();
+
+          refreshPreviewAfterSetupChange(
+            true
+          );
+
 
           updateInfoPanel();
 
@@ -3103,7 +3312,11 @@ function initializeControls() {
 
       refreshFormationButtons();
 
-      refreshPreviewAfterSetupChange();
+
+      refreshPreviewAfterSetupChange(
+        true
+      );
+
 
       updateInfoPanel();
 
@@ -3222,30 +3435,30 @@ function initializeControls() {
   /* ---------- DIFFICULTY ---------- */
 
   attachDifficultyTooltip(
-    difficultyCasual,
+    difficultyRelaxed,
     "casual"
   );
 
 
   attachDifficultyTooltip(
-    difficultyBeginner,
+    difficultyStandard,
     "beginner"
   );
 
 
   attachDifficultyTooltip(
-    difficultyIntermediate,
+    difficultyChallenging,
     "intermediate"
   );
 
 
   attachDifficultyTooltip(
-    difficultyHard,
+    difficultyRuthless,
     "hard"
   );
 
 
-  difficultyCasual.addEventListener(
+  difficultyRelaxed.addEventListener(
     "click",
     function() {
 
@@ -3266,7 +3479,7 @@ function initializeControls() {
   );
 
 
-  difficultyBeginner.addEventListener(
+  difficultyStandard.addEventListener(
     "click",
     function() {
 
@@ -3287,7 +3500,7 @@ function initializeControls() {
   );
 
 
-  difficultyIntermediate.addEventListener(
+  difficultyChallenging.addEventListener(
     "click",
     function() {
 
@@ -3308,7 +3521,7 @@ function initializeControls() {
   );
 
 
-  difficultyHard.addEventListener(
+  difficultyRuthless.addEventListener(
     "click",
     function() {
 
@@ -3591,28 +3804,28 @@ function refreshSideButtons() {
 
 function refreshDifficultyButtons() {
 
-  difficultyCasual.classList.toggle(
+  difficultyRelaxed.classList.toggle(
     "active",
     difficultyKey ===
     "casual"
   );
 
 
-  difficultyBeginner.classList.toggle(
+  difficultyStandard.classList.toggle(
     "active",
     difficultyKey ===
     "beginner"
   );
 
 
-  difficultyIntermediate.classList.toggle(
+  difficultyChallenging.classList.toggle(
     "active",
     difficultyKey ===
     "intermediate"
   );
 
 
-  difficultyHard.classList.toggle(
+  difficultyRuthless.classList.toggle(
     "active",
     difficultyKey ===
     "hard"
@@ -3627,6 +3840,8 @@ function refreshDifficultyButtons() {
 /* ===================================================== */
 
 function renderPreview() {
+
+  clearFormationAnimationTimers();
 
   clearEngineMoveTimer();
 
@@ -3897,6 +4112,8 @@ function resetCurrentGame() {
 
 function endCurrentGame() {
 
+  clearFormationAnimationTimers();
+
   clearEngineMoveTimer();
 
 
@@ -3954,6 +4171,8 @@ function endCurrentGame() {
 
 
 function beginGame() {
+
+  clearFormationAnimationTimers();
 
   clearEngineMoveTimer();
 
