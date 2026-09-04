@@ -454,11 +454,11 @@ select {
 .piece {
   position:relative;
   z-index:2;
-  width:82%;
-  height:82%;
+  width:92%;
+  height:92%;
   object-fit:contain;
   pointer-events:none;
-  filter:drop-shadow(0 1px 1px rgba(0,0,0,.15));
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));
 }
 
 .coordinate {
@@ -663,6 +663,7 @@ th {
   width:55px;
   height:55px;
   margin:0 auto 3px;
+  object-fit:contain;
 }
 
 .promotion-option span {
@@ -1627,41 +1628,19 @@ const PIECE_NAMES = {
 
 const PIECE_IMAGES = {
 
-  wp:
-    "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg",
+  wp:"./wP.png",
+  wr:"./wR.png",
+  wn:"./wN.png",
+  wb:"./wB.png",
+  wq:"./wQ.png",
+  wk:"./wK.png",
 
-  wr:
-    "https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg",
-
-  wn:
-    "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg",
-
-  wb:
-    "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg",
-
-  wq:
-    "https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg",
-
-  wk:
-    "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg",
-
-  bp:
-    "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg",
-
-  br:
-    "https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg",
-
-  bn:
-    "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg",
-
-  bb:
-    "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg",
-
-  bq:
-    "https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg",
-
-  bk:
-    "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg"
+  bp:"./bP.png",
+  br:"./bR.png",
+  bn:"./bN.png",
+  bb:"./bB.png",
+  bq:"./bQ.png",
+  bk:"./bK.png"
 
 };
 
