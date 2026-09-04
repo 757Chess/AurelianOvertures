@@ -1019,11 +1019,11 @@ th {
 
 
           <button
-            id="difficultyChallenging"
+            id="difficultyFierce"
             class="difficulty-btn"
             type="button">
 
-            Challenging
+            Fierce
 
           </button>
 
@@ -1503,7 +1503,7 @@ const DIFFICULTY_GUIDES = {
 
   intermediate: {
 
-    title:"Challenging",
+    title:"Fierce",
 
     description:
       "A stronger opponent that demands careful play and better tactical awareness.",
@@ -1790,8 +1790,8 @@ const difficultyRelaxed =
 const difficultyStandard =
   document.getElementById("difficultyStandard");
 
-const difficultyChallenging =
-  document.getElementById("difficultyChallenging");
+const difficultyFierce =
+  document.getElementById("difficultyFierce");
 
 const difficultyRuthless =
   document.getElementById("difficultyRuthless");
@@ -2068,7 +2068,7 @@ function playSoundForMove(move) {
 
 
 /* ===================================================== */
-/* FORMATION ASSEMBLY ANIMATION                          */
+/* FORMATION ASSEMBLY                                    */
 /* ===================================================== */
 
 function clearFormationAnimationTimers() {
@@ -2090,7 +2090,7 @@ function clearFormationAnimationTimers() {
 }
 
 
-function animateFormationAssembly() {
+function animateFormationAssembly(side) {
 
   if (
     gameStarted
@@ -2104,9 +2104,26 @@ function animateFormationAssembly() {
   clearFormationAnimationTimers();
 
 
+  const targetColor =
+
+    side ===
+    "computer"
+
+      ? (
+          playerColor ===
+          "w"
+
+            ? "b"
+
+            : "w"
+        )
+
+      : playerColor;
+
+
   const rank =
 
-    playerColor ===
+    targetColor ===
     "w"
 
       ? "1"
@@ -2115,12 +2132,14 @@ function animateFormationAssembly() {
 
 
   const squares = [
+
     "a" + rank,
     "b" + rank,
     "c" + rank,
     "f" + rank,
     "g" + rank,
     "h" + rank
+
   ];
 
 
@@ -3137,7 +3156,7 @@ function shouldReturnToPreview() {
 
 
 function refreshPreviewAfterSetupChange(
-  animateFormation = false
+  animateSide = null
 ) {
 
   if (
@@ -3148,14 +3167,20 @@ function refreshPreviewAfterSetupChange(
 
 
     if (
-      animateFormation
+      animateSide
     ) {
 
       requestAnimationFrame(
         () => {
 
           requestAnimationFrame(
-            animateFormationAssembly
+            () => {
+
+              animateFormationAssembly(
+                animateSide
+              );
+
+            }
           );
 
         }
@@ -3175,8 +3200,6 @@ function refreshPreviewAfterSetupChange(
 
 function initializeControls() {
 
-
-  /* ---------- SIX FORMATIONS ---------- */
 
   FORMATIONS.forEach(
     function(formation) {
@@ -3239,7 +3262,7 @@ function initializeControls() {
 
 
           refreshPreviewAfterSetupChange(
-            true
+            "player"
           );
 
 
@@ -3283,8 +3306,6 @@ function initializeControls() {
   );
 
 
-  /* ---------- RANDOM FORMATION ---------- */
-
   randomFormationBtn.dataset.code =
     "RANDOM";
 
@@ -3314,7 +3335,7 @@ function initializeControls() {
 
 
       refreshPreviewAfterSetupChange(
-        true
+        "player"
       );
 
 
@@ -3323,8 +3344,6 @@ function initializeControls() {
     }
   );
 
-
-  /* ---------- COMPUTER FORMATION ---------- */
 
   computerFormationSelect.addEventListener(
     "change",
@@ -3347,15 +3366,16 @@ function initializeControls() {
           : computerFormationChoice;
 
 
-      refreshPreviewAfterSetupChange();
+      refreshPreviewAfterSetupChange(
+        "computer"
+      );
+
 
       updateInfoPanel();
 
     }
   );
 
-
-  /* ---------- COLOR ---------- */
 
   playWhiteBtn.addEventListener(
     "click",
@@ -3432,8 +3452,6 @@ function initializeControls() {
   );
 
 
-  /* ---------- DIFFICULTY ---------- */
-
   attachDifficultyTooltip(
     difficultyRelaxed,
     "casual"
@@ -3447,7 +3465,7 @@ function initializeControls() {
 
 
   attachDifficultyTooltip(
-    difficultyChallenging,
+    difficultyFierce,
     "intermediate"
   );
 
@@ -3464,10 +3482,8 @@ function initializeControls() {
 
       playMenuClick();
 
-
       difficultyKey =
         "casual";
-
 
       refreshDifficultyButtons();
 
@@ -3485,10 +3501,8 @@ function initializeControls() {
 
       playMenuClick();
 
-
       difficultyKey =
         "beginner";
-
 
       refreshDifficultyButtons();
 
@@ -3500,16 +3514,14 @@ function initializeControls() {
   );
 
 
-  difficultyChallenging.addEventListener(
+  difficultyFierce.addEventListener(
     "click",
     function() {
 
       playMenuClick();
 
-
       difficultyKey =
         "intermediate";
-
 
       refreshDifficultyButtons();
 
@@ -3527,10 +3539,8 @@ function initializeControls() {
 
       playMenuClick();
 
-
       difficultyKey =
         "hard";
-
 
       refreshDifficultyButtons();
 
@@ -3541,8 +3551,6 @@ function initializeControls() {
     }
   );
 
-
-  /* ---------- SOUND ---------- */
 
   soundButton.addEventListener(
     "click",
@@ -3578,8 +3586,6 @@ function initializeControls() {
     }
   );
 
-
-  /* ---------- GAME BUTTONS ---------- */
 
   newGameBtn.addEventListener(
     "click",
@@ -3622,8 +3628,6 @@ function initializeControls() {
     }
   );
 
-
-  /* ---------- PROMOTION ---------- */
 
   promotionCancel.addEventListener(
     "click",
@@ -3818,7 +3822,7 @@ function refreshDifficultyButtons() {
   );
 
 
-  difficultyChallenging.classList.toggle(
+  difficultyFierce.classList.toggle(
     "active",
     difficultyKey ===
     "intermediate"
