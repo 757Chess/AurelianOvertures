@@ -133,8 +133,14 @@ h1 {
 }
 
 button,
-select {
+select,
+textarea,
+input {
   font:inherit;
+}
+
+button,
+select {
   touch-action:manipulation;
 }
 
@@ -142,7 +148,8 @@ select {
 .side-btn,
 .difficulty-btn,
 .action-btn,
-.sound-btn {
+.sound-btn,
+.feedback-btn {
   border:1px solid var(--button-border);
   background:var(--button);
   border-radius:9px;
@@ -209,7 +216,8 @@ button:hover {
 .side-btn,
 .difficulty-btn,
 .action-btn,
-.sound-btn {
+.sound-btn,
+.feedback-btn {
   padding:8px 7px;
 }
 
@@ -248,6 +256,12 @@ select {
 
 .primary:hover {
   background:var(--green-hover);
+}
+
+.feedback-btn {
+  width:100%;
+  margin-top:8px;
+  background:#fff;
 }
 
 
@@ -532,6 +546,11 @@ select {
   color:var(--green);
 }
 
+
+/* ===================================================== */
+/* GENERAL BOXES                                         */
+/* ===================================================== */
+
 .box {
   padding:9px 10px;
   background:#faf8f4;
@@ -719,6 +738,175 @@ th {
 
 
 /* ===================================================== */
+/* FEEDBACK MODAL                                        */
+/* ===================================================== */
+
+.feedback-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.42);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1100;
+  padding:18px;
+}
+
+.feedback-overlay.visible {
+  display:flex;
+}
+
+.feedback-card {
+  width:520px;
+  max-width:100%;
+  background:#fffdf9;
+  border:1px solid #d8d1c5;
+  border-radius:16px;
+  box-shadow:0 18px 60px rgba(0,0,0,.26);
+  padding:22px;
+  position:relative;
+}
+
+.feedback-close {
+  position:absolute;
+  right:12px;
+  top:10px;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  font-size:25px;
+  line-height:1;
+  color:#777;
+  padding:4px 7px;
+}
+
+.feedback-close:hover {
+  background:transparent;
+  color:#222;
+}
+
+.feedback-card h2 {
+  margin:0 34px 6px 0;
+  font-size:23px;
+}
+
+.feedback-intro {
+  margin:0 0 17px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+.feedback-field {
+  margin-bottom:12px;
+}
+
+.feedback-field label {
+  display:block;
+  margin-bottom:5px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.feedback-field input,
+.feedback-field textarea {
+  width:100%;
+  border:1px solid #cec5b8;
+  border-radius:9px;
+  padding:10px;
+  background:#fff;
+  color:var(--text);
+  outline:none;
+}
+
+.feedback-field input:focus,
+.feedback-field textarea:focus {
+  border-color:var(--green);
+  box-shadow:0 0 0 2px rgba(53,92,77,.12);
+}
+
+.feedback-field textarea {
+  min-height:170px;
+  resize:vertical;
+  line-height:1.4;
+}
+
+.feedback-actions {
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:15px;
+}
+
+.feedback-cancel,
+.feedback-submit,
+.feedback-done {
+  padding:9px 14px;
+  border-radius:9px;
+  cursor:pointer;
+  border:1px solid var(--button-border);
+}
+
+.feedback-cancel {
+  background:#fff;
+}
+
+.feedback-submit,
+.feedback-done {
+  background:var(--green);
+  color:#fff;
+  border-color:var(--green);
+}
+
+.feedback-submit:hover,
+.feedback-done:hover {
+  background:var(--green-hover);
+}
+
+.feedback-submit:disabled {
+  opacity:.6;
+  cursor:wait;
+}
+
+.feedback-status {
+  min-height:18px;
+  margin-top:9px;
+  font-size:12px;
+  color:#a53d35;
+}
+
+.feedback-success {
+  display:none;
+  text-align:center;
+  padding:18px 4px 4px;
+}
+
+.feedback-success.visible {
+  display:block;
+}
+
+.feedback-success-icon {
+  font-size:34px;
+  margin-bottom:6px;
+}
+
+.feedback-success h3 {
+  margin:0 0 6px;
+  font-size:20px;
+}
+
+.feedback-success p {
+  margin:0 0 17px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.feedback-form.hidden {
+  display:none;
+}
+
+
+/* ===================================================== */
 /* TABLET                                                */
 /* ===================================================== */
 
@@ -824,7 +1012,8 @@ th {
   .side-btn,
   .difficulty-btn,
   .action-btn,
-  .sound-btn {
+  .sound-btn,
+  .feedback-btn {
     min-height:40px;
   }
 
@@ -878,6 +1067,14 @@ th {
     transform:translateX(-50%);
     max-height:45vh;
     overflow:auto;
+  }
+
+  .feedback-card {
+    padding:18px;
+  }
+
+  .feedback-field textarea {
+    min-height:145px;
   }
 
 }
@@ -1141,6 +1338,16 @@ th {
       </div>
 
 
+      <button
+        id="feedbackButton"
+        class="feedback-btn"
+        type="button">
+
+        💬 Send Feedback
+
+      </button>
+
+
       <div class="small-note">
 
         Hover or tap formations and difficulty settings for guidance.
@@ -1402,6 +1609,168 @@ th {
       Cancel
 
     </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- FEEDBACK -->
+
+<div
+  id="feedbackOverlay"
+  class="feedback-overlay">
+
+  <div class="feedback-card">
+
+    <button
+      id="feedbackClose"
+      class="feedback-close"
+      type="button"
+      aria-label="Close feedback form">
+
+      ×
+
+    </button>
+
+
+    <div
+      id="feedbackFormWrap"
+      class="feedback-form">
+
+      <h2>
+        Send Feedback
+      </h2>
+
+
+      <p class="feedback-intro">
+
+        Unfiltered thoughts welcome. What worked? What didn’t?
+        What confused you? What would you change?
+
+      </p>
+
+
+      <form id="feedbackForm">
+
+        <div class="feedback-field">
+
+          <label for="feedbackMessage">
+            Your feedback
+          </label>
+
+
+          <textarea
+            id="feedbackMessage"
+            name="message"
+            required
+            placeholder="Type whatever is on your mind..."></textarea>
+
+        </div>
+
+
+        <div class="feedback-field">
+
+          <label for="feedbackName">
+            Name — optional
+          </label>
+
+
+          <input
+            id="feedbackName"
+            name="name"
+            type="text"
+            placeholder="Your name">
+
+        </div>
+
+
+        <div class="feedback-field">
+
+          <label for="feedbackEmail">
+            Email — optional
+          </label>
+
+
+          <input
+            id="feedbackEmail"
+            name="email"
+            type="email"
+            placeholder="you@example.com">
+
+        </div>
+
+
+        <input
+          type="hidden"
+          name="_subject"
+          value="Aurelian Overtures Feedback">
+
+
+        <div class="feedback-actions">
+
+          <button
+            id="feedbackCancel"
+            class="feedback-cancel"
+            type="button">
+
+            Cancel
+
+          </button>
+
+
+          <button
+            id="feedbackSubmit"
+            class="feedback-submit"
+            type="submit">
+
+            Send Feedback
+
+          </button>
+
+        </div>
+
+
+        <div
+          id="feedbackStatus"
+          class="feedback-status">
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <div
+      id="feedbackSuccess"
+      class="feedback-success">
+
+      <div class="feedback-success-icon">
+        ✓
+      </div>
+
+
+      <h3>
+        Thanks — feedback received.
+      </h3>
+
+
+      <p>
+        Your thoughts have been sent.
+      </p>
+
+
+      <button
+        id="feedbackDone"
+        class="feedback-done"
+        type="button">
+
+        Back to the Game
+
+      </button>
+
+    </div>
 
   </div>
 
@@ -1862,6 +2231,39 @@ const promotionOptions =
 
 const promotionCancel =
   document.getElementById("promotionCancel");
+
+const feedbackButton =
+  document.getElementById("feedbackButton");
+
+const feedbackOverlay =
+  document.getElementById("feedbackOverlay");
+
+const feedbackClose =
+  document.getElementById("feedbackClose");
+
+const feedbackCancel =
+  document.getElementById("feedbackCancel");
+
+const feedbackDone =
+  document.getElementById("feedbackDone");
+
+const feedbackForm =
+  document.getElementById("feedbackForm");
+
+const feedbackFormWrap =
+  document.getElementById("feedbackFormWrap");
+
+const feedbackSuccess =
+  document.getElementById("feedbackSuccess");
+
+const feedbackStatus =
+  document.getElementById("feedbackStatus");
+
+const feedbackSubmit =
+  document.getElementById("feedbackSubmit");
+
+const feedbackMessage =
+  document.getElementById("feedbackMessage");
 
 
 
@@ -6329,6 +6731,350 @@ function updateInfoPanel() {
     "</div>";
 
 }
+
+
+
+/* ===================================================== */
+/* FEEDBACK                                              */
+/* ===================================================== */
+
+const FORMSPREE_ENDPOINT =
+  "https://formspree.io/f/moeqnajk";
+
+
+function openFeedback() {
+
+  playMenuClick();
+
+  hideTooltip();
+
+
+  feedbackStatus.textContent =
+    "";
+
+
+  feedbackFormWrap.classList.remove(
+    "hidden"
+  );
+
+
+  feedbackSuccess.classList.remove(
+    "visible"
+  );
+
+
+  feedbackOverlay.classList.add(
+    "visible"
+  );
+
+
+  setTimeout(
+    () => {
+
+      feedbackMessage.focus();
+
+    },
+    80
+  );
+
+}
+
+
+function closeFeedback() {
+
+  feedbackOverlay.classList.remove(
+    "visible"
+  );
+
+}
+
+
+function resetFeedbackForm() {
+
+  feedbackForm.reset();
+
+
+  feedbackStatus.textContent =
+    "";
+
+
+  feedbackSubmit.disabled =
+    false;
+
+
+  feedbackSubmit.textContent =
+    "Send Feedback";
+
+
+  feedbackFormWrap.classList.remove(
+    "hidden"
+  );
+
+
+  feedbackSuccess.classList.remove(
+    "visible"
+  );
+
+}
+
+
+feedbackButton.addEventListener(
+  "click",
+  function() {
+
+    openFeedback();
+
+  }
+);
+
+
+feedbackClose.addEventListener(
+  "click",
+  function() {
+
+    playMenuClick();
+
+    closeFeedback();
+
+  }
+);
+
+
+feedbackCancel.addEventListener(
+  "click",
+  function() {
+
+    playMenuClick();
+
+    closeFeedback();
+
+  }
+);
+
+
+feedbackDone.addEventListener(
+  "click",
+  function() {
+
+    playMenuClick();
+
+    closeFeedback();
+
+    resetFeedbackForm();
+
+  }
+);
+
+
+feedbackOverlay.addEventListener(
+  "click",
+  function(event) {
+
+    if (
+      event.target ===
+      feedbackOverlay
+    ) {
+
+      closeFeedback();
+
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key ===
+      "Escape" &&
+      feedbackOverlay.classList.contains(
+        "visible"
+      )
+    ) {
+
+      closeFeedback();
+
+    }
+
+  }
+);
+
+
+feedbackForm.addEventListener(
+  "submit",
+  async function(event) {
+
+    event.preventDefault();
+
+
+    feedbackStatus.textContent =
+      "";
+
+
+    feedbackSubmit.disabled =
+      true;
+
+
+    feedbackSubmit.textContent =
+      "Sending...";
+
+
+    const formData =
+      new FormData(
+        feedbackForm
+      );
+
+
+    formData.append(
+      "page",
+      window.location.href
+    );
+
+
+    if (
+      gameStarted
+    ) {
+
+      formData.append(
+        "player_formation",
+        actualPlayerFormation ||
+        ""
+      );
+
+
+      formData.append(
+        "computer_formation",
+        actualComputerFormation ||
+        ""
+      );
+
+
+      formData.append(
+        "difficulty",
+        DIFFICULTIES[
+          difficultyKey
+        ].label
+      );
+
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          FORMSPREE_ENDPOINT,
+          {
+
+            method:"POST",
+
+            body:formData,
+
+            headers:{
+              "Accept":
+                "application/json"
+            }
+
+          }
+        );
+
+
+      if (
+        response.ok
+      ) {
+
+        feedbackFormWrap.classList.add(
+          "hidden"
+        );
+
+
+        feedbackSuccess.classList.add(
+          "visible"
+        );
+
+
+        feedbackForm.reset();
+
+      }
+
+      else {
+
+        let message =
+          "Something went wrong. Please try again.";
+
+
+        try {
+
+          const data =
+            await response.json();
+
+
+          if (
+            data.errors &&
+            data.errors.length
+          ) {
+
+            message =
+              data.errors
+                .map(
+                  error =>
+                    error.message
+                )
+                .join(" ");
+
+          }
+
+        }
+
+        catch(
+          error
+        ) {
+
+        }
+
+
+        feedbackStatus.textContent =
+          message;
+
+
+        feedbackSubmit.disabled =
+          false;
+
+
+        feedbackSubmit.textContent =
+          "Send Feedback";
+
+      }
+
+    }
+
+    catch(
+      error
+    ) {
+
+      feedbackStatus.textContent =
+        "Unable to send right now. Please check your connection and try again.";
+
+
+      feedbackSubmit.disabled =
+        false;
+
+
+      feedbackSubmit.textContent =
+        "Send Feedback";
+
+
+      console.error(
+        error
+      );
+
+    }
+
+  }
+);
 
 
 
