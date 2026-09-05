@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The Aurelian Chess Overtures</title>
+<title>The Aurelian Overtures</title>
 
 <style>
 
@@ -64,7 +64,7 @@ h1 {
 
 .app {
   display:grid;
-  grid-template-columns:290px 600px 320px;
+  grid-template-columns:290px 620px 320px;
   gap:16px;
   justify-content:center;
   align-items:start;
@@ -373,11 +373,79 @@ select {
 
 .board-wrap {
   width:100%;
-  max-width:576px;
+  max-width:604px;
   margin:0 auto;
 }
 
+
+/*
+Coordinates live outside the playable board.
+*/
+
+.board-coordinate-frame {
+  width:100%;
+  display:grid;
+
+  grid-template-columns:
+    20px
+    minmax(0,576px);
+
+  grid-template-rows:
+    minmax(0,576px)
+    20px;
+
+  justify-content:center;
+  align-items:stretch;
+}
+
+
+.rank-coordinates {
+  grid-column:1;
+  grid-row:1;
+
+  display:grid;
+  grid-template-rows:repeat(8,1fr);
+
+  align-items:center;
+  justify-items:center;
+
+  font-size:11px;
+  font-weight:bold;
+  color:#4f4a43;
+}
+
+
+.file-coordinates {
+  grid-column:2;
+  grid-row:2;
+
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+
+  align-items:center;
+  justify-items:center;
+
+  font-size:11px;
+  font-weight:bold;
+  color:#4f4a43;
+}
+
+
+.coordinate-corner {
+  grid-column:1;
+  grid-row:2;
+}
+
+
+/*
+The image itself already contains the thin dark outline,
+so no additional CSS border is added here.
+*/
+
 #board {
+  grid-column:2;
+  grid-row:1;
+
   display:grid;
   grid-template-columns:repeat(8,1fr);
   grid-template-rows:repeat(8,1fr);
@@ -391,10 +459,12 @@ select {
   background-position:center;
   background-repeat:no-repeat;
 
-  border:3px solid #252525;
-  border-radius:8px;
+  border:none;
+  border-radius:0;
+
   overflow:hidden;
 }
+
 
 .square {
   position:relative;
@@ -416,8 +486,7 @@ select {
 
 
 /*
-The textured board supplies the actual light/dark square colors.
-These classes remain because other game logic already uses them.
+The board artwork supplies the actual square colors.
 */
 
 .light,
@@ -427,7 +496,7 @@ These classes remain because other game logic already uses them.
 
 
 /*
-Move highlights tint the marble rather than replacing it.
+Last-move tint keeps the marble visible underneath.
 */
 
 .last-move {
@@ -477,33 +546,8 @@ Move highlights tint the marble rather than replacing it.
 }
 
 
-.coordinate {
-  position:absolute;
-  z-index:4;
-  font-size:10px;
-  font-weight:bold;
-  opacity:.78;
-  pointer-events:none;
-
-  color:#252525;
-
-  text-shadow:
-    0 1px 1px rgba(255,255,255,.65);
-}
-
-.coord-file {
-  right:4px;
-  bottom:3px;
-}
-
-.coord-rank {
-  left:4px;
-  top:3px;
-}
-
-
 .preview-bar {
-  margin-top:8px;
+  margin-top:6px;
   min-height:31px;
   display:flex;
   justify-content:center;
@@ -712,7 +756,7 @@ th {
 @media (max-width:1240px) {
 
   .app {
-    grid-template-columns:270px minmax(0,560px) 290px;
+    grid-template-columns:270px minmax(0,580px) 290px;
   }
 
 }
@@ -825,9 +869,23 @@ th {
     font-size:10px;
   }
 
-  #board {
-    border-width:2px;
+
+  .board-coordinate-frame {
+    grid-template-columns:
+      15px
+      minmax(0,1fr);
+
+    grid-template-rows:
+      minmax(0,1fr)
+      15px;
   }
+
+
+  .rank-coordinates,
+  .file-coordinates {
+    font-size:8px;
+  }
+
 
   .selected::after,
   .check::after {
@@ -835,9 +893,6 @@ th {
     border-width:3px;
   }
 
-  .coordinate {
-    font-size:8px;
-  }
 
   .preview-bar {
     min-height:27px;
@@ -889,11 +944,12 @@ th {
 
 <div id="hoverTooltip"></div>
 
+
 <div class="page">
 
   <div class="header">
 
-    <h1>The Aurelian Chess Overtures</h1>
+    <h1>The Aurelian Overtures</h1>
 
     <p class="subtitle">
       A Strategic Chess Variant
@@ -1136,7 +1192,24 @@ th {
 
       <div class="board-wrap">
 
-        <div id="board"></div>
+        <div class="board-coordinate-frame">
+
+          <div
+            id="rankCoordinates"
+            class="rank-coordinates">
+          </div>
+
+          <div id="board"></div>
+
+          <div
+            id="fileCoordinates"
+            class="file-coordinates">
+          </div>
+
+          <div class="coordinate-corner"></div>
+
+        </div>
+
 
         <div
           id="previewBar"
@@ -1728,6 +1801,12 @@ Object.values(
 
 const boardEl =
   document.getElementById("board");
+
+const rankCoordinatesEl =
+  document.getElementById("rankCoordinates");
+
+const fileCoordinatesEl =
+  document.getElementById("fileCoordinates");
 
 const formationButtonsEl =
   document.getElementById("formationButtons");
@@ -3842,6 +3921,68 @@ function refreshDifficultyButtons() {
 
 
 /* ===================================================== */
+/* COORDINATES                                           */
+/* ===================================================== */
+
+function renderCoordinates(
+  files,
+  ranks
+) {
+
+  rankCoordinatesEl.innerHTML =
+    "";
+
+
+  fileCoordinatesEl.innerHTML =
+    "";
+
+
+  ranks.forEach(
+    rank => {
+
+      const label =
+        document.createElement(
+          "span"
+        );
+
+
+      label.textContent =
+        rank;
+
+
+      rankCoordinatesEl.appendChild(
+        label
+      );
+
+    }
+  );
+
+
+  files.forEach(
+    file => {
+
+      const label =
+        document.createElement(
+          "span"
+        );
+
+
+      label.textContent =
+        file;
+
+
+      fileCoordinatesEl.appendChild(
+        label
+      );
+
+    }
+  );
+
+}
+
+
+
+/* ===================================================== */
 /* PREVIEW                                               */
 /* ===================================================== */
 
@@ -4429,6 +4570,12 @@ function drawBoard() {
         ];
 
 
+  renderCoordinates(
+    files,
+    ranks
+  );
+
+
   const checkedSquare =
     findCheckedKingSquare();
 
@@ -4582,58 +4729,6 @@ function drawBoard() {
 
         square.appendChild(
           image
-        );
-
-      }
-
-
-      if (
-        row ===
-        7
-      ) {
-
-        const fileLabel =
-          document.createElement(
-            "span"
-          );
-
-
-        fileLabel.className =
-          "coordinate coord-file";
-
-
-        fileLabel.textContent =
-          file;
-
-
-        square.appendChild(
-          fileLabel
-        );
-
-      }
-
-
-      if (
-        column ===
-        0
-      ) {
-
-        const rankLabel =
-          document.createElement(
-            "span"
-          );
-
-
-        rankLabel.className =
-          "coordinate coord-rank";
-
-
-        rankLabel.textContent =
-          rank;
-
-
-        square.appendChild(
-          rankLabel
         );
 
       }
