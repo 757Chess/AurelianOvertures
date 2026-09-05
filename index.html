@@ -158,7 +158,8 @@ select {
   transition:
     background .15s ease,
     border-color .15s ease,
-    color .15s ease;
+    color .15s ease,
+    opacity .15s ease;
 }
 
 .choice-btn {
@@ -188,8 +189,13 @@ select {
   font-size:11px;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background:#eee9df;
+}
+
+button:disabled {
+  opacity:.48;
+  cursor:not-allowed;
 }
 
 .active {
@@ -198,7 +204,7 @@ button:hover {
   border-color:var(--green);
 }
 
-.active:hover {
+.active:hover:not(:disabled) {
   background:var(--green-hover);
 }
 
@@ -241,6 +247,7 @@ select {
   gap:6px;
 }
 
+.undo-action,
 .reset-action {
   grid-column:1 / -1;
 }
@@ -251,7 +258,7 @@ select {
   border-color:var(--green);
 }
 
-.primary:hover {
+.primary:hover:not(:disabled) {
   background:var(--green-hover);
 }
 
@@ -472,20 +479,16 @@ select {
 #board {
   grid-column:2;
   grid-row:1;
-
   display:grid;
   grid-template-columns:repeat(8,1fr);
   grid-template-rows:repeat(8,1fr);
-
   width:100%;
   max-width:576px;
   aspect-ratio:1 / 1;
-
   background-image:url("./boardtexture.png");
   background-size:100% 100%;
   background-position:center;
   background-repeat:no-repeat;
-
   border:none;
   border-radius:0;
   overflow:hidden;
@@ -497,13 +500,10 @@ select {
   height:100%;
   min-width:0;
   min-height:0;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   background:transparent;
-
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;
@@ -716,10 +716,6 @@ th {
   line-height:1.35;
 }
 
-.game-over-line:last-of-type {
-  margin-bottom:0;
-}
-
 .game-over-actions {
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -737,7 +733,7 @@ th {
   border-color:var(--green);
 }
 
-.summary-btn.primary-summary:hover {
+.summary-btn.primary-summary:hover:not(:disabled) {
   background:var(--green-hover);
 }
 
@@ -1190,18 +1186,11 @@ th {
 <div class="page">
 
   <div class="header">
-
     <h1>The Aurelian Overtures</h1>
-
-    <p class="subtitle">
-      A Strategic Chess Variant
-    </p>
-
+    <p class="subtitle">A Strategic Chess Variant</p>
   </div>
 
-
   <div class="app">
-
 
     <!-- LEFT PANEL -->
 
@@ -1209,54 +1198,32 @@ th {
 
       <div class="section">
 
-        <h2 class="panel-title">
-          Game Setup
-        </h2>
+        <h2 class="panel-title">Game Setup</h2>
 
-        <div class="label">
-          Your formation
-        </div>
+        <div class="label">Your formation</div>
 
-        <div
-          id="formationButtons"
-          class="formation-grid">
-        </div>
+        <div id="formationButtons" class="formation-grid"></div>
 
         <div class="random-formation-wrap">
-
           <button
             id="randomFormationBtn"
             class="choice-btn random-formation-btn"
             type="button">
 
-            <span class="formation-code">
-              🎲 Random Formation
-            </span>
-
-            <span class="formation-name">
-              Surprise me
-            </span>
+            <span class="formation-code">🎲 Random Formation</span>
+            <span class="formation-name">Surprise me</span>
 
           </button>
-
         </div>
 
         <div style="height:9px"></div>
 
-        <label
-          class="label"
-          for="computerFormationSelect">
-
+        <label class="label" for="computerFormationSelect">
           Computer formation
-
         </label>
 
         <select id="computerFormationSelect">
-
-          <option value="RANDOM">
-            Random formation
-          </option>
-
+          <option value="RANDOM">Random formation</option>
         </select>
 
       </div>
@@ -1264,9 +1231,7 @@ th {
 
       <div class="section">
 
-        <div class="label">
-          Play as
-        </div>
+        <div class="label">Play as</div>
 
         <div class="three-buttons">
 
@@ -1274,27 +1239,21 @@ th {
             id="playWhiteBtn"
             class="side-btn active"
             type="button">
-
             White
-
           </button>
 
           <button
             id="playRandomBtn"
             class="side-btn"
             type="button">
-
             Random
-
           </button>
 
           <button
             id="playBlackBtn"
             class="side-btn"
             type="button">
-
             Black
-
           </button>
 
         </div>
@@ -1304,9 +1263,7 @@ th {
 
       <div class="section">
 
-        <div class="label">
-          Difficulty
-        </div>
+        <div class="label">Difficulty</div>
 
         <div class="difficulty-grid">
 
@@ -1314,36 +1271,28 @@ th {
             id="difficultyRelaxed"
             class="difficulty-btn active"
             type="button">
-
             Relaxed
-
           </button>
 
           <button
             id="difficultyStandard"
             class="difficulty-btn"
             type="button">
-
             Standard
-
           </button>
 
           <button
             id="difficultyFierce"
             class="difficulty-btn"
             type="button">
-
             Fierce
-
           </button>
 
           <button
             id="difficultyRuthless"
             class="difficulty-btn"
             type="button">
-
             Ruthless
-
           </button>
 
         </div>
@@ -1353,18 +1302,14 @@ th {
 
       <div class="section">
 
-        <div class="label">
-          Sound
-        </div>
+        <div class="label">Sound</div>
 
         <button
           id="soundButton"
           class="sound-btn active"
           type="button"
           style="width:100%;">
-
           🔊 Sound On
-
         </button>
 
       </div>
@@ -1376,36 +1321,36 @@ th {
           id="newGameBtn"
           class="action-btn primary"
           type="button">
-
           Start New Game
-
         </button>
 
         <button
           id="endGameBtn"
           class="action-btn"
           type="button">
-
           End Game
+        </button>
 
+        <button
+          id="undoBtn"
+          class="action-btn undo-action"
+          type="button"
+          disabled>
+          Undo (3)
         </button>
 
         <button
           id="resetBtn"
           class="action-btn reset-action"
           type="button">
-
           Reset Current Game
-
         </button>
 
       </div>
 
 
       <div class="small-note">
-
         Hover or tap formations and difficulty settings for guidance.
-
       </div>
 
     </div>
@@ -1422,33 +1367,21 @@ th {
 
         <div class="board-coordinate-frame">
 
-          <div
-            id="rankCoordinates"
-            class="rank-coordinates">
-          </div>
+          <div id="rankCoordinates" class="rank-coordinates"></div>
 
           <div id="board"></div>
 
-          <div
-            id="fileCoordinates"
-            class="file-coordinates">
-          </div>
+          <div id="fileCoordinates" class="file-coordinates"></div>
 
           <div class="coordinate-corner"></div>
 
         </div>
 
-
-        <div
-          id="previewBar"
-          class="preview-bar">
-
+        <div id="previewBar" class="preview-bar">
           Formation preview
-
         </div>
 
       </div>
-
 
       <div id="captureToast"></div>
 
@@ -1462,24 +1395,14 @@ th {
 
       <div class="section">
 
-        <div class="label">
-          Status
-        </div>
+        <div class="label">Status</div>
 
-        <div
-          id="statusBox"
-          class="box status-box">
-
+        <div id="statusBox" class="box status-box">
           Loading Stockfish...
-
         </div>
 
-        <div
-          id="engineBox"
-          class="engine">
-
+        <div id="engineBox" class="engine">
           Engine loading...
-
         </div>
 
       </div>
@@ -1487,23 +1410,16 @@ th {
 
       <div class="section">
 
-        <div class="label">
-          Match
-        </div>
+        <div class="label">Match</div>
 
-        <div
-          id="infoBox"
-          class="box">
-        </div>
+        <div id="infoBox" class="box"></div>
 
       </div>
 
 
       <div class="section">
 
-        <div class="label">
-          Material & Captures
-        </div>
+        <div class="label">Material & Captures</div>
 
         <div class="box">
 
@@ -1513,58 +1429,32 @@ th {
               Material even
             </span>
 
-            <span
-              id="materialScore"
-              class="material-score">
-
+            <span id="materialScore" class="material-score">
               0
-
             </span>
 
           </div>
 
-
           <div class="capture-row">
 
-            <div
-              id="topCaptureTitle"
-              class="capture-label">
-
+            <div id="topCaptureTitle" class="capture-label">
               White captured
-
             </div>
 
-            <div
-              id="topCapturedPieces"
-              class="captured-pieces">
-
-              <span class="none">
-                None
-              </span>
-
+            <div id="topCapturedPieces" class="captured-pieces">
+              <span class="none">None</span>
             </div>
 
           </div>
 
-
           <div class="capture-row">
 
-            <div
-              id="bottomCaptureTitle"
-              class="capture-label">
-
+            <div id="bottomCaptureTitle" class="capture-label">
               Black captured
-
             </div>
 
-            <div
-              id="bottomCapturedPieces"
-              class="captured-pieces">
-
-              <span class="none">
-                None
-              </span>
-
+            <div id="bottomCapturedPieces" class="captured-pieces">
+              <span class="none">None</span>
             </div>
 
           </div>
@@ -1576,34 +1466,26 @@ th {
 
       <div class="section">
 
-        <div class="label">
-          Move History
-        </div>
+        <div class="label">Move History</div>
 
-        <div
-          id="moveBox"
-          class="box move-box">
+        <div id="moveBox" class="box move-box">
 
           <table>
 
             <thead>
-
               <tr>
                 <th>#</th>
                 <th>White</th>
                 <th>Black</th>
               </tr>
-
             </thead>
 
             <tbody id="moveListBody">
-
               <tr>
                 <td colspan="3">
                   Game not started.
                 </td>
               </tr>
-
             </tbody>
 
           </table>
@@ -1617,26 +1499,15 @@ th {
       </div>
 
 
-      <!-- GAME OVER SUMMARY -->
+      <div id="gameOverSection" class="section">
 
-      <div
-        id="gameOverSection"
-        class="section">
-
-        <div class="label">
-          Game Over
-        </div>
+        <div class="label">Game Over</div>
 
         <div class="game-over-box">
 
-          <div
-            id="gameOverResult"
-            class="game-over-result">
-          </div>
+          <div id="gameOverResult" class="game-over-result"></div>
 
-          <div
-            id="gameOverDetails">
-          </div>
+          <div id="gameOverDetails"></div>
 
           <div class="game-over-actions">
 
@@ -1644,26 +1515,19 @@ th {
               id="copyGameBtn"
               class="summary-btn"
               type="button">
-
               📋 Copy Game Record
-
             </button>
 
             <button
               id="rematchBtn"
               class="summary-btn primary-summary"
               type="button">
-
               ↻ Rematch
-
             </button>
 
           </div>
 
-          <div
-            id="copyStatus"
-            class="copy-status">
-          </div>
+          <div id="copyStatus" class="copy-status"></div>
 
         </div>
 
@@ -1672,23 +1536,17 @@ th {
 
       <div class="section">
 
-        <div class="label">
-          Feedback
-        </div>
+        <div class="label">Feedback</div>
 
         <button
           id="feedbackButton"
           class="feedback-btn"
           type="button">
-
           💬 Send Feedback
-
         </button>
 
         <div class="small-note">
-
           Thoughts, suggestions, and unfiltered reactions are welcome.
-
         </div>
 
       </div>
@@ -1703,32 +1561,21 @@ th {
 
 <!-- PROMOTION -->
 
-<div
-  id="promotionOverlay"
-  class="promotion-overlay">
+<div id="promotionOverlay" class="promotion-overlay">
 
   <div class="promotion-card">
 
-    <h2>
-      Promote Your Pawn
-    </h2>
+    <h2>Promote Your Pawn</h2>
 
-    <p>
-      Choose the piece your pawn becomes.
-    </p>
+    <p>Choose the piece your pawn becomes.</p>
 
-    <div
-      id="promotionOptions"
-      class="promotion-options">
-    </div>
+    <div id="promotionOptions" class="promotion-options"></div>
 
     <button
       id="promotionCancel"
       class="promotion-cancel"
       type="button">
-
       Cancel
-
     </button>
 
   </div>
@@ -1739,9 +1586,7 @@ th {
 
 <!-- FEEDBACK -->
 
-<div
-  id="feedbackOverlay"
-  class="feedback-overlay">
+<div id="feedbackOverlay" class="feedback-overlay">
 
   <div class="feedback-card">
 
@@ -1750,25 +1595,16 @@ th {
       class="feedback-close"
       type="button"
       aria-label="Close feedback form">
-
       ×
-
     </button>
 
+    <div id="feedbackFormWrap" class="feedback-form">
 
-    <div
-      id="feedbackFormWrap"
-      class="feedback-form">
-
-      <h2>
-        Send Feedback
-      </h2>
+      <h2>Send Feedback</h2>
 
       <p class="feedback-intro">
-
         Unfiltered thoughts welcome. What worked? What didn’t?
         What confused you? What would you change?
-
       </p>
 
       <form id="feedbackForm">
@@ -1787,7 +1623,6 @@ th {
 
         </div>
 
-
         <div class="feedback-field">
 
           <label for="feedbackName">
@@ -1801,7 +1636,6 @@ th {
             placeholder="Your name">
 
         </div>
-
 
         <div class="feedback-field">
 
@@ -1817,12 +1651,10 @@ th {
 
         </div>
 
-
         <input
           type="hidden"
           name="_subject"
           value="Aurelian Overtures Feedback">
-
 
         <div class="feedback-actions">
 
@@ -1830,55 +1662,38 @@ th {
             id="feedbackCancel"
             class="feedback-cancel"
             type="button">
-
             Cancel
-
           </button>
 
           <button
             id="feedbackSubmit"
             class="feedback-submit"
             type="submit">
-
             Send Feedback
-
           </button>
 
         </div>
 
-        <div
-          id="feedbackStatus"
-          class="feedback-status">
-        </div>
+        <div id="feedbackStatus" class="feedback-status"></div>
 
       </form>
 
     </div>
 
 
-    <div
-      id="feedbackSuccess"
-      class="feedback-success">
+    <div id="feedbackSuccess" class="feedback-success">
 
-      <div class="feedback-success-icon">
-        ✓
-      </div>
+      <div class="feedback-success-icon">✓</div>
 
-      <h3>
-        Thanks — feedback received.
-      </h3>
+      <h3>Thanks — feedback received.</h3>
 
-      <p>
-        Your thoughts have been sent.
-      </p>
+      <p>Your thoughts have been sent.</p>
 
       <button
         id="feedbackDone"
         class="feedback-done"
         type="button">
-
         Back to the Game
-
       </button>
 
     </div>
@@ -2143,14 +1958,12 @@ const DISPLAY_ORDER = [
 
 
 const PIECE_NAMES = {
-
   p:"Pawn",
   n:"Knight",
   b:"Bishop",
   r:"Rook",
   q:"Queen",
   k:"King"
-
 };
 
 
@@ -2186,8 +1999,7 @@ const PROMOTION_NAMES = {
 /* SOUND                                                 */
 /* ===================================================== */
 
-const MENU_CLICK_VOLUME =
-  .28;
+const MENU_CLICK_VOLUME = .28;
 
 
 const SOUND_FILES = {
@@ -2204,9 +2016,7 @@ const SOUND_FILES = {
 };
 
 
-Object.values(
-  SOUND_FILES
-).forEach(
+Object.values(SOUND_FILES).forEach(
   file => {
 
     const audio =
@@ -2329,6 +2139,9 @@ const newGameBtn =
 const endGameBtn =
   document.getElementById("endGameBtn");
 
+const undoBtn =
+  document.getElementById("undoBtn");
+
 const resetBtn =
   document.getElementById("resetBtn");
 
@@ -2422,6 +2235,12 @@ let engineThinking =
 let engineMoveTimer =
   null;
 
+let engineSearchActive =
+  false;
+
+let ignoreStoppedBestmove =
+  false;
+
 let game =
   null;
 
@@ -2445,6 +2264,9 @@ let soundEnabled =
 
 let moveAnimating =
   false;
+
+let undosRemaining =
+  3;
 
 let captureToastItems =
   [];
@@ -2504,9 +2326,7 @@ function playSound(
 
 
   const file =
-    SOUND_FILES[
-      name
-    ];
+    SOUND_FILES[name];
 
 
   if (
@@ -2638,11 +2458,8 @@ function playSoundForMove(move) {
 function castlingEnabledForCurrentGame() {
 
   return (
-    actualPlayerFormation ===
-    "RNB" &&
-
-    actualComputerFormation ===
-    "RNB"
+    actualPlayerFormation === "RNB" &&
+    actualComputerFormation === "RNB"
   );
 
 }
@@ -2762,19 +2579,15 @@ function findPlannedMove(
 
   const moves =
     game.moves({
-
       square:from,
-
       verbose:true
-
     });
 
 
   let matches =
     moves.filter(
       move =>
-        move.to ===
-        to
+        move.to === to
     );
 
 
@@ -2785,8 +2598,7 @@ function findPlannedMove(
     matches =
       matches.filter(
         move =>
-          move.promotion ===
-          promotion
+          move.promotion === promotion
       );
 
   }
@@ -2816,8 +2628,7 @@ function getCastlingRookSquares(
 
   const rank =
 
-    plannedMove.color ===
-    "w"
+    plannedMove.color === "w"
 
       ? "1"
 
@@ -2825,34 +2636,24 @@ function getCastlingRookSquares(
 
 
   if (
-    plannedMove.flags.includes(
-      "k"
-    )
+    plannedMove.flags.includes("k")
   ) {
 
     return {
-
       from:"h" + rank,
-
       to:"f" + rank
-
     };
 
   }
 
 
   if (
-    plannedMove.flags.includes(
-      "q"
-    )
+    plannedMove.flags.includes("q")
   ) {
 
     return {
-
       from:"a" + rank,
-
       to:"d" + rank
-
     };
 
   }
@@ -2924,14 +2725,12 @@ function animateSinglePiece(
 
         (
           toRect.left +
-          toRect.width /
-          2
+          toRect.width / 2
         ) -
 
         (
           fromRect.left +
-          fromRect.width /
-          2
+          fromRect.width / 2
         );
 
 
@@ -2939,14 +2738,12 @@ function animateSinglePiece(
 
         (
           toRect.top +
-          toRect.height /
-          2
+          toRect.height / 2
         ) -
 
         (
           fromRect.top +
-          fromRect.height /
-          2
+          fromRect.height / 2
         );
 
 
@@ -2986,7 +2783,6 @@ function animateSinglePiece(
         pieceImage.animate(
 
           [
-
             {
               transform:
                 "translate(0px, 0px)"
@@ -2996,11 +2792,9 @@ function animateSinglePiece(
               transform:
                 `translate(${deltaX}px, ${deltaY}px)`
             }
-
           ],
 
           {
-
             duration:
               MOVE_ANIMATION_DURATION,
 
@@ -3009,7 +2803,6 @@ function animateSinglePiece(
 
             fill:
               "forwards"
-
           }
 
         );
@@ -3025,8 +2818,7 @@ function animateSinglePiece(
 
       setTimeout(
         finish,
-        MOVE_ANIMATION_DURATION +
-        80
+        MOVE_ANIMATION_DURATION + 80
       );
 
     }
@@ -3118,15 +2910,11 @@ function animateFormationAssembly(side) {
 
   const targetColor =
 
-    side ===
-    "computer"
+    side === "computer"
 
       ? (
-          playerColor ===
-          "w"
-
+          playerColor === "w"
             ? "b"
-
             : "w"
         )
 
@@ -3135,8 +2923,7 @@ function animateFormationAssembly(side) {
 
   const rank =
 
-    targetColor ===
-    "w"
+    targetColor === "w"
 
       ? "1"
 
@@ -3225,7 +3012,6 @@ function animateFormationAssembly(side) {
             pieceImage.animate(
 
               [
-
                 {
                   opacity:0,
                   transform:
@@ -3244,19 +3030,12 @@ function animateFormationAssembly(side) {
                   transform:
                     "translateY(0px) scale(1)"
                 }
-
               ],
 
               {
-
                 duration:145,
-
-                easing:
-                  "ease-out",
-
-                fill:
-                  "forwards"
-
+                easing:"ease-out",
+                fill:"forwards"
               }
 
             );
@@ -3285,8 +3064,7 @@ function randomEngineDelay() {
 
   return (
     1500 +
-    Math.random() *
-    3000
+    Math.random() * 3000
   );
 
 }
@@ -3331,6 +3109,7 @@ function scheduleEngineMove() {
 
 
   updateStatus();
+  updateUndoButton();
 
 
   const delay =
@@ -3402,14 +3181,11 @@ function showComputerCaptureToast(
 
 
   if (
-    captureToastItems.length >
-    4
+    captureToastItems.length > 4
   ) {
 
     captureToastItems =
-      captureToastItems.slice(
-        -4
-      );
+      captureToastItems.slice(-4);
 
   }
 
@@ -3458,9 +3234,7 @@ function renderCaptureToast() {
   let html =
 
     "<div class='capture-toast-title'>" +
-
     "Stockfish captured" +
-
     "</div>";
 
 
@@ -3472,22 +3246,17 @@ function renderCaptureToast() {
         "<div class='capture-toast-row'>" +
 
         "<img class='capture-toast-piece' " +
-
         "src='" +
-
         PIECE_IMAGES[
           item.color +
           item.type
         ] +
-
         "' alt=''>" +
 
         "<span>" +
-
         PIECE_NAMES[
           item.type
         ] +
-
         "</span>" +
 
         "</div>";
@@ -3557,44 +3326,31 @@ function clearCaptureToast() {
 function getFormationTooltipHTML(code) {
 
   if (
-    code ===
-    "RANDOM"
+    code === "RANDOM"
   ) {
 
     return (
 
       "<div class='tooltip-title'>" +
-
       "Random Formation" +
-
       "</div>" +
 
       "<div class='tooltip-description'>" +
-
       "Let the game choose one of the six formations for you." +
-
       "</div>" +
 
       "<div class='tooltip-line'>" +
-
       "<strong>Strength:</strong> " +
-
       "Forces you to adapt and explore formations you might not normally select." +
-
       "</div>" +
 
       "<div class='tooltip-line'>" +
-
       "<strong>Tip:</strong> " +
-
       "Use Random when you want to practice reacting to unfamiliar starting positions." +
-
       "</div>" +
 
       "<div class='tooltip-note'>" +
-
       "The preview may change when the game begins." +
-
       "</div>"
 
     );
@@ -3603,46 +3359,31 @@ function getFormationTooltipHTML(code) {
 
 
   const guide =
-    FORMATION_GUIDES[
-      code
-    ];
+    FORMATION_GUIDES[code];
 
 
   return (
 
     "<div class='tooltip-title'>" +
-
-    FORMATION_MAP[
-      code
-    ] +
-
+    FORMATION_MAP[code] +
     "</div>" +
 
     "<div class='tooltip-description'>" +
-
     guide.description +
-
     "</div>" +
 
     "<div class='tooltip-line'>" +
-
     "<strong>Strength:</strong> " +
-
     guide.strength +
-
     "</div>" +
 
     "<div class='tooltip-line'>" +
-
     "<strong>Tip:</strong> " +
-
     guide.tip +
-
     "</div>" +
 
     (
-      code ===
-      "RNB"
+      code === "RNB"
 
         ? "<div class='tooltip-note'>Castling is available when both players choose The Bastion.</div>"
 
@@ -3662,39 +3403,27 @@ function getFormationTooltipHTML(code) {
 function getDifficultyTooltipHTML(key) {
 
   const guide =
-    DIFFICULTY_GUIDES[
-      key
-    ];
+    DIFFICULTY_GUIDES[key];
 
 
   return (
 
     "<div class='tooltip-title'>" +
-
     guide.title +
-
     "</div>" +
 
     "<div class='tooltip-description'>" +
-
     guide.description +
-
     "</div>" +
 
     "<div class='tooltip-line'>" +
-
     "<strong>How it plays:</strong> " +
-
     guide.behavior +
-
     "</div>" +
 
     "<div class='tooltip-line'>" +
-
     "<strong>Best for:</strong> " +
-
     guide.bestFor +
-
     "</div>"
 
   );
@@ -3711,8 +3440,7 @@ function positionTooltip(button) {
 
   if (
     isTouchStyleDevice() ||
-    window.innerWidth <=
-    700
+    window.innerWidth <= 700
   ) {
 
     return;
@@ -3743,13 +3471,11 @@ function positionTooltip(button) {
 
 
   if (
-    left >=
-    10
+    left >= 10
   ) {
 
     hoverTooltip.style.left =
-      left +
-      "px";
+      left + "px";
 
 
     const tooltipHeight =
@@ -3759,8 +3485,7 @@ function positionTooltip(button) {
     if (
       top +
       tooltipHeight >
-      window.innerHeight -
-      10
+      window.innerHeight - 10
     ) {
 
       top =
@@ -3772,8 +3497,7 @@ function positionTooltip(button) {
 
 
     if (
-      top <
-      10
+      top < 10
     ) {
 
       top =
@@ -3783,8 +3507,7 @@ function positionTooltip(button) {
 
 
     hoverTooltip.style.top =
-      top +
-      "px";
+      top + "px";
 
 
     return;
@@ -3816,8 +3539,7 @@ function positionTooltip(button) {
   if (
     top +
     tooltipHeight >
-    window.innerHeight -
-    10
+    window.innerHeight - 10
   ) {
 
     top =
@@ -3829,8 +3551,7 @@ function positionTooltip(button) {
 
 
   if (
-    top <
-    10
+    top < 10
   ) {
 
     top =
@@ -3840,13 +3561,11 @@ function positionTooltip(button) {
 
 
   hoverTooltip.style.left =
-    left +
-    "px";
+    left + "px";
 
 
   hoverTooltip.style.top =
-    top +
-    "px";
+    top + "px";
 
 }
 
@@ -3901,9 +3620,7 @@ function attachFormationTooltip(
 
         showTooltip(
           button,
-          getFormationTooltipHTML(
-            code
-          )
+          getFormationTooltipHTML(code)
         );
 
       }
@@ -3938,9 +3655,7 @@ function attachFormationTooltip(
 
         showTooltip(
           button,
-          getFormationTooltipHTML(
-            code
-          )
+          getFormationTooltipHTML(code)
         );
 
       }
@@ -3978,9 +3693,7 @@ function attachFormationTooltip(
 
         showTooltip(
           button,
-          getFormationTooltipHTML(
-            code
-          )
+          getFormationTooltipHTML(code)
         );
 
       }
@@ -4006,9 +3719,7 @@ function attachDifficultyTooltip(
 
         showTooltip(
           button,
-          getDifficultyTooltipHTML(
-            key
-          )
+          getDifficultyTooltipHTML(key)
         );
 
       }
@@ -4043,9 +3754,7 @@ function attachDifficultyTooltip(
 
         showTooltip(
           button,
-          getDifficultyTooltipHTML(
-            key
-          )
+          getDifficultyTooltipHTML(key)
         );
 
       }
@@ -4083,9 +3792,7 @@ function attachDifficultyTooltip(
 
         showTooltip(
           button,
-          getDifficultyTooltipHTML(
-            key
-          )
+          getDifficultyTooltipHTML(key)
         );
 
       }
@@ -4255,15 +3962,11 @@ function initializeControls() {
       button.innerHTML =
 
         "<span class='formation-code'>" +
-
         formation.code +
-
         "</span>" +
 
         "<span class='formation-name'>" +
-
         formation.name +
-
         "</span>";
 
 
@@ -4317,11 +4020,8 @@ function initializeControls() {
       option.textContent =
 
         formation.name +
-
         " (" +
-
         formation.code +
-
         ")";
 
 
@@ -4383,8 +4083,7 @@ function initializeControls() {
 
       previewComputerFormation =
 
-        computerFormationChoice ===
-        "RANDOM"
+        computerFormationChoice === "RANDOM"
 
           ? randomFormation()
 
@@ -4640,6 +4339,20 @@ function initializeControls() {
   );
 
 
+  undoBtn.addEventListener(
+    "click",
+    function() {
+
+      playMenuClick();
+
+      hideTooltip();
+
+      undoPlayerTurn();
+
+    }
+  );
+
+
   resetBtn.addEventListener(
     "click",
     function() {
@@ -4783,6 +4496,284 @@ rematchBtn.addEventListener(
 
 
 /* ===================================================== */
+/* UNDO                                                  */
+/* ===================================================== */
+
+function getLatestPlayerMoveIndex() {
+
+  if (
+    !game
+  ) {
+    return -1;
+  }
+
+
+  const history =
+    game.history({
+      verbose:true
+    });
+
+
+  for (
+    let i =
+      history.length - 1;
+
+    i >= 0;
+
+    i--
+  ) {
+
+    if (
+      history[i].color ===
+      playerColor
+    ) {
+
+      return i;
+
+    }
+
+  }
+
+
+  return -1;
+
+}
+
+
+function updateUndoButton() {
+
+  const hasPlayerMove =
+    getLatestPlayerMoveIndex() >= 0;
+
+
+  const canUndo =
+
+    gameStarted &&
+    game &&
+    hasPlayerMove &&
+    undosRemaining > 0 &&
+    !moveAnimating &&
+    !promotionPending;
+
+
+  undoBtn.disabled =
+    !canUndo;
+
+
+  undoBtn.textContent =
+    "Undo (" +
+    undosRemaining +
+    ")";
+
+}
+
+
+function restoreLastMoveHighlight() {
+
+  if (
+    !game
+  ) {
+
+    lastMove =
+      null;
+
+    return;
+
+  }
+
+
+  const history =
+    game.history({
+      verbose:true
+    });
+
+
+  if (
+    history.length === 0
+  ) {
+
+    lastMove =
+      null;
+
+    return;
+
+  }
+
+
+  const previousMove =
+    history[
+      history.length - 1
+    ];
+
+
+  lastMove = {
+
+    from:
+      previousMove.from,
+
+    to:
+      previousMove.to
+
+  };
+
+}
+
+
+function undoPlayerTurn() {
+
+  if (
+    !gameStarted ||
+    !game ||
+    undosRemaining <= 0 ||
+    moveAnimating ||
+    promotionPending
+  ) {
+
+    return;
+
+  }
+
+
+  const history =
+    game.history({
+      verbose:true
+    });
+
+
+  let latestPlayerMoveIndex =
+    -1;
+
+
+  for (
+    let i =
+      history.length - 1;
+
+    i >= 0;
+
+    i--
+  ) {
+
+    if (
+      history[i].color ===
+      playerColor
+    ) {
+
+      latestPlayerMoveIndex =
+        i;
+
+      break;
+
+    }
+
+  }
+
+
+  if (
+    latestPlayerMoveIndex < 0
+  ) {
+
+    updateUndoButton();
+
+    return;
+
+  }
+
+
+  clearEngineMoveTimer();
+
+
+  if (
+    engineSearchActive
+  ) {
+
+    ignoreStoppedBestmove =
+      true;
+
+
+    engine.postMessage(
+      "stop"
+    );
+
+
+    engineSearchActive =
+      false;
+
+  }
+
+  else {
+
+    engine.postMessage(
+      "stop"
+    );
+
+  }
+
+
+  engineThinking =
+    false;
+
+
+  clearCaptureToast();
+
+  hideGameOverSummary();
+
+  hidePromotion();
+
+
+  selectedSquare =
+    null;
+
+
+  legalMoves =
+    [];
+
+
+  promotionPending =
+    null;
+
+
+  const pliesToUndo =
+
+    history.length -
+    latestPlayerMoveIndex;
+
+
+  for (
+    let i=0;
+
+    i<pliesToUndo;
+
+    i++
+  ) {
+
+    game.undo();
+
+  }
+
+
+  undosRemaining--;
+
+
+  restoreLastMoveHighlight();
+
+
+  drawBoard();
+
+  renderMoveList();
+
+  updateCapturedPieces();
+
+  updateStatus();
+
+  updateInfoPanel();
+
+  updateUndoButton();
+
+}
+
+
+
+/* ===================================================== */
 /* BUTTON STATES                                         */
 /* ===================================================== */
 
@@ -4839,22 +4830,19 @@ function refreshSideButtons() {
 
   playWhiteBtn.classList.toggle(
     "active",
-    activeChoice ===
-    "w"
+    activeChoice === "w"
   );
 
 
   playRandomBtn.classList.toggle(
     "active",
-    activeChoice ===
-    "RANDOM"
+    activeChoice === "RANDOM"
   );
 
 
   playBlackBtn.classList.toggle(
     "active",
-    activeChoice ===
-    "b"
+    activeChoice === "b"
   );
 
 }
@@ -4864,29 +4852,25 @@ function refreshDifficultyButtons() {
 
   difficultyRelaxed.classList.toggle(
     "active",
-    difficultyKey ===
-    "casual"
+    difficultyKey === "casual"
   );
 
 
   difficultyStandard.classList.toggle(
     "active",
-    difficultyKey ===
-    "beginner"
+    difficultyKey === "beginner"
   );
 
 
   difficultyFierce.classList.toggle(
     "active",
-    difficultyKey ===
-    "intermediate"
+    difficultyKey === "intermediate"
   );
 
 
   difficultyRuthless.classList.toggle(
     "active",
-    difficultyKey ===
-    "hard"
+    difficultyKey === "hard"
   );
 
 }
@@ -4973,6 +4957,10 @@ function renderPreview() {
   );
 
 
+  engineSearchActive =
+    false;
+
+
   engineThinking =
     false;
 
@@ -5022,8 +5010,7 @@ function renderPreview() {
 
   const previewColor =
 
-    playerColorChoice ===
-    "b"
+    playerColorChoice === "b"
 
       ? "b"
 
@@ -5036,8 +5023,7 @@ function renderPreview() {
 
   const whiteSetup =
 
-    playerColor ===
-    "w"
+    playerColor === "w"
 
       ? previewPlayerFormation
 
@@ -5046,8 +5032,7 @@ function renderPreview() {
 
   const blackSetup =
 
-    playerColor ===
-    "b"
+    playerColor === "b"
 
       ? previewPlayerFormation
 
@@ -5076,6 +5061,8 @@ function renderPreview() {
 
   updateInfoPanel();
 
+  updateUndoButton();
+
 
   const previewText =
 
@@ -5097,8 +5084,7 @@ function renderPreview() {
     previewText +
 
     (
-      playerFormationChoice ===
-      "RANDOM"
+      playerFormationChoice === "RANDOM"
 
         ? "&nbsp;— Random rerolls when the game starts."
 
@@ -5106,8 +5092,7 @@ function renderPreview() {
     ) +
 
     (
-      playerColorChoice ===
-      "RANDOM"
+      playerColorChoice === "RANDOM"
 
         ? "&nbsp;— Color will be chosen when the game starts."
 
@@ -5131,8 +5116,7 @@ function resolvePlayerFormation() {
 
   return (
 
-    playerFormationChoice ===
-    "RANDOM"
+    playerFormationChoice === "RANDOM"
 
       ? randomFormation()
 
@@ -5147,8 +5131,7 @@ function resolveComputerFormation() {
 
   return (
 
-    computerFormationChoice ===
-    "RANDOM"
+    computerFormationChoice === "RANDOM"
 
       ? randomFormation()
 
@@ -5162,14 +5145,12 @@ function resolveComputerFormation() {
 function resolvePlayerColor() {
 
   if (
-    playerColorChoice ===
-    "RANDOM"
+    playerColorChoice === "RANDOM"
   ) {
 
     return (
 
-      Math.random() <
-      .5
+      Math.random() < .5
 
         ? "w"
 
@@ -5271,6 +5252,10 @@ function endCurrentGame() {
   );
 
 
+  engineSearchActive =
+    false;
+
+
   engineThinking =
     false;
 
@@ -5299,8 +5284,7 @@ function endCurrentGame() {
 
 
   if (
-    playerFormationChoice ===
-    "RANDOM"
+    playerFormationChoice === "RANDOM"
   ) {
 
     previewPlayerFormation =
@@ -5310,8 +5294,7 @@ function endCurrentGame() {
 
 
   if (
-    computerFormationChoice ===
-    "RANDOM"
+    computerFormationChoice === "RANDOM"
   ) {
 
     previewComputerFormation =
@@ -5339,6 +5322,10 @@ function beginGame() {
   engine.postMessage(
     "stop"
   );
+
+
+  engineSearchActive =
+    false;
 
 
   clearCaptureToast();
@@ -5376,13 +5363,16 @@ function beginGame() {
     null;
 
 
+  undosRemaining =
+    3;
+
+
   hidePromotion();
 
 
   const whiteSetup =
 
-    playerColor ===
-    "w"
+    playerColor === "w"
 
       ? actualPlayerFormation
 
@@ -5391,8 +5381,7 @@ function beginGame() {
 
   const blackSetup =
 
-    playerColor ===
-    "b"
+    playerColor === "b"
 
       ? actualPlayerFormation
 
@@ -5434,6 +5423,8 @@ function beginGame() {
 
   updateStatus();
 
+  updateUndoButton();
+
 
   previewBar.innerHTML =
 
@@ -5464,8 +5455,7 @@ function beginGame() {
     "&nbsp;·&nbsp;" +
 
     (
-      playerColor ===
-      "w"
+      playerColor === "w"
 
         ? "You are White"
 
@@ -5489,8 +5479,7 @@ function beginGame() {
 
 
   if (
-    game.turn() !==
-    playerColor
+    game.turn() !== playerColor
   ) {
 
     scheduleEngineMove();
@@ -5512,15 +5501,12 @@ function applyDifficulty() {
 
 
   const difficulty =
-    DIFFICULTIES[
-      difficultyKey
-    ];
+    DIFFICULTIES[difficultyKey];
 
 
   engine.postMessage(
 
     "setoption name Skill Level value " +
-
     difficulty.skill
 
   );
@@ -5541,8 +5527,7 @@ function isPlayerTurn() {
 
     game &&
 
-    game.turn() ===
-    playerColor &&
+    game.turn() === playerColor &&
 
     !engineThinking &&
 
@@ -5564,8 +5549,7 @@ function drawBoard() {
 
 
   const orientationWhite =
-    playerColor ===
-    "w";
+    playerColor === "w";
 
 
   const files =
@@ -5627,8 +5611,7 @@ function drawBoard() {
 
 
       const squareName =
-        file +
-        rank;
+        file + rank;
 
 
       const square =
@@ -5650,8 +5633,7 @@ function drawBoard() {
         (
           row +
           column
-        ) % 2 ===
-        0
+        ) % 2 === 0
 
           ? "light"
 
@@ -5663,10 +5645,8 @@ function drawBoard() {
       if (
         lastMove &&
         (
-          squareName ===
-          lastMove.from ||
-          squareName ===
-          lastMove.to
+          squareName === lastMove.from ||
+          squareName === lastMove.to
         )
       ) {
 
@@ -5678,8 +5658,7 @@ function drawBoard() {
 
 
       if (
-        selectedSquare ===
-        squareName
+        selectedSquare === squareName
       ) {
 
         square.classList.add(
@@ -5690,8 +5669,7 @@ function drawBoard() {
 
 
       if (
-        checkedSquare ===
-        squareName
+        checkedSquare === squareName
       ) {
 
         square.classList.add(
@@ -5704,8 +5682,7 @@ function drawBoard() {
       if (
         legalMoves.some(
           move =>
-            move.to ===
-            squareName
+            move.to === squareName
         )
       ) {
 
@@ -5852,14 +5829,12 @@ function animateInvalidMove(
 
     (
       toRect.left +
-      toRect.width /
-      2
+      toRect.width / 2
     ) -
 
     (
       fromRect.left +
-      fromRect.width /
-      2
+      fromRect.width / 2
     );
 
 
@@ -5867,14 +5842,12 @@ function animateInvalidMove(
 
     (
       toRect.top +
-      toRect.height /
-      2
+      toRect.height / 2
     ) -
 
     (
       fromRect.top +
-      fromRect.height /
-      2
+      fromRect.height / 2
     );
 
 
@@ -5886,7 +5859,6 @@ function animateInvalidMove(
   pieceImage.animate(
 
     [
-
       {
         transform:
           "translate(0px, 0px)"
@@ -5908,16 +5880,11 @@ function animateInvalidMove(
         transform:
           "translate(0px, 0px)"
       }
-
     ],
 
     {
-
       duration:360,
-
-      easing:
-        "ease-in-out"
-
+      easing:"ease-in-out"
     }
 
   );
@@ -5959,14 +5926,12 @@ function handleSquareClick(
     const destinationMoves =
       legalMoves.filter(
         move =>
-          move.to ===
-          squareName
+          move.to === squareName
       );
 
 
     if (
-      destinationMoves.length >
-      0
+      destinationMoves.length > 0
     ) {
 
       const promotionMoves =
@@ -5977,8 +5942,7 @@ function handleSquareClick(
 
 
       if (
-        promotionMoves.length >
-        0
+        promotionMoves.length > 0
       ) {
 
         openPromotion(
@@ -6006,8 +5970,7 @@ function handleSquareClick(
 
     if (
       piece &&
-      piece.color ===
-      playerColor
+      piece.color === playerColor
     ) {
 
       selectSquare(
@@ -6033,8 +5996,7 @@ function handleSquareClick(
 
   if (
     piece &&
-    piece.color ===
-    playerColor
+    piece.color === playerColor
   ) {
 
     selectSquare(
@@ -6056,13 +6018,8 @@ function selectSquare(
 
   legalMoves =
     game.moves({
-
-      square:
-        squareName,
-
-      verbose:
-        true
-
+      square:squareName,
+      verbose:true
     });
 
 
@@ -6087,10 +6044,11 @@ function openPromotion(
   };
 
 
+  updateUndoButton();
+
+
   promotionOptions
-    .querySelectorAll(
-      "img"
-    )
+    .querySelectorAll("img")
     .forEach(
       image => {
 
@@ -6131,6 +6089,8 @@ function cancelPromotion() {
 
 
   hidePromotion();
+
+  updateUndoButton();
 
 }
 
@@ -6217,6 +6177,9 @@ async function completePlayerMove(
     true;
 
 
+  updateUndoButton();
+
+
   await animateLegalMove(
     from,
     to,
@@ -6225,14 +6188,15 @@ async function completePlayerMove(
 
 
   if (
-    game !==
-    gameAtStart ||
-
+    game !== gameAtStart ||
     !gameStarted
   ) {
 
     moveAnimating =
       false;
+
+
+    updateUndoButton();
 
 
     return;
@@ -6244,11 +6208,9 @@ async function completePlayerMove(
 
     const move =
       game.move({
-
         from,
         to,
         promotion
-
       });
 
 
@@ -6267,6 +6229,8 @@ async function completePlayerMove(
 
       drawBoard();
 
+      updateUndoButton();
+
 
       return;
 
@@ -6274,13 +6238,8 @@ async function completePlayerMove(
 
 
     lastMove = {
-
-      from:
-        move.from,
-
-      to:
-        move.to
-
+      from:move.from,
+      to:move.to
     };
 
 
@@ -6326,6 +6285,8 @@ async function completePlayerMove(
 
     drawBoard();
 
+    updateUndoButton();
+
 
     console.error(
       error
@@ -6352,7 +6313,13 @@ function requestEngineMove() {
       false;
 
 
+    engineSearchActive =
+      false;
+
+
     updateStatus();
+
+    updateUndoButton();
 
 
     return;
@@ -6361,14 +6328,11 @@ function requestEngineMove() {
 
 
   const difficulty =
-    DIFFICULTIES[
-      difficultyKey
-    ];
+    DIFFICULTIES[difficultyKey];
 
 
   if (
-    difficulty.randomMoveChance >
-    0 &&
+    difficulty.randomMoveChance > 0 &&
     Math.random() <
     difficulty.randomMoveChance
   ) {
@@ -6380,8 +6344,7 @@ function requestEngineMove() {
 
 
     if (
-      moves.length >
-      0
+      moves.length > 0
     ) {
 
       const randomMove =
@@ -6406,20 +6369,18 @@ function requestEngineMove() {
 
 
   engine.postMessage(
-
     "position fen " +
-
     game.fen()
-
   );
 
 
+  engineSearchActive =
+    true;
+
+
   engine.postMessage(
-
     "go nodes " +
-
     difficulty.nodes
-
   );
 
 }
@@ -6449,6 +6410,8 @@ async function playCasualRandomMove(
 
     updateStatus();
 
+    updateUndoButton();
+
 
     return;
 
@@ -6461,13 +6424,9 @@ async function playCasualRandomMove(
 
   const plannedMove =
     findPlannedMove(
-
       moveObject.from,
-
       moveObject.to,
-
       moveObject.promotion
-
     );
 
 
@@ -6475,21 +6434,18 @@ async function playCasualRandomMove(
     true;
 
 
+  updateUndoButton();
+
+
   await animateLegalMove(
-
     moveObject.from,
-
     moveObject.to,
-
     plannedMove
-
   );
 
 
   if (
-    game !==
-    gameAtStart ||
-
+    game !== gameAtStart ||
     !gameStarted
   ) {
 
@@ -6501,6 +6457,9 @@ async function playCasualRandomMove(
       false;
 
 
+    updateUndoButton();
+
+
     return;
 
   }
@@ -6510,16 +6469,9 @@ async function playCasualRandomMove(
 
     const move =
       game.move({
-
-        from:
-          moveObject.from,
-
-        to:
-          moveObject.to,
-
-        promotion:
-          moveObject.promotion
-
+        from:moveObject.from,
+        to:moveObject.to,
+        promotion:moveObject.promotion
       });
 
 
@@ -6539,19 +6491,17 @@ async function playCasualRandomMove(
 
       updateStatus();
 
+      updateUndoButton();
+
+
       return;
 
     }
 
 
     lastMove = {
-
-      from:
-        move.from,
-
-      to:
-        move.to
-
+      from:move.from,
+      to:move.to
     };
 
 
@@ -6574,6 +6524,8 @@ async function playCasualRandomMove(
 
 
     drawBoard();
+
+    updateUndoButton();
 
 
     console.error(
@@ -6601,8 +6553,7 @@ async function playEngineMove(
   if (
     !game ||
     !moveText ||
-    moveText ===
-    "(none)"
+    moveText === "(none)"
   ) {
 
     engineThinking =
@@ -6610,6 +6561,8 @@ async function playEngineMove(
 
 
     updateStatus();
+
+    updateUndoButton();
 
 
     return;
@@ -6633,8 +6586,7 @@ async function playEngineMove(
 
   const promotion =
 
-    moveText.length >=
-    5
+    moveText.length >= 5
 
       ? moveText.substring(
           4,
@@ -6660,6 +6612,9 @@ async function playEngineMove(
     true;
 
 
+  updateUndoButton();
+
+
   await animateLegalMove(
     from,
     to,
@@ -6668,9 +6623,7 @@ async function playEngineMove(
 
 
   if (
-    game !==
-    gameAtStart ||
-
+    game !== gameAtStart ||
     !gameStarted
   ) {
 
@@ -6682,6 +6635,9 @@ async function playEngineMove(
       false;
 
 
+    updateUndoButton();
+
+
     return;
 
   }
@@ -6691,11 +6647,9 @@ async function playEngineMove(
 
     const move =
       game.move({
-
         from,
         to,
         promotion
-
       });
 
 
@@ -6715,19 +6669,17 @@ async function playEngineMove(
 
       updateStatus();
 
+      updateUndoButton();
+
+
       return;
 
     }
 
 
     lastMove = {
-
-      from:
-        move.from,
-
-      to:
-        move.to
-
+      from:move.from,
+      to:move.to
     };
 
 
@@ -6751,6 +6703,8 @@ async function playEngineMove(
 
     drawBoard();
 
+    updateUndoButton();
+
 
     console.error(
       error
@@ -6772,8 +6726,7 @@ function afterMove(
 
   if (
     move.captured &&
-    move.color !==
-    playerColor
+    move.color !== playerColor
   ) {
 
     showComputerCaptureToast(
@@ -6792,6 +6745,8 @@ function afterMove(
   updateStatus();
 
   updateGameOverSummary();
+
+  updateUndoButton();
 
   playSoundForMove(
     move
@@ -6876,24 +6831,14 @@ function getCaptured() {
 
       const missingBlack =
 
-        INITIAL_COUNTS[
-          type
-        ] -
-
-        counts.b[
-          type
-        ];
+        INITIAL_COUNTS[type] -
+        counts.b[type];
 
 
       const missingWhite =
 
-        INITIAL_COUNTS[
-          type
-        ] -
-
-        counts.w[
-          type
-        ];
+        INITIAL_COUNTS[type] -
+        counts.w[type];
 
 
       for (
@@ -6946,7 +6891,6 @@ function captureValue(
     ) =>
 
       total +
-
       PIECE_VALUES[
         piece.type
       ],
@@ -6967,8 +6911,7 @@ function renderCaptured(
 
 
   if (
-    pieces.length ===
-    0
+    pieces.length === 0
   ) {
 
     element.innerHTML =
@@ -7054,8 +6997,7 @@ function updateCapturedPieces() {
 
 
   if (
-    difference >
-    0
+    difference > 0
   ) {
 
     materialText.textContent =
@@ -7069,8 +7011,7 @@ function updateCapturedPieces() {
   }
 
   else if (
-    difference <
-    0
+    difference < 0
   ) {
 
     materialText.textContent =
@@ -7137,30 +7078,20 @@ function findCheckedKingSquare() {
     ) {
 
       const piece =
-        board[
-          row
-        ][
-          column
-        ];
+        board[row][column];
 
 
       if (
         piece &&
-        piece.type ===
-        "k" &&
-        piece.color ===
-        checkedColor
+        piece.type === "k" &&
+        piece.color === checkedColor
       ) {
 
         return (
 
-          "abcdefgh"[
-            column
-          ] +
-
+          "abcdefgh"[column] +
           (
-            8 -
-            row
+            8 - row
           )
 
         );
@@ -7191,13 +7122,9 @@ function renderMoveList() {
     moveListBody.innerHTML =
 
       "<tr>" +
-
       "<td colspan='3'>" +
-
       "Game not started." +
-
       "</td>" +
-
       "</tr>";
 
 
@@ -7211,20 +7138,15 @@ function renderMoveList() {
 
 
   if (
-    history.length ===
-    0
+    history.length === 0
   ) {
 
     moveListBody.innerHTML =
 
       "<tr>" +
-
       "<td colspan='3'>" +
-
       "No moves yet." +
-
       "</td>" +
-
       "</tr>";
 
 
@@ -7235,23 +7157,20 @@ function renderMoveList() {
 
   const totalFullMoves =
     Math.ceil(
-      history.length /
-      2
+      history.length / 2
     );
 
 
   const firstVisibleMove =
     Math.max(
       1,
-      totalFullMoves -
-      3
+      totalFullMoves - 3
     );
 
 
   const startIndex =
     (
-      firstVisibleMove -
-      1
+      firstVisibleMove - 1
     ) * 2;
 
 
@@ -7270,37 +7189,26 @@ function renderMoveList() {
       "<tr>" +
 
       "<td>" +
-
       (
         Math.floor(
-          i /
-          2
+          i / 2
         ) +
         1
       ) +
-
       "</td>" +
 
       "<td>" +
-
       (
-        history[
-          i
-        ] ||
+        history[i] ||
         ""
       ) +
-
       "</td>" +
 
       "<td>" +
-
       (
-        history[
-          i+1
-        ] ||
+        history[i+1] ||
         ""
       ) +
-
       "</td>" +
 
       "</tr>";
@@ -7337,8 +7245,7 @@ function getGameResultText() {
 
     const winner =
 
-      game.turn() ===
-      "w"
+      game.turn() === "w"
 
         ? "b"
 
@@ -7347,8 +7254,7 @@ function getGameResultText() {
 
     return (
 
-      winner ===
-      playerColor
+      winner === playerColor
 
         ? "Victory — you won by checkmate."
 
@@ -7412,15 +7318,13 @@ function updateGameOverSummary() {
 
   const moveCount =
     Math.ceil(
-      history.length /
-      2
+      history.length / 2
     );
 
 
   const colorName =
 
-    playerColor ===
-    "w"
+    playerColor === "w"
 
       ? "White"
 
@@ -7443,74 +7347,45 @@ function updateGameOverSummary() {
   gameOverDetails.innerHTML =
 
     "<div class='game-over-line'>" +
-
     "<strong>Your formation:</strong> " +
-
     FORMATION_MAP[
       actualPlayerFormation
     ] +
-
     " (" +
-
     actualPlayerFormation +
-
     ")" +
-
     "</div>" +
 
-
     "<div class='game-over-line'>" +
-
     "<strong>Computer formation:</strong> " +
-
     FORMATION_MAP[
       actualComputerFormation
     ] +
-
     " (" +
-
     actualComputerFormation +
-
     ")" +
-
     "</div>" +
 
-
     "<div class='game-over-line'>" +
-
     "<strong>Your color:</strong> " +
-
     colorName +
-
     "</div>" +
 
-
     "<div class='game-over-line'>" +
-
     "<strong>Difficulty:</strong> " +
-
     DIFFICULTIES[
       difficultyKey
     ].label +
-
     "</div>" +
 
-
     "<div class='game-over-line'>" +
-
     "<strong>Moves:</strong> " +
-
     moveCount +
-
     "</div>" +
 
-
     "<div class='game-over-line'>" +
-
     "<strong>Castling:</strong> " +
-
     castlingText +
-
     "</div>";
 
 
@@ -7556,23 +7431,18 @@ function buildFullMoveText() {
 
     const moveNumber =
       Math.floor(
-        i /
-        2
+        i / 2
       ) +
       1;
 
 
     const whiteMove =
-      history[
-        i
-      ] ||
+      history[i] ||
       "";
 
 
     const blackMove =
-      history[
-        i+1
-      ] ||
+      history[i+1] ||
       "";
 
 
@@ -7606,8 +7476,7 @@ function buildGameRecord() {
 
   const colorName =
 
-    playerColor ===
-    "w"
+    playerColor === "w"
 
       ? "White"
 
@@ -7630,57 +7499,40 @@ function buildGameRecord() {
     "A Strategic Chess Variant\n\n" +
 
     "Result: " +
-
     getGameResultText() +
-
     "\n" +
 
     "Player formation: " +
-
     FORMATION_MAP[
       actualPlayerFormation
     ] +
-
     " (" +
-
     actualPlayerFormation +
-
     ")\n" +
 
     "Computer formation: " +
-
     FORMATION_MAP[
       actualComputerFormation
     ] +
-
     " (" +
-
     actualComputerFormation +
-
     ")\n" +
 
     "Player color: " +
-
     colorName +
-
     "\n" +
 
     "Difficulty: " +
-
     DIFFICULTIES[
       difficultyKey
     ].label +
-
     "\n" +
 
     "Castling: " +
-
     castlingText +
-
     "\n\n" +
 
     "Moves\n" +
-
     "-----\n" +
 
     buildFullMoveText()
@@ -7814,8 +7666,7 @@ function updateStatus() {
 
       const winner =
 
-        game.turn() ===
-        "w"
+        game.turn() === "w"
 
           ? "b"
 
@@ -7824,8 +7675,7 @@ function updateStatus() {
 
       setStatus(
 
-        winner ===
-        playerColor
+        winner === playerColor
 
           ? "Checkmate — you win!"
 
@@ -7912,8 +7762,7 @@ function updateStatus() {
 
 
   if (
-    game.turn() ===
-    playerColor
+    game.turn() === playerColor
   ) {
 
     setStatus(
@@ -7963,9 +7812,7 @@ function setStatus(
 function updateInfoPanel() {
 
   const difficulty =
-    DIFFICULTIES[
-      difficultyKey
-    ];
+    DIFFICULTIES[difficultyKey];
 
 
   let playerFormationText;
@@ -7990,8 +7837,7 @@ function updateInfoPanel() {
   }
 
   else if (
-    playerFormationChoice ===
-    "RANDOM"
+    playerFormationChoice === "RANDOM"
   ) {
 
     playerFormationText =
@@ -8038,8 +7884,7 @@ function updateInfoPanel() {
   }
 
   else if (
-    computerFormationChoice ===
-    "RANDOM"
+    computerFormationChoice === "RANDOM"
   ) {
 
     computerText =
@@ -8073,8 +7918,7 @@ function updateInfoPanel() {
 
     colorText =
 
-      playerColor ===
-      "w"
+      playerColor === "w"
 
         ? "White"
 
@@ -8083,8 +7927,7 @@ function updateInfoPanel() {
   }
 
   else if (
-    playerColorChoice ===
-    "RANDOM"
+    playerColorChoice === "RANDOM"
   ) {
 
     colorText =
@@ -8096,8 +7939,7 @@ function updateInfoPanel() {
 
     colorText =
 
-      playerColorChoice ===
-      "w"
+      playerColorChoice === "w"
 
         ? "White"
 
@@ -8122,10 +7964,8 @@ function updateInfoPanel() {
 
   else if (
     !gameStarted &&
-    playerFormationChoice ===
-    "RNB" &&
-    computerFormationChoice ===
-    "RNB"
+    playerFormationChoice === "RNB" &&
+    computerFormationChoice === "RNB"
   ) {
 
     castlingText =
@@ -8139,11 +7979,8 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>You:</strong> " +
-
     playerFormationText +
-
     " · " +
-
     colorText +
 
     "</div>" +
@@ -8151,7 +7988,6 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>Computer:</strong> " +
-
     computerText +
 
     "</div>" +
@@ -8159,7 +7995,6 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>Difficulty:</strong> " +
-
     difficulty.label +
 
     "</div>" +
@@ -8167,7 +8002,6 @@ function updateInfoPanel() {
     "<div class='match-line'>" +
 
     "<strong>Castling:</strong> " +
-
     castlingText +
 
     "</div>";
@@ -8325,8 +8159,7 @@ feedbackOverlay.addEventListener(
   function(event) {
 
     if (
-      event.target ===
-      feedbackOverlay
+      event.target === feedbackOverlay
     ) {
 
       closeFeedback();
@@ -8344,8 +8177,7 @@ document.addEventListener(
   function(event) {
 
     if (
-      event.key ===
-      "Escape" &&
+      event.key === "Escape" &&
       feedbackOverlay.classList.contains(
         "visible"
       )
@@ -8436,16 +8268,12 @@ feedbackForm.addEventListener(
         await fetch(
           FORMSPREE_ENDPOINT,
           {
-
             method:"POST",
-
             body:formData,
-
             headers:{
               "Accept":
                 "application/json"
             }
-
           }
         );
 
@@ -8556,8 +8384,7 @@ function(event) {
 
 
   if (
-    message ===
-    "uciok"
+    message === "uciok"
   ) {
 
     engine.postMessage(
@@ -8568,8 +8395,7 @@ function(event) {
 
 
   if (
-    message ===
-    "readyok"
+    message === "readyok"
   ) {
 
     engineReady =
@@ -8600,8 +8426,7 @@ function(event) {
 
 
   if (
-    typeof message ===
-    "string" &&
+    typeof message === "string" &&
     message.startsWith(
       "bestmove"
     )
@@ -8610,6 +8435,23 @@ function(event) {
     const move =
       message
         .split(" ")[1];
+
+
+    if (
+      ignoreStoppedBestmove
+    ) {
+
+      ignoreStoppedBestmove =
+        false;
+
+
+      return;
+
+    }
+
+
+    engineSearchActive =
+      false;
 
 
     if (
