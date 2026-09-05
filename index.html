@@ -149,7 +149,8 @@ select {
 .difficulty-btn,
 .action-btn,
 .sound-btn,
-.feedback-btn {
+.feedback-btn,
+.summary-btn {
   border:1px solid var(--button-border);
   background:var(--button);
   border-radius:9px;
@@ -217,7 +218,8 @@ button:hover {
 .difficulty-btn,
 .action-btn,
 .sound-btn,
-.feedback-btn {
+.feedback-btn,
+.summary-btn {
   padding:8px 7px;
 }
 
@@ -654,9 +656,7 @@ select {
 }
 
 .move-box {
-  max-height:310px;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
+  overflow:hidden;
 }
 
 table {
@@ -673,8 +673,6 @@ td {
 }
 
 th {
-  position:sticky;
-  top:0;
   background:#f2ede4;
 }
 
@@ -683,6 +681,72 @@ th {
   font-size:10px;
   color:var(--muted);
   line-height:1.35;
+}
+
+
+/* ===================================================== */
+/* GAME OVER SUMMARY                                     */
+/* ===================================================== */
+
+#gameOverSection {
+  display:none;
+}
+
+#gameOverSection.visible {
+  display:block;
+}
+
+.game-over-box {
+  padding:12px;
+  background:#fbf8f1;
+  border:1px solid #ded5c7;
+  border-radius:11px;
+}
+
+.game-over-result {
+  margin-bottom:9px;
+  color:var(--green);
+  font-size:17px;
+  font-weight:bold;
+}
+
+.game-over-line {
+  margin-bottom:4px;
+  font-size:12px;
+  line-height:1.35;
+}
+
+.game-over-line:last-of-type {
+  margin-bottom:0;
+}
+
+.game-over-actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:11px;
+}
+
+.summary-btn {
+  font-size:12px;
+}
+
+.summary-btn.primary-summary {
+  background:var(--green);
+  color:#fff;
+  border-color:var(--green);
+}
+
+.summary-btn.primary-summary:hover {
+  background:var(--green-hover);
+}
+
+.copy-status {
+  min-height:14px;
+  margin-top:7px;
+  text-align:center;
+  font-size:10px;
+  color:var(--green);
 }
 
 
@@ -1037,7 +1101,8 @@ th {
   .difficulty-btn,
   .action-btn,
   .sound-btn,
-  .feedback-btn {
+  .feedback-btn,
+  .summary-btn {
     min-height:40px;
   }
 
@@ -1071,10 +1136,6 @@ th {
     min-height:27px;
     font-size:11px;
     line-height:1.3;
-  }
-
-  .move-box {
-    max-height:240px;
   }
 
   #hoverTooltip {
@@ -1528,11 +1589,9 @@ th {
             <thead>
 
               <tr>
-
                 <th>#</th>
                 <th>White</th>
                 <th>Black</th>
-
               </tr>
 
             </thead>
@@ -1540,16 +1599,71 @@ th {
             <tbody id="moveListBody">
 
               <tr>
-
                 <td colspan="3">
                   Game not started.
                 </td>
-
               </tr>
 
             </tbody>
 
           </table>
+
+        </div>
+
+        <div class="small-note">
+          Showing the latest four moves.
+        </div>
+
+      </div>
+
+
+      <!-- GAME OVER SUMMARY -->
+
+      <div
+        id="gameOverSection"
+        class="section">
+
+        <div class="label">
+          Game Over
+        </div>
+
+        <div class="game-over-box">
+
+          <div
+            id="gameOverResult"
+            class="game-over-result">
+          </div>
+
+          <div
+            id="gameOverDetails">
+          </div>
+
+          <div class="game-over-actions">
+
+            <button
+              id="copyGameBtn"
+              class="summary-btn"
+              type="button">
+
+              📋 Copy Game Record
+
+            </button>
+
+            <button
+              id="rematchBtn"
+              class="summary-btn primary-summary"
+              type="button">
+
+              ↻ Rematch
+
+            </button>
+
+          </div>
+
+          <div
+            id="copyStatus"
+            class="copy-status">
+          </div>
 
         </div>
 
@@ -2169,6 +2283,24 @@ const bottomCapturedPieces =
 
 const moveListBody =
   document.getElementById("moveListBody");
+
+const gameOverSection =
+  document.getElementById("gameOverSection");
+
+const gameOverResult =
+  document.getElementById("gameOverResult");
+
+const gameOverDetails =
+  document.getElementById("gameOverDetails");
+
+const copyGameBtn =
+  document.getElementById("copyGameBtn");
+
+const rematchBtn =
+  document.getElementById("rematchBtn");
+
+const copyStatus =
+  document.getElementById("copyStatus");
 
 const playWhiteBtn =
   document.getElementById("playWhiteBtn");
@@ -4622,6 +4754,35 @@ function initializeControls() {
 
 
 /* ===================================================== */
+/* GAME OVER CONTROLS                                    */
+/* ===================================================== */
+
+copyGameBtn.addEventListener(
+  "click",
+  async function() {
+
+    playMenuClick();
+
+    await copyGameRecord();
+
+  }
+);
+
+
+rematchBtn.addEventListener(
+  "click",
+  function() {
+
+    playMenuClick();
+
+    rematchCurrentGame();
+
+  }
+);
+
+
+
+/* ===================================================== */
 /* BUTTON STATES                                         */
 /* ===================================================== */
 
@@ -4856,6 +5017,8 @@ function renderPreview() {
 
   clearCaptureToast();
 
+  hideGameOverSummary();
+
 
   const previewColor =
 
@@ -5076,6 +5239,24 @@ function resetCurrentGame() {
 }
 
 
+function rematchCurrentGame() {
+
+  if (
+    !actualPlayerFormation ||
+    !actualComputerFormation ||
+    !actualPlayerColor
+  ) {
+
+    return;
+
+  }
+
+
+  beginGame();
+
+}
+
+
 function endCurrentGame() {
 
   clearFormationAnimationTimers();
@@ -5114,6 +5295,8 @@ function endCurrentGame() {
 
   clearCaptureToast();
 
+  hideGameOverSummary();
+
 
   if (
     playerFormationChoice ===
@@ -5149,6 +5332,8 @@ function beginGame() {
   clearEngineMoveTimer();
 
   hideRuleToast();
+
+  hideGameOverSummary();
 
 
   engine.postMessage(
@@ -6606,6 +6791,8 @@ function afterMove(
 
   updateStatus();
 
+  updateGameOverSummary();
+
   playSoundForMove(
     move
   );
@@ -7046,12 +7233,34 @@ function renderMoveList() {
   }
 
 
+  const totalFullMoves =
+    Math.ceil(
+      history.length /
+      2
+    );
+
+
+  const firstVisibleMove =
+    Math.max(
+      1,
+      totalFullMoves -
+      3
+    );
+
+
+  const startIndex =
+    (
+      firstVisibleMove -
+      1
+    ) * 2;
+
+
   let html =
     "";
 
 
   for (
-    let i=0;
+    let i=startIndex;
     i<history.length;
     i+=2
   ) {
@@ -7063,7 +7272,10 @@ function renderMoveList() {
       "<td>" +
 
       (
-        i/2 +
+        Math.floor(
+          i /
+          2
+        ) +
         1
       ) +
 
@@ -7099,15 +7311,479 @@ function renderMoveList() {
   moveListBody.innerHTML =
     html;
 
+}
 
-  const moveBox =
-    document.getElementById(
-      "moveBox"
+
+
+/* ===================================================== */
+/* GAME OVER SUMMARY                                     */
+/* ===================================================== */
+
+function getGameResultText() {
+
+  if (
+    !game ||
+    !game.isGameOver()
+  ) {
+
+    return "";
+
+  }
+
+
+  if (
+    game.isCheckmate()
+  ) {
+
+    const winner =
+
+      game.turn() ===
+      "w"
+
+        ? "b"
+
+        : "w";
+
+
+    return (
+
+      winner ===
+      playerColor
+
+        ? "Victory — you won by checkmate."
+
+        : "Defeat — Stockfish won by checkmate."
+
+    );
+
+  }
+
+
+  if (
+    game.isStalemate()
+  ) {
+
+    return "Draw by stalemate.";
+
+  }
+
+
+  if (
+    game.isThreefoldRepetition()
+  ) {
+
+    return "Draw by threefold repetition.";
+
+  }
+
+
+  if (
+    game.isInsufficientMaterial()
+  ) {
+
+    return "Draw by insufficient material.";
+
+  }
+
+
+  return "Draw.";
+
+}
+
+
+function updateGameOverSummary() {
+
+  if (
+    !gameStarted ||
+    !game ||
+    !game.isGameOver()
+  ) {
+
+    hideGameOverSummary();
+
+    return;
+
+  }
+
+
+  const history =
+    game.history();
+
+
+  const moveCount =
+    Math.ceil(
+      history.length /
+      2
     );
 
 
-  moveBox.scrollTop =
-    moveBox.scrollHeight;
+  const colorName =
+
+    playerColor ===
+    "w"
+
+      ? "White"
+
+      : "Black";
+
+
+  const castlingText =
+
+    castlingEnabledForCurrentGame()
+
+      ? "Enabled"
+
+      : "Disabled";
+
+
+  gameOverResult.textContent =
+    getGameResultText();
+
+
+  gameOverDetails.innerHTML =
+
+    "<div class='game-over-line'>" +
+
+    "<strong>Your formation:</strong> " +
+
+    FORMATION_MAP[
+      actualPlayerFormation
+    ] +
+
+    " (" +
+
+    actualPlayerFormation +
+
+    ")" +
+
+    "</div>" +
+
+
+    "<div class='game-over-line'>" +
+
+    "<strong>Computer formation:</strong> " +
+
+    FORMATION_MAP[
+      actualComputerFormation
+    ] +
+
+    " (" +
+
+    actualComputerFormation +
+
+    ")" +
+
+    "</div>" +
+
+
+    "<div class='game-over-line'>" +
+
+    "<strong>Your color:</strong> " +
+
+    colorName +
+
+    "</div>" +
+
+
+    "<div class='game-over-line'>" +
+
+    "<strong>Difficulty:</strong> " +
+
+    DIFFICULTIES[
+      difficultyKey
+    ].label +
+
+    "</div>" +
+
+
+    "<div class='game-over-line'>" +
+
+    "<strong>Moves:</strong> " +
+
+    moveCount +
+
+    "</div>" +
+
+
+    "<div class='game-over-line'>" +
+
+    "<strong>Castling:</strong> " +
+
+    castlingText +
+
+    "</div>";
+
+
+  copyStatus.textContent =
+    "";
+
+
+  gameOverSection.classList.add(
+    "visible"
+  );
+
+}
+
+
+function hideGameOverSummary() {
+
+  gameOverSection.classList.remove(
+    "visible"
+  );
+
+
+  copyStatus.textContent =
+    "";
+
+}
+
+
+function buildFullMoveText() {
+
+  const history =
+    game.history();
+
+
+  const lines =
+    [];
+
+
+  for (
+    let i=0;
+    i<history.length;
+    i+=2
+  ) {
+
+    const moveNumber =
+      Math.floor(
+        i /
+        2
+      ) +
+      1;
+
+
+    const whiteMove =
+      history[
+        i
+      ] ||
+      "";
+
+
+    const blackMove =
+      history[
+        i+1
+      ] ||
+      "";
+
+
+    lines.push(
+
+      moveNumber +
+      ". " +
+      whiteMove +
+      (
+        blackMove
+
+          ? " " +
+            blackMove
+
+          : ""
+      )
+
+    );
+
+  }
+
+
+  return lines.join(
+    "\n"
+  );
+
+}
+
+
+function buildGameRecord() {
+
+  const colorName =
+
+    playerColor ===
+    "w"
+
+      ? "White"
+
+      : "Black";
+
+
+  const castlingText =
+
+    castlingEnabledForCurrentGame()
+
+      ? "Enabled"
+
+      : "Disabled";
+
+
+  return (
+
+    "The Aurelian Overtures\n" +
+
+    "A Strategic Chess Variant\n\n" +
+
+    "Result: " +
+
+    getGameResultText() +
+
+    "\n" +
+
+    "Player formation: " +
+
+    FORMATION_MAP[
+      actualPlayerFormation
+    ] +
+
+    " (" +
+
+    actualPlayerFormation +
+
+    ")\n" +
+
+    "Computer formation: " +
+
+    FORMATION_MAP[
+      actualComputerFormation
+    ] +
+
+    " (" +
+
+    actualComputerFormation +
+
+    ")\n" +
+
+    "Player color: " +
+
+    colorName +
+
+    "\n" +
+
+    "Difficulty: " +
+
+    DIFFICULTIES[
+      difficultyKey
+    ].label +
+
+    "\n" +
+
+    "Castling: " +
+
+    castlingText +
+
+    "\n\n" +
+
+    "Moves\n" +
+
+    "-----\n" +
+
+    buildFullMoveText()
+
+  );
+
+}
+
+
+async function copyGameRecord() {
+
+  if (
+    !game ||
+    !game.isGameOver()
+  ) {
+
+    return;
+
+  }
+
+
+  const record =
+    buildGameRecord();
+
+
+  try {
+
+    await navigator.clipboard.writeText(
+      record
+    );
+
+
+    copyStatus.textContent =
+      "Game record copied.";
+
+  }
+
+  catch(
+    error
+  ) {
+
+    const textarea =
+      document.createElement(
+        "textarea"
+      );
+
+
+    textarea.value =
+      record;
+
+
+    textarea.style.position =
+      "fixed";
+
+
+    textarea.style.opacity =
+      "0";
+
+
+    document.body.appendChild(
+      textarea
+    );
+
+
+    textarea.select();
+
+
+    try {
+
+      document.execCommand(
+        "copy"
+      );
+
+
+      copyStatus.textContent =
+        "Game record copied.";
+
+    }
+
+    catch(
+      fallbackError
+    ) {
+
+      copyStatus.textContent =
+        "Unable to copy automatically.";
+
+    }
+
+
+    textarea.remove();
+
+  }
+
+
+  setTimeout(
+    () => {
+
+      copyStatus.textContent =
+        "";
+
+    },
+    2500
+  );
 
 }
 
@@ -7519,6 +8195,14 @@ function openFeedback() {
     "";
 
 
+  feedbackSubmit.disabled =
+    false;
+
+
+  feedbackSubmit.textContent =
+    "Send Feedback";
+
+
   feedbackFormWrap.classList.remove(
     "hidden"
   );
@@ -7602,6 +8286,8 @@ feedbackClose.addEventListener(
 
     closeFeedback();
 
+    resetFeedbackForm();
+
   }
 );
 
@@ -7613,6 +8299,8 @@ feedbackCancel.addEventListener(
     playMenuClick();
 
     closeFeedback();
+
+    resetFeedbackForm();
 
   }
 );
@@ -7643,6 +8331,8 @@ feedbackOverlay.addEventListener(
 
       closeFeedback();
 
+      resetFeedbackForm();
+
     }
 
   }
@@ -7662,6 +8352,8 @@ document.addEventListener(
     ) {
 
       closeFeedback();
+
+      resetFeedbackForm();
 
     }
 
