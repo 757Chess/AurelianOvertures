@@ -377,11 +377,6 @@ select {
   margin:0 auto;
 }
 
-
-/*
-Coordinates live outside the playable board.
-*/
-
 .board-coordinate-frame {
   width:100%;
   display:grid;
@@ -398,7 +393,6 @@ Coordinates live outside the playable board.
   align-items:stretch;
 }
 
-
 .rank-coordinates {
   grid-column:1;
   grid-row:1;
@@ -413,7 +407,6 @@ Coordinates live outside the playable board.
   font-weight:bold;
   color:#4f4a43;
 }
-
 
 .file-coordinates {
   grid-column:2;
@@ -430,17 +423,10 @@ Coordinates live outside the playable board.
   color:#4f4a43;
 }
 
-
 .coordinate-corner {
   grid-column:1;
   grid-row:2;
 }
-
-
-/*
-The image itself already contains the thin dark outline,
-so no additional CSS border is added here.
-*/
 
 #board {
   grid-column:2;
@@ -465,7 +451,6 @@ so no additional CSS border is added here.
   overflow:hidden;
 }
 
-
 .square {
   position:relative;
   width:100%;
@@ -484,25 +469,14 @@ so no additional CSS border is added here.
   -webkit-user-select:none;
 }
 
-
-/*
-The board artwork supplies the actual square colors.
-*/
-
 .light,
 .dark {
   background:transparent;
 }
 
-
-/*
-Last-move tint keeps the marble visible underneath.
-*/
-
 .last-move {
   background:rgba(232,202,69,.42);
 }
-
 
 .selected::after {
   content:"";
@@ -513,7 +487,6 @@ Last-move tint keeps the marble visible underneath.
   pointer-events:none;
 }
 
-
 .check::after {
   content:"";
   position:absolute;
@@ -522,7 +495,6 @@ Last-move tint keeps the marble visible underneath.
   border-radius:6px;
   pointer-events:none;
 }
-
 
 .move-dot {
   position:absolute;
@@ -534,7 +506,6 @@ Last-move tint keeps the marble visible underneath.
   pointer-events:none;
 }
 
-
 .piece {
   position:relative;
   z-index:2;
@@ -544,7 +515,6 @@ Last-move tint keeps the marble visible underneath.
   pointer-events:none;
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));
 }
-
 
 .preview-bar {
   margin-top:6px;
@@ -561,7 +531,6 @@ Last-move tint keeps the marble visible underneath.
 .preview-bar strong {
   color:var(--green);
 }
-
 
 .box {
   padding:9px 10px;
@@ -869,7 +838,6 @@ th {
     font-size:10px;
   }
 
-
   .board-coordinate-frame {
     grid-template-columns:
       15px
@@ -880,19 +848,16 @@ th {
       15px;
   }
 
-
   .rank-coordinates,
   .file-coordinates {
     font-size:8px;
   }
-
 
   .selected::after,
   .check::after {
     inset:3px;
     border-width:3px;
   }
-
 
   .preview-bar {
     min-height:27px;
@@ -3328,9 +3293,6 @@ function initializeControls() {
         "click",
         function() {
 
-          playMenuClick();
-
-
           playerFormationChoice =
             formation.code;
 
@@ -3401,9 +3363,6 @@ function initializeControls() {
     "click",
     function() {
 
-      playMenuClick();
-
-
       playerFormationChoice =
         "RANDOM";
 
@@ -3429,9 +3388,6 @@ function initializeControls() {
   computerFormationSelect.addEventListener(
     "change",
     function() {
-
-      playMenuClick();
-
 
       computerFormationChoice =
         computerFormationSelect.value;
