@@ -112,6 +112,11 @@ h1 {
   font-size:14px;
 }
 
+
+/* ===================================================== */
+/* CONTROLS                                              */
+/* ===================================================== */
+
 .formation-grid {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -371,7 +376,7 @@ select {
 
 
 /* ===================================================== */
-/* CASTLING TOAST                                        */
+/* RULE TOAST                                            */
 /* ===================================================== */
 
 #ruleToast {
@@ -465,16 +470,20 @@ select {
 #board {
   grid-column:2;
   grid-row:1;
+
   display:grid;
   grid-template-columns:repeat(8,1fr);
   grid-template-rows:repeat(8,1fr);
+
   width:100%;
   max-width:576px;
   aspect-ratio:1 / 1;
+
   background-image:url("./boardtexture.png");
   background-size:100% 100%;
   background-position:center;
   background-repeat:no-repeat;
+
   border:none;
   border-radius:0;
   overflow:hidden;
@@ -486,10 +495,13 @@ select {
   height:100%;
   min-width:0;
   min-height:0;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   background:transparent;
+
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;
@@ -540,6 +552,11 @@ select {
   object-fit:contain;
   pointer-events:none;
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));
+  will-change:transform;
+}
+
+.piece.move-glide {
+  z-index:30;
 }
 
 .preview-bar {
@@ -750,7 +767,7 @@ th {
 
 
 /* ===================================================== */
-/* FEEDBACK MODAL                                        */
+/* FEEDBACK                                              */
 /* ===================================================== */
 
 .feedback-overlay {
@@ -918,10 +935,16 @@ th {
 }
 
 
+/* ===================================================== */
+/* RESPONSIVE                                            */
+/* ===================================================== */
+
 @media (max-width:1240px) {
+
   .app {
     grid-template-columns:270px minmax(0,580px) 290px;
   }
+
 }
 
 @media (max-width:1120px) {
@@ -947,6 +970,7 @@ th {
     position:fixed;
     top:18px;
   }
+
 }
 
 @media (max-width:700px) {
@@ -1105,11 +1129,18 @@ th {
 <div class="page">
 
   <div class="header">
+
     <h1>The Aurelian Overtures</h1>
-    <p class="subtitle">A Strategic Chess Variant</p>
+
+    <p class="subtitle">
+      A Strategic Chess Variant
+    </p>
+
   </div>
 
+
   <div class="app">
+
 
     <!-- LEFT PANEL -->
 
@@ -1117,11 +1148,18 @@ th {
 
       <div class="section">
 
-        <h2 class="panel-title">Game Setup</h2>
+        <h2 class="panel-title">
+          Game Setup
+        </h2>
 
-        <div class="label">Your formation</div>
+        <div class="label">
+          Your formation
+        </div>
 
-        <div id="formationButtons" class="formation-grid"></div>
+        <div
+          id="formationButtons"
+          class="formation-grid">
+        </div>
 
         <div class="random-formation-wrap">
 
@@ -1130,8 +1168,13 @@ th {
             class="choice-btn random-formation-btn"
             type="button">
 
-            <span class="formation-code">🎲 Random Formation</span>
-            <span class="formation-name">Surprise me</span>
+            <span class="formation-code">
+              🎲 Random Formation
+            </span>
+
+            <span class="formation-name">
+              Surprise me
+            </span>
 
           </button>
 
@@ -1142,11 +1185,17 @@ th {
         <label
           class="label"
           for="computerFormationSelect">
+
           Computer formation
+
         </label>
 
         <select id="computerFormationSelect">
-          <option value="RANDOM">Random formation</option>
+
+          <option value="RANDOM">
+            Random formation
+          </option>
+
         </select>
 
       </div>
@@ -1154,7 +1203,9 @@ th {
 
       <div class="section">
 
-        <div class="label">Play as</div>
+        <div class="label">
+          Play as
+        </div>
 
         <div class="three-buttons">
 
@@ -1162,21 +1213,27 @@ th {
             id="playWhiteBtn"
             class="side-btn active"
             type="button">
+
             White
+
           </button>
 
           <button
             id="playRandomBtn"
             class="side-btn"
             type="button">
+
             Random
+
           </button>
 
           <button
             id="playBlackBtn"
             class="side-btn"
             type="button">
+
             Black
+
           </button>
 
         </div>
@@ -1186,7 +1243,9 @@ th {
 
       <div class="section">
 
-        <div class="label">Difficulty</div>
+        <div class="label">
+          Difficulty
+        </div>
 
         <div class="difficulty-grid">
 
@@ -1194,28 +1253,36 @@ th {
             id="difficultyRelaxed"
             class="difficulty-btn active"
             type="button">
+
             Relaxed
+
           </button>
 
           <button
             id="difficultyStandard"
             class="difficulty-btn"
             type="button">
+
             Standard
+
           </button>
 
           <button
             id="difficultyFierce"
             class="difficulty-btn"
             type="button">
+
             Fierce
+
           </button>
 
           <button
             id="difficultyRuthless"
             class="difficulty-btn"
             type="button">
+
             Ruthless
+
           </button>
 
         </div>
@@ -1225,14 +1292,18 @@ th {
 
       <div class="section">
 
-        <div class="label">Sound</div>
+        <div class="label">
+          Sound
+        </div>
 
         <button
           id="soundButton"
           class="sound-btn active"
           type="button"
           style="width:100%;">
+
           🔊 Sound On
+
         </button>
 
       </div>
@@ -1244,27 +1315,36 @@ th {
           id="newGameBtn"
           class="action-btn primary"
           type="button">
+
           Start New Game
+
         </button>
 
         <button
           id="endGameBtn"
           class="action-btn"
           type="button">
+
           End Game
+
         </button>
 
         <button
           id="resetBtn"
           class="action-btn reset-action"
           type="button">
+
           Reset Current Game
+
         </button>
 
       </div>
 
+
       <div class="small-note">
+
         Hover or tap formations and difficulty settings for guidance.
+
       </div>
 
     </div>
@@ -1281,21 +1361,33 @@ th {
 
         <div class="board-coordinate-frame">
 
-          <div id="rankCoordinates" class="rank-coordinates"></div>
+          <div
+            id="rankCoordinates"
+            class="rank-coordinates">
+          </div>
 
           <div id="board"></div>
 
-          <div id="fileCoordinates" class="file-coordinates"></div>
+          <div
+            id="fileCoordinates"
+            class="file-coordinates">
+          </div>
 
           <div class="coordinate-corner"></div>
 
         </div>
 
-        <div id="previewBar" class="preview-bar">
+
+        <div
+          id="previewBar"
+          class="preview-bar">
+
           Formation preview
+
         </div>
 
       </div>
+
 
       <div id="captureToast"></div>
 
@@ -1309,14 +1401,24 @@ th {
 
       <div class="section">
 
-        <div class="label">Status</div>
+        <div class="label">
+          Status
+        </div>
 
-        <div id="statusBox" class="box status-box">
+        <div
+          id="statusBox"
+          class="box status-box">
+
           Loading Stockfish...
+
         </div>
 
-        <div id="engineBox" class="engine">
+        <div
+          id="engineBox"
+          class="engine">
+
           Engine loading...
+
         </div>
 
       </div>
@@ -1324,47 +1426,84 @@ th {
 
       <div class="section">
 
-        <div class="label">Match</div>
+        <div class="label">
+          Match
+        </div>
 
-        <div id="infoBox" class="box"></div>
+        <div
+          id="infoBox"
+          class="box">
+        </div>
 
       </div>
 
 
       <div class="section">
 
-        <div class="label">Material & Captures</div>
+        <div class="label">
+          Material & Captures
+        </div>
 
         <div class="box">
 
           <div class="material-line">
 
-            <span id="materialText">Material even</span>
+            <span id="materialText">
+              Material even
+            </span>
 
-            <span id="materialScore" class="material-score">0</span>
+            <span
+              id="materialScore"
+              class="material-score">
+
+              0
+
+            </span>
 
           </div>
 
+
           <div class="capture-row">
 
-            <div id="topCaptureTitle" class="capture-label">
+            <div
+              id="topCaptureTitle"
+              class="capture-label">
+
               White captured
+
             </div>
 
-            <div id="topCapturedPieces" class="captured-pieces">
-              <span class="none">None</span>
+            <div
+              id="topCapturedPieces"
+              class="captured-pieces">
+
+              <span class="none">
+                None
+              </span>
+
             </div>
 
           </div>
 
+
           <div class="capture-row">
 
-            <div id="bottomCaptureTitle" class="capture-label">
+            <div
+              id="bottomCaptureTitle"
+              class="capture-label">
+
               Black captured
+
             </div>
 
-            <div id="bottomCapturedPieces" class="captured-pieces">
-              <span class="none">None</span>
+            <div
+              id="bottomCapturedPieces"
+              class="captured-pieces">
+
+              <span class="none">
+                None
+              </span>
+
             </div>
 
           </div>
@@ -1376,24 +1515,36 @@ th {
 
       <div class="section">
 
-        <div class="label">Move History</div>
+        <div class="label">
+          Move History
+        </div>
 
-        <div id="moveBox" class="box move-box">
+        <div
+          id="moveBox"
+          class="box move-box">
 
           <table>
 
             <thead>
+
               <tr>
+
                 <th>#</th>
                 <th>White</th>
                 <th>Black</th>
+
               </tr>
+
             </thead>
 
             <tbody id="moveListBody">
 
               <tr>
-                <td colspan="3">Game not started.</td>
+
+                <td colspan="3">
+                  Game not started.
+                </td>
+
               </tr>
 
             </tbody>
@@ -1407,17 +1558,23 @@ th {
 
       <div class="section">
 
-        <div class="label">Feedback</div>
+        <div class="label">
+          Feedback
+        </div>
 
         <button
           id="feedbackButton"
           class="feedback-btn"
           type="button">
+
           💬 Send Feedback
+
         </button>
 
         <div class="small-note">
+
           Thoughts, suggestions, and unfiltered reactions are welcome.
+
         </div>
 
       </div>
@@ -1432,21 +1589,32 @@ th {
 
 <!-- PROMOTION -->
 
-<div id="promotionOverlay" class="promotion-overlay">
+<div
+  id="promotionOverlay"
+  class="promotion-overlay">
 
   <div class="promotion-card">
 
-    <h2>Promote Your Pawn</h2>
+    <h2>
+      Promote Your Pawn
+    </h2>
 
-    <p>Choose the piece your pawn becomes.</p>
+    <p>
+      Choose the piece your pawn becomes.
+    </p>
 
-    <div id="promotionOptions" class="promotion-options"></div>
+    <div
+      id="promotionOptions"
+      class="promotion-options">
+    </div>
 
     <button
       id="promotionCancel"
       class="promotion-cancel"
       type="button">
+
       Cancel
+
     </button>
 
   </div>
@@ -1457,7 +1625,9 @@ th {
 
 <!-- FEEDBACK -->
 
-<div id="feedbackOverlay" class="feedback-overlay">
+<div
+  id="feedbackOverlay"
+  class="feedback-overlay">
 
   <div class="feedback-card">
 
@@ -1466,16 +1636,25 @@ th {
       class="feedback-close"
       type="button"
       aria-label="Close feedback form">
+
       ×
+
     </button>
 
-    <div id="feedbackFormWrap" class="feedback-form">
 
-      <h2>Send Feedback</h2>
+    <div
+      id="feedbackFormWrap"
+      class="feedback-form">
+
+      <h2>
+        Send Feedback
+      </h2>
 
       <p class="feedback-intro">
+
         Unfiltered thoughts welcome. What worked? What didn’t?
         What confused you? What would you change?
+
       </p>
 
       <form id="feedbackForm">
@@ -1524,10 +1703,12 @@ th {
 
         </div>
 
+
         <input
           type="hidden"
           name="_subject"
           value="Aurelian Overtures Feedback">
+
 
         <div class="feedback-actions">
 
@@ -1535,40 +1716,55 @@ th {
             id="feedbackCancel"
             class="feedback-cancel"
             type="button">
+
             Cancel
+
           </button>
 
           <button
             id="feedbackSubmit"
             class="feedback-submit"
             type="submit">
+
             Send Feedback
+
           </button>
 
         </div>
 
-        <div id="feedbackStatus" class="feedback-status"></div>
+        <div
+          id="feedbackStatus"
+          class="feedback-status">
+        </div>
 
       </form>
 
     </div>
 
 
-    <div id="feedbackSuccess" class="feedback-success">
+    <div
+      id="feedbackSuccess"
+      class="feedback-success">
 
       <div class="feedback-success-icon">
         ✓
       </div>
 
-      <h3>Thanks — feedback received.</h3>
+      <h3>
+        Thanks — feedback received.
+      </h3>
 
-      <p>Your thoughts have been sent.</p>
+      <p>
+        Your thoughts have been sent.
+      </p>
 
       <button
         id="feedbackDone"
         class="feedback-done"
         type="button">
+
         Back to the Game
+
       </button>
 
     </div>
@@ -2115,6 +2311,9 @@ let promotionPending =
 let soundEnabled =
   true;
 
+let moveAnimating =
+  false;
+
 let captureToastItems =
   [];
 
@@ -2129,6 +2328,10 @@ let ruleToastTimer =
 
 let formationAnimationTimers =
   [];
+
+
+const MOVE_ANIMATION_DURATION =
+  230;
 
 
 const engine =
@@ -2235,25 +2438,43 @@ function playSoundForMove(move) {
     if (
       game.isCheckmate()
     ) {
-      playSound("checkmate");
+
+      playSound(
+        "checkmate"
+      );
+
     }
 
     else {
-      playSound("draw");
+
+      playSound(
+        "draw"
+      );
+
     }
 
+
     return;
+
   }
 
 
   if (
     move.captured
   ) {
-    playSound("capture");
+
+    playSound(
+      "capture"
+    );
+
   }
 
   else {
-    playSound("move");
+
+    playSound(
+      "move"
+    );
+
   }
 
 
@@ -2263,7 +2484,11 @@ function playSoundForMove(move) {
 
     setTimeout(
       () => {
-        playSound("check");
+
+        playSound(
+          "check"
+        );
+
       },
       120
     );
@@ -2281,8 +2506,11 @@ function playSoundForMove(move) {
 function castlingEnabledForCurrentGame() {
 
   return (
-    actualPlayerFormation === "RNB" &&
-    actualComputerFormation === "RNB"
+    actualPlayerFormation ===
+    "RNB" &&
+
+    actualComputerFormation ===
+    "RNB"
   );
 
 }
@@ -2293,7 +2521,11 @@ function showRuleToast() {
   if (
     ruleToastTimer
   ) {
-    clearTimeout(ruleToastTimer);
+
+    clearTimeout(
+      ruleToastTimer
+    );
+
   }
 
 
@@ -2318,9 +2550,13 @@ function showRuleToast() {
 
 
   ruleToast.classList.add(
+
     castlingEnabled
+
       ? "enabled"
+
       : "disabled"
+
   );
 
 
@@ -2355,7 +2591,11 @@ function hideRuleToast() {
   if (
     ruleToastTimer
   ) {
-    clearTimeout(ruleToastTimer);
+
+    clearTimeout(
+      ruleToastTimer
+    );
+
   }
 
 
@@ -2372,6 +2612,344 @@ function hideRuleToast() {
 
 
 /* ===================================================== */
+/* LEGAL MOVE GLIDE                                      */
+/* ===================================================== */
+
+function findPlannedMove(
+  from,
+  to,
+  promotion
+) {
+
+  if (
+    !game
+  ) {
+    return null;
+  }
+
+
+  const moves =
+    game.moves({
+
+      square:from,
+
+      verbose:true
+
+    });
+
+
+  let matches =
+    moves.filter(
+      move =>
+        move.to ===
+        to
+    );
+
+
+  if (
+    promotion
+  ) {
+
+    matches =
+      matches.filter(
+        move =>
+          move.promotion ===
+          promotion
+      );
+
+  }
+
+
+  return (
+    matches[0] ||
+    null
+  );
+
+}
+
+
+function getCastlingRookSquares(
+  plannedMove
+) {
+
+  if (
+    !plannedMove ||
+    !plannedMove.flags
+  ) {
+
+    return null;
+
+  }
+
+
+  const rank =
+
+    plannedMove.color ===
+    "w"
+
+      ? "1"
+
+      : "8";
+
+
+  if (
+    plannedMove.flags.includes(
+      "k"
+    )
+  ) {
+
+    return {
+
+      from:"h" + rank,
+
+      to:"f" + rank
+
+    };
+
+  }
+
+
+  if (
+    plannedMove.flags.includes(
+      "q"
+    )
+  ) {
+
+    return {
+
+      from:"a" + rank,
+
+      to:"d" + rank
+
+    };
+
+  }
+
+
+  return null;
+
+}
+
+
+function animateSinglePiece(
+  fromSquare,
+  toSquare
+) {
+
+  return new Promise(
+    resolve => {
+
+      const fromEl =
+        boardEl.querySelector(
+          `[data-square="${fromSquare}"]`
+        );
+
+
+      const toEl =
+        boardEl.querySelector(
+          `[data-square="${toSquare}"]`
+        );
+
+
+      if (
+        !fromEl ||
+        !toEl
+      ) {
+
+        resolve();
+
+        return;
+
+      }
+
+
+      const pieceImage =
+        fromEl.querySelector(
+          ".piece"
+        );
+
+
+      if (
+        !pieceImage
+      ) {
+
+        resolve();
+
+        return;
+
+      }
+
+
+      const fromRect =
+        fromEl.getBoundingClientRect();
+
+
+      const toRect =
+        toEl.getBoundingClientRect();
+
+
+      const deltaX =
+
+        (
+          toRect.left +
+          toRect.width /
+          2
+        ) -
+
+        (
+          fromRect.left +
+          fromRect.width /
+          2
+        );
+
+
+      const deltaY =
+
+        (
+          toRect.top +
+          toRect.height /
+          2
+        ) -
+
+        (
+          fromRect.top +
+          fromRect.height /
+          2
+        );
+
+
+      pieceImage.classList.add(
+        "move-glide"
+      );
+
+
+      let finished =
+        false;
+
+
+      function finish() {
+
+        if (
+          finished
+        ) {
+          return;
+        }
+
+
+        finished =
+          true;
+
+
+        pieceImage.classList.remove(
+          "move-glide"
+        );
+
+
+        resolve();
+
+      }
+
+
+      const animation =
+        pieceImage.animate(
+
+          [
+
+            {
+              transform:
+                "translate(0px, 0px)"
+            },
+
+            {
+              transform:
+                `translate(${deltaX}px, ${deltaY}px)`
+            }
+
+          ],
+
+          {
+
+            duration:
+              MOVE_ANIMATION_DURATION,
+
+            easing:
+              "cubic-bezier(.22,.61,.36,1)",
+
+            fill:
+              "forwards"
+
+          }
+
+        );
+
+
+      animation.onfinish =
+        finish;
+
+
+      animation.oncancel =
+        finish;
+
+
+      setTimeout(
+        finish,
+        MOVE_ANIMATION_DURATION +
+        80
+      );
+
+    }
+  );
+
+}
+
+
+async function animateLegalMove(
+  from,
+  to,
+  plannedMove
+) {
+
+  const animations = [
+
+    animateSinglePiece(
+      from,
+      to
+    )
+
+  ];
+
+
+  const rookMove =
+    getCastlingRookSquares(
+      plannedMove
+    );
+
+
+  if (
+    rookMove
+  ) {
+
+    animations.push(
+
+      animateSinglePiece(
+        rookMove.from,
+        rookMove.to
+      )
+
+    );
+
+  }
+
+
+  await Promise.all(
+    animations
+  );
+
+}
+
+
+
+/* ===================================================== */
 /* FORMATION ASSEMBLY                                    */
 /* ===================================================== */
 
@@ -2379,7 +2957,11 @@ function clearFormationAnimationTimers() {
 
   formationAnimationTimers.forEach(
     timer => {
-      clearTimeout(timer);
+
+      clearTimeout(
+        timer
+      );
+
     }
   );
 
@@ -2410,7 +2992,9 @@ function animateFormationAssembly(side) {
       ? (
           playerColor ===
           "w"
+
             ? "b"
+
             : "w"
         )
 
@@ -2472,8 +3056,10 @@ function animateFormationAssembly(side) {
         pieceImage.style.opacity =
           "0";
 
+
         pieceImage.style.transform =
           "translateY(-18px) scale(.9)";
+
 
         pieceImages.push(
           pieceImage
@@ -2584,6 +3170,7 @@ function clearEngineMoveTimer() {
       engineMoveTimer
     );
 
+
     engineMoveTimer =
       null;
 
@@ -2598,7 +3185,9 @@ function scheduleEngineMove() {
     !game ||
     game.isGameOver()
   ) {
+
     return;
+
   }
 
 
@@ -2622,6 +3211,7 @@ function scheduleEngineMove() {
 
         engineMoveTimer =
           null;
+
 
         requestEngineMove();
 
@@ -2651,20 +3241,31 @@ function showComputerCaptureToast(
   if (
     captureToastTimer
   ) {
-    clearTimeout(captureToastTimer);
+
+    clearTimeout(
+      captureToastTimer
+    );
+
   }
 
 
   if (
     captureToastClearTimer
   ) {
-    clearTimeout(captureToastClearTimer);
+
+    clearTimeout(
+      captureToastClearTimer
+    );
+
   }
 
 
   captureToastItems.push({
+
     type:pieceType,
+
     color:playerColor
+
   });
 
 
@@ -2674,7 +3275,9 @@ function showComputerCaptureToast(
   ) {
 
     captureToastItems =
-      captureToastItems.slice(-4);
+      captureToastItems.slice(
+        -4
+      );
 
   }
 
@@ -2703,6 +3306,7 @@ function showComputerCaptureToast(
               captureToastItems =
                 [];
 
+
               captureToast.innerHTML =
                 "";
 
@@ -2720,7 +3324,12 @@ function showComputerCaptureToast(
 function renderCaptureToast() {
 
   let html =
-    "<div class='capture-toast-title'>Stockfish captured</div>";
+
+    "<div class='capture-toast-title'>" +
+
+    "Stockfish captured" +
+
+    "</div>";
 
 
   captureToastItems.forEach(
@@ -2730,7 +3339,9 @@ function renderCaptureToast() {
 
         "<div class='capture-toast-row'>" +
 
-        "<img class='capture-toast-piece' src='" +
+        "<img class='capture-toast-piece' " +
+
+        "src='" +
 
         PIECE_IMAGES[
           item.color +
@@ -2764,22 +3375,32 @@ function clearCaptureToast() {
   if (
     captureToastTimer
   ) {
-    clearTimeout(captureToastTimer);
+
+    clearTimeout(
+      captureToastTimer
+    );
+
   }
 
 
   if (
     captureToastClearTimer
   ) {
-    clearTimeout(captureToastClearTimer);
+
+    clearTimeout(
+      captureToastClearTimer
+    );
+
   }
 
 
   captureToastTimer =
     null;
 
+
   captureToastClearTimer =
     null;
+
 
   captureToastItems =
     [];
@@ -2810,7 +3431,11 @@ function getFormationTooltipHTML(code) {
 
     return (
 
-      "<div class='tooltip-title'>Random Formation</div>" +
+      "<div class='tooltip-title'>" +
+
+      "Random Formation" +
+
+      "</div>" +
 
       "<div class='tooltip-description'>" +
 
@@ -2818,13 +3443,17 @@ function getFormationTooltipHTML(code) {
 
       "</div>" +
 
-      "<div class='tooltip-line'><strong>Strength:</strong> " +
+      "<div class='tooltip-line'>" +
+
+      "<strong>Strength:</strong> " +
 
       "Forces you to adapt and explore formations you might not normally select." +
 
       "</div>" +
 
-      "<div class='tooltip-line'><strong>Tip:</strong> " +
+      "<div class='tooltip-line'>" +
+
+      "<strong>Tip:</strong> " +
 
       "Use Random when you want to practice reacting to unfamiliar starting positions." +
 
@@ -2863,20 +3492,25 @@ function getFormationTooltipHTML(code) {
 
     "</div>" +
 
-    "<div class='tooltip-line'><strong>Strength:</strong> " +
+    "<div class='tooltip-line'>" +
+
+    "<strong>Strength:</strong> " +
 
     guide.strength +
 
     "</div>" +
 
-    "<div class='tooltip-line'><strong>Tip:</strong> " +
+    "<div class='tooltip-line'>" +
+
+    "<strong>Tip:</strong> " +
 
     guide.tip +
 
     "</div>" +
 
     (
-      code === "RNB"
+      code ===
+      "RNB"
 
         ? "<div class='tooltip-note'>Castling is available when both players choose The Bastion.</div>"
 
@@ -2915,13 +3549,17 @@ function getDifficultyTooltipHTML(key) {
 
     "</div>" +
 
-    "<div class='tooltip-line'><strong>How it plays:</strong> " +
+    "<div class='tooltip-line'>" +
+
+    "<strong>How it plays:</strong> " +
 
     guide.behavior +
 
     "</div>" +
 
-    "<div class='tooltip-line'><strong>Best for:</strong> " +
+    "<div class='tooltip-line'>" +
+
+    "<strong>Best for:</strong> " +
 
     guide.bestFor +
 
@@ -2944,7 +3582,9 @@ function positionTooltip(button) {
     window.innerWidth <=
     700
   ) {
+
     return;
+
   }
 
 
@@ -3003,7 +3643,10 @@ function positionTooltip(button) {
       top <
       10
     ) {
-      top = 10;
+
+      top =
+        10;
+
     }
 
 
@@ -3057,7 +3700,10 @@ function positionTooltip(button) {
     top <
     10
   ) {
-    top = 10;
+
+    top =
+      10;
+
   }
 
 
@@ -3123,7 +3769,9 @@ function attachFormationTooltip(
 
         showTooltip(
           button,
-          getFormationTooltipHTML(code)
+          getFormationTooltipHTML(
+            code
+          )
         );
 
       }
@@ -3139,7 +3787,9 @@ function attachFormationTooltip(
       if (
         !isTouchStyleDevice()
       ) {
+
         hideTooltip();
+
       }
 
     }
@@ -3156,7 +3806,9 @@ function attachFormationTooltip(
 
         showTooltip(
           button,
-          getFormationTooltipHTML(code)
+          getFormationTooltipHTML(
+            code
+          )
         );
 
       }
@@ -3172,7 +3824,9 @@ function attachFormationTooltip(
       if (
         !isTouchStyleDevice()
       ) {
+
         hideTooltip();
+
       }
 
     }
@@ -3189,9 +3843,12 @@ function attachFormationTooltip(
 
         event.stopPropagation();
 
+
         showTooltip(
           button,
-          getFormationTooltipHTML(code)
+          getFormationTooltipHTML(
+            code
+          )
         );
 
       }
@@ -3217,7 +3874,9 @@ function attachDifficultyTooltip(
 
         showTooltip(
           button,
-          getDifficultyTooltipHTML(key)
+          getDifficultyTooltipHTML(
+            key
+          )
         );
 
       }
@@ -3233,7 +3892,9 @@ function attachDifficultyTooltip(
       if (
         !isTouchStyleDevice()
       ) {
+
         hideTooltip();
+
       }
 
     }
@@ -3250,7 +3911,9 @@ function attachDifficultyTooltip(
 
         showTooltip(
           button,
-          getDifficultyTooltipHTML(key)
+          getDifficultyTooltipHTML(
+            key
+          )
         );
 
       }
@@ -3266,7 +3929,9 @@ function attachDifficultyTooltip(
       if (
         !isTouchStyleDevice()
       ) {
+
         hideTooltip();
+
       }
 
     }
@@ -3283,9 +3948,12 @@ function attachDifficultyTooltip(
 
         event.stopPropagation();
 
+
         showTooltip(
           button,
-          getDifficultyTooltipHTML(key)
+          getDifficultyTooltipHTML(
+            key
+          )
         );
 
       }
@@ -3430,7 +4098,6 @@ function refreshPreviewAfterSetupChange(
 /* ===================================================== */
 
 function initializeControls() {
-
 
   FORMATIONS.forEach(
     function(formation) {
@@ -3609,11 +4276,14 @@ function initializeControls() {
 
       playMenuClick();
 
+
       playerColorChoice =
         "w";
 
+
       playerColor =
         "w";
+
 
       refreshSideButtons();
 
@@ -3631,11 +4301,14 @@ function initializeControls() {
 
       playMenuClick();
 
+
       playerColorChoice =
         "RANDOM";
 
+
       playerColor =
         "w";
+
 
       refreshSideButtons();
 
@@ -3653,11 +4326,14 @@ function initializeControls() {
 
       playMenuClick();
 
+
       playerColorChoice =
         "b";
 
+
       playerColor =
         "b";
+
 
       refreshSideButtons();
 
@@ -3795,7 +4471,9 @@ function initializeControls() {
       if (
         soundEnabled
       ) {
+
         playMenuClick();
+
       }
 
     }
@@ -3922,6 +4600,7 @@ function initializeControls() {
         function() {
 
           playMenuClick();
+
 
           choosePromotion(
             pieceType
@@ -4137,6 +4816,10 @@ function renderPreview() {
     false;
 
 
+  moveAnimating =
+    false;
+
+
   gameStarted =
     false;
 
@@ -4349,6 +5032,7 @@ function startNewGame() {
       "Stockfish is still loading."
     );
 
+
     return;
 
   }
@@ -4381,6 +5065,7 @@ function resetCurrentGame() {
 
     startNewGame();
 
+
     return;
 
   }
@@ -4406,6 +5091,10 @@ function endCurrentGame() {
 
 
   engineThinking =
+    false;
+
+
+  moveAnimating =
     false;
 
 
@@ -4479,6 +5168,10 @@ function beginGame() {
 
 
   engineThinking =
+    false;
+
+
+  moveAnimating =
     false;
 
 
@@ -4602,6 +5295,7 @@ function beginGame() {
         "start"
       );
 
+
       showRuleToast();
 
     },
@@ -4626,7 +5320,9 @@ function applyDifficulty() {
   if (
     !engineReady
   ) {
+
     return;
+
   }
 
 
@@ -4664,6 +5360,8 @@ function isPlayerTurn() {
     playerColor &&
 
     !engineThinking &&
+
+    !moveAnimating &&
 
     !promotionPending &&
 
@@ -4931,6 +5629,7 @@ function animateInvalidMove(
       "invalid"
     );
 
+
     return;
 
   }
@@ -4949,6 +5648,7 @@ function animateInvalidMove(
     playSound(
       "invalid"
     );
+
 
     return;
 
@@ -5055,7 +5755,9 @@ function handleSquareClick(
   if (
     !isPlayerTurn()
   ) {
+
     return;
+
   }
 
 
@@ -5099,6 +5801,7 @@ function handleSquareClick(
           squareName
         );
 
+
         return;
 
       }
@@ -5109,6 +5812,7 @@ function handleSquareClick(
         squareName,
         undefined
       );
+
 
       return;
 
@@ -5125,6 +5829,7 @@ function handleSquareClick(
         squareName
       );
 
+
       return;
 
     }
@@ -5134,6 +5839,7 @@ function handleSquareClick(
       selectedSquare,
       squareName
     );
+
 
     return;
 
@@ -5251,7 +5957,9 @@ function choosePromotion(
   if (
     !promotionPending
   ) {
+
     return;
+
   }
 
 
@@ -5279,19 +5987,83 @@ function choosePromotion(
 }
 
 
-function completePlayerMove(
+async function completePlayerMove(
   from,
   to,
   promotion
 ) {
 
+  if (
+    moveAnimating
+  ) {
+
+    return;
+
+  }
+
+
+  const plannedMove =
+    findPlannedMove(
+      from,
+      to,
+      promotion
+    );
+
+
+  if (
+    !plannedMove
+  ) {
+
+    playSound(
+      "invalid"
+    );
+
+
+    return;
+
+  }
+
+
+  const gameAtStart =
+    game;
+
+
+  moveAnimating =
+    true;
+
+
+  await animateLegalMove(
+    from,
+    to,
+    plannedMove
+  );
+
+
+  if (
+    game !==
+    gameAtStart ||
+
+    !gameStarted
+  ) {
+
+    moveAnimating =
+      false;
+
+
+    return;
+
+  }
+
+
   try {
 
     const move =
       game.move({
+
         from,
         to,
         promotion
+
       });
 
 
@@ -5299,9 +6071,17 @@ function completePlayerMove(
       !move
     ) {
 
+      moveAnimating =
+        false;
+
+
       playSound(
         "invalid"
       );
+
+
+      drawBoard();
+
 
       return;
 
@@ -5309,8 +6089,13 @@ function completePlayerMove(
 
 
     lastMove = {
-      from:move.from,
-      to:move.to
+
+      from:
+        move.from,
+
+      to:
+        move.to
+
     };
 
 
@@ -5320,6 +6105,10 @@ function completePlayerMove(
 
     legalMoves =
       [];
+
+
+    moveAnimating =
+      false;
 
 
     afterMove(
@@ -5341,9 +6130,16 @@ function completePlayerMove(
     error
   ) {
 
+    moveAnimating =
+      false;
+
+
     playSound(
       "invalid"
     );
+
+
+    drawBoard();
 
 
     console.error(
@@ -5370,7 +6166,9 @@ function requestEngineMove() {
     engineThinking =
       false;
 
+
     updateStatus();
+
 
     return;
 
@@ -5414,6 +6212,7 @@ function requestEngineMove() {
         randomMove
       );
 
+
       return;
 
     }
@@ -5441,12 +6240,17 @@ function requestEngineMove() {
 }
 
 
-function playCasualRandomMove(
+async function playCasualRandomMove(
   moveObject
 ) {
 
-  engineThinking =
-    false;
+  if (
+    moveAnimating
+  ) {
+
+    return;
+
+  }
 
 
   if (
@@ -5454,7 +6258,63 @@ function playCasualRandomMove(
     game.isGameOver()
   ) {
 
+    engineThinking =
+      false;
+
+
     updateStatus();
+
+
+    return;
+
+  }
+
+
+  const gameAtStart =
+    game;
+
+
+  const plannedMove =
+    findPlannedMove(
+
+      moveObject.from,
+
+      moveObject.to,
+
+      moveObject.promotion
+
+    );
+
+
+  moveAnimating =
+    true;
+
+
+  await animateLegalMove(
+
+    moveObject.from,
+
+    moveObject.to,
+
+    plannedMove
+
+  );
+
+
+  if (
+    game !==
+    gameAtStart ||
+
+    !gameStarted
+  ) {
+
+    moveAnimating =
+      false;
+
+
+    engineThinking =
+      false;
+
 
     return;
 
@@ -5478,10 +6338,24 @@ function playCasualRandomMove(
       });
 
 
+    moveAnimating =
+      false;
+
+
+    engineThinking =
+      false;
+
+
     if (
       !move
     ) {
+
+      drawBoard();
+
+      updateStatus();
+
       return;
+
     }
 
 
@@ -5506,6 +6380,17 @@ function playCasualRandomMove(
     error
   ) {
 
+    moveAnimating =
+      false;
+
+
+    engineThinking =
+      false;
+
+
+    drawBoard();
+
+
     console.error(
       error
     );
@@ -5515,12 +6400,17 @@ function playCasualRandomMove(
 }
 
 
-function playEngineMove(
+async function playEngineMove(
   moveText
 ) {
 
-  engineThinking =
-    false;
+  if (
+    moveAnimating
+  ) {
+
+    return;
+
+  }
 
 
   if (
@@ -5530,7 +6420,12 @@ function playEngineMove(
     "(none)"
   ) {
 
+    engineThinking =
+      false;
+
+
     updateStatus();
+
 
     return;
 
@@ -5564,20 +6459,79 @@ function playEngineMove(
       : undefined;
 
 
+  const gameAtStart =
+    game;
+
+
+  const plannedMove =
+    findPlannedMove(
+      from,
+      to,
+      promotion
+    );
+
+
+  moveAnimating =
+    true;
+
+
+  await animateLegalMove(
+    from,
+    to,
+    plannedMove
+  );
+
+
+  if (
+    game !==
+    gameAtStart ||
+
+    !gameStarted
+  ) {
+
+    moveAnimating =
+      false;
+
+
+    engineThinking =
+      false;
+
+
+    return;
+
+  }
+
+
   try {
 
     const move =
       game.move({
+
         from,
         to,
         promotion
+
       });
+
+
+    moveAnimating =
+      false;
+
+
+    engineThinking =
+      false;
 
 
     if (
       !move
     ) {
+
+      drawBoard();
+
+      updateStatus();
+
       return;
+
     }
 
 
@@ -5601,6 +6555,17 @@ function playEngineMove(
   catch(
     error
   ) {
+
+    moveAnimating =
+      false;
+
+
+    engineThinking =
+      false;
+
+
+    drawBoard();
+
 
     console.error(
       error
@@ -5822,6 +6787,7 @@ function renderCaptured(
     element.innerHTML =
       "<span class='none'>None</span>";
 
+
     return;
 
   }
@@ -5957,7 +6923,9 @@ function findCheckedKingSquare() {
     !game ||
     !game.inCheck()
   ) {
+
     return null;
+
   }
 
 
@@ -6154,7 +7122,9 @@ function updateStatus() {
   if (
     !gameStarted
   ) {
+
     return;
+
   }
 
 
@@ -6201,6 +7171,7 @@ function updateStatus() {
         "Draw by stalemate."
       );
 
+
       return;
 
     }
@@ -6214,6 +7185,7 @@ function updateStatus() {
         "Draw by repetition."
       );
 
+
       return;
 
     }
@@ -6226,6 +7198,7 @@ function updateStatus() {
       setStatus(
         "Draw by insufficient material."
       );
+
 
       return;
 
@@ -6473,8 +7446,10 @@ function updateInfoPanel() {
 
   else if (
     !gameStarted &&
-    playerFormationChoice === "RNB" &&
-    computerFormationChoice === "RNB"
+    playerFormationChoice ===
+    "RNB" &&
+    computerFormationChoice ===
+    "RNB"
   ) {
 
     castlingText =
@@ -6612,7 +7587,9 @@ function resetFeedbackForm() {
 feedbackButton.addEventListener(
   "click",
   function() {
+
     openFeedback();
+
   }
 );
 
@@ -6663,7 +7640,9 @@ feedbackOverlay.addEventListener(
       event.target ===
       feedbackOverlay
     ) {
+
       closeFeedback();
+
     }
 
   }
@@ -6750,7 +7729,9 @@ feedbackForm.addEventListener(
       formData.append(
         "castling",
         castlingEnabledForCurrentGame()
+
           ? "Enabled"
+
           : "Disabled"
       );
 
@@ -6942,7 +7923,9 @@ function(event) {
     if (
       !gameStarted
     ) {
+
       return;
+
     }
 
 
@@ -6996,7 +7979,9 @@ document.addEventListener(
       if (
         !helpButton
       ) {
+
         hideTooltip();
+
       }
 
     }
