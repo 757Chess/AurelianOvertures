@@ -16,13 +16,9 @@
   --muted:#6b6b6b;
   --green:#355c4d;
   --green-hover:#466f5e;
-  --light:#f0d9b5;
-  --dark:#b58863;
-  --last-light:#f5e68b;
-  --last-dark:#d5c257;
   --selected:#f2c94c;
   --check:#d9534f;
-  --dot:rgba(20,20,20,.28);
+  --dot:rgba(20,20,20,.30);
   --button:#f7f4ee;
   --button-border:#d5cdc0;
   --shadow:0 8px 24px rgba(0,0,0,.07);
@@ -385,9 +381,16 @@ select {
   display:grid;
   grid-template-columns:repeat(8,1fr);
   grid-template-rows:repeat(8,1fr);
+
   width:100%;
   max-width:576px;
   aspect-ratio:1 / 1;
+
+  background-image:url("./boardtexture.png");
+  background-size:100% 100%;
+  background-position:center;
+  background-repeat:no-repeat;
+
   border:3px solid #252525;
   border-radius:8px;
   overflow:hidden;
@@ -399,29 +402,38 @@ select {
   height:100%;
   min-width:0;
   min-height:0;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
+  background:transparent;
+
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;
 }
 
-.light {
-  background:var(--light);
-}
 
+/*
+The textured board supplies the actual light/dark square colors.
+These classes remain because other game logic already uses them.
+*/
+
+.light,
 .dark {
-  background:var(--dark);
+  background:transparent;
 }
 
-.last-move.light {
-  background:var(--last-light);
+
+/*
+Move highlights tint the marble rather than replacing it.
+*/
+
+.last-move {
+  background:rgba(232,202,69,.42);
 }
 
-.last-move.dark {
-  background:var(--last-dark);
-}
 
 .selected::after {
   content:"";
@@ -432,6 +444,7 @@ select {
   pointer-events:none;
 }
 
+
 .check::after {
   content:"";
   position:absolute;
@@ -440,6 +453,7 @@ select {
   border-radius:6px;
   pointer-events:none;
 }
+
 
 .move-dot {
   position:absolute;
@@ -451,6 +465,7 @@ select {
   pointer-events:none;
 }
 
+
 .piece {
   position:relative;
   z-index:2;
@@ -461,12 +476,19 @@ select {
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));
 }
 
+
 .coordinate {
   position:absolute;
+  z-index:4;
   font-size:10px;
   font-weight:bold;
-  opacity:.7;
+  opacity:.78;
   pointer-events:none;
+
+  color:#252525;
+
+  text-shadow:
+    0 1px 1px rgba(255,255,255,.65);
 }
 
 .coord-file {
@@ -478,6 +500,7 @@ select {
   left:4px;
   top:3px;
 }
+
 
 .preview-bar {
   margin-top:8px;
@@ -494,6 +517,7 @@ select {
 .preview-bar strong {
   color:var(--green);
 }
+
 
 .box {
   padding:9px 10px;
@@ -864,7 +888,6 @@ th {
 <body>
 
 <div id="hoverTooltip"></div>
-
 
 <div class="page">
 
