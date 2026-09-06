@@ -502,6 +502,7 @@ select {
 #board {
   grid-column:2;
   grid-row:1;
+  position:relative;
   display:grid;
   grid-template-columns:repeat(8,1fr);
   grid-template-rows:repeat(8,1fr);
@@ -515,6 +516,31 @@ select {
   border:none;
   border-radius:0;
   overflow:hidden;
+}
+
+.annotation-layer {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:40;
+  pointer-events:none;
+}
+
+.annotation-arrow {
+  stroke:#8e2026;
+  stroke-width:11;
+  stroke-linecap:round;
+  opacity:.78;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.20));
+}
+
+.annotation-marker {
+  fill:rgba(201,158,61,.10);
+  stroke:#c99e3d;
+  stroke-width:9;
+  opacity:.92;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));
 }
 
 .square {
@@ -2343,6 +2369,15 @@ let undosRemaining =
 
 let dragState =
   null;
+
+let annotationDragState =
+  null;
+
+let annotationArrows =
+  [];
+
+let annotationMarkers =
+  new Set();
 
 let ignoreBoardClickUntil =
   0;
@@ -5882,6 +5917,8 @@ function drawBoard() {
           }
 
 
+          clearAnnotations();
+
           handleSquareClick(
             squareName
           );
@@ -5898,7 +5935,609 @@ function drawBoard() {
 
   }
 
+  renderAnnotations();
+
 }
+
+
+
+/* ===================================================== */
+/* BOARD ANNOTATIONS                                     */
+/* ===================================================== */
+
+function annotationSquareCenter(
+  squareName
+) {
+
+  const fileIndex =
+    squareName.charCodeAt(0) - 97;
+
+  const rank =
+    Number(
+      squareName[1]
+    );
+
+  const orientationWhite =
+    playerColor === "w";
+
+  const column =
+    orientationWhite
+      ? fileIndex
+      : 7 - fileIndex;
+
+  const row =
+    orientationWhite
+      ? 8 - rank
+      : rank - 1;
+
+  return {
+    x:column * 100 + 50,
+    y:row * 100 + 50
+  };
+
+}
+
+
+function renderAnnotations(
+  previewFrom = null,
+  previewTo = null
+) {
+
+  const existing =
+    boardEl.querySelector(
+      ".annotation-layer"
+    );
+
+  if (
+    existing
+  ) {
+    existing.remove();
+  }
+
+  if (
+    annotationMarkers.size === 0 &&
+    annotationArrows.length === 0 &&
+    !(previewFrom && previewTo && previewFrom !== previewTo)
+  ) {
+    return;
+  }
+
+  const svgNS =
+    "http://www.w3.org/2000/svg";
+
+  const svg =
+    document.createElementNS(
+      svgNS,
+      "svg"
+    );
+
+  svg.classList.add(
+    "annotation-layer"
+  );
+
+  svg.setAttribute(
+    "viewBox",
+    "0 0 800 800"
+  );
+
+  svg.setAttribute(
+    "preserveAspectRatio",
+    "none"
+  );
+
+  const defs =
+    document.createElementNS(
+      svgNS,
+      "defs"
+    );
+
+  const marker =
+    document.createElementNS(
+      svgNS,
+      "marker"
+    );
+
+  marker.setAttribute(
+    "id",
+    "aurelianArrowHead"
+  );
+
+  marker.setAttribute(
+    "markerWidth",
+    "9"
+  );
+
+  marker.setAttribute(
+    "markerHeight",
+    "9"
+  );
+
+  marker.setAttribute(
+    "refX",
+    "7"
+  );
+
+  marker.setAttribute(
+    "refY",
+    "4.5"
+  );
+
+  marker.setAttribute(
+    "orient",
+    "auto"
+  );
+
+  marker.setAttribute(
+    "markerUnits",
+    "strokeWidth"
+  );
+
+  const arrowHead =
+    document.createElementNS(
+      svgNS,
+      "path"
+    );
+
+  arrowHead.setAttribute(
+    "d",
+    "M 0 0 L 9 4.5 L 0 9 z"
+  );
+
+  arrowHead.setAttribute(
+    "fill",
+    "#8e2026"
+  );
+
+  marker.appendChild(
+    arrowHead
+  );
+
+  defs.appendChild(
+    marker
+  );
+
+  svg.appendChild(
+    defs
+  );
+
+  annotationMarkers.forEach(
+    squareName => {
+
+      const center =
+        annotationSquareCenter(
+          squareName
+        );
+
+      const circle =
+        document.createElementNS(
+          svgNS,
+          "circle"
+        );
+
+      circle.classList.add(
+        "annotation-marker"
+      );
+
+      circle.setAttribute(
+        "cx",
+        center.x
+      );
+
+      circle.setAttribute(
+        "cy",
+        center.y
+      );
+
+      circle.setAttribute(
+        "r",
+        "34"
+      );
+
+      svg.appendChild(
+        circle
+      );
+
+    }
+  );
+
+  function appendArrow(
+    from,
+    to,
+    opacity = null
+  ) {
+
+    const start =
+      annotationSquareCenter(
+        from
+      );
+
+    const end =
+      annotationSquareCenter(
+        to
+      );
+
+    const dx =
+      end.x - start.x;
+
+    const dy =
+      end.y - start.y;
+
+    const length =
+      Math.hypot(
+        dx,
+        dy
+      );
+
+    if (
+      length === 0
+    ) {
+      return;
+    }
+
+    const shorten =
+      Math.min(
+        28,
+        length * .18
+      );
+
+    const endX =
+      end.x -
+      (dx / length) * shorten;
+
+    const endY =
+      end.y -
+      (dy / length) * shorten;
+
+    const line =
+      document.createElementNS(
+        svgNS,
+        "line"
+      );
+
+    line.classList.add(
+      "annotation-arrow"
+    );
+
+    line.setAttribute(
+      "x1",
+      start.x
+    );
+
+    line.setAttribute(
+      "y1",
+      start.y
+    );
+
+    line.setAttribute(
+      "x2",
+      endX
+    );
+
+    line.setAttribute(
+      "y2",
+      endY
+    );
+
+    line.setAttribute(
+      "marker-end",
+      "url(#aurelianArrowHead)"
+    );
+
+    if (
+      opacity !== null
+    ) {
+      line.style.opacity =
+        opacity;
+    }
+
+    svg.appendChild(
+      line
+    );
+
+  }
+
+  annotationArrows.forEach(
+    arrow => {
+      appendArrow(
+        arrow.from,
+        arrow.to
+      );
+    }
+  );
+
+  if (
+    previewFrom &&
+    previewTo &&
+    previewFrom !== previewTo
+  ) {
+    appendArrow(
+      previewFrom,
+      previewTo,
+      .52
+    );
+  }
+
+  boardEl.appendChild(
+    svg
+  );
+
+}
+
+
+function clearAnnotations() {
+
+  if (
+    annotationMarkers.size === 0 &&
+    annotationArrows.length === 0
+  ) {
+    return;
+  }
+
+  annotationMarkers.clear();
+
+  annotationArrows =
+    [];
+
+  renderAnnotations();
+
+}
+
+
+function toggleAnnotationMarker(
+  squareName
+) {
+
+  if (
+    annotationMarkers.has(
+      squareName
+    )
+  ) {
+    annotationMarkers.delete(
+      squareName
+    );
+  }
+  else {
+    annotationMarkers.add(
+      squareName
+    );
+  }
+
+  renderAnnotations();
+
+}
+
+
+function toggleAnnotationArrow(
+  from,
+  to
+) {
+
+  const index =
+    annotationArrows.findIndex(
+      arrow =>
+        arrow.from === from &&
+        arrow.to === to
+    );
+
+  if (
+    index >= 0
+  ) {
+    annotationArrows.splice(
+      index,
+      1
+    );
+  }
+  else {
+    annotationArrows.push({
+      from,
+      to
+    });
+  }
+
+  renderAnnotations();
+
+}
+
+
+function beginAnnotationDrag(
+  event
+) {
+
+  if (
+    isTouchStyleDevice() ||
+    event.button !== 2
+  ) {
+    return;
+  }
+
+  const squareName =
+    squareFromPoint(
+      event.clientX,
+      event.clientY
+    );
+
+  if (
+    !squareName
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+
+  annotationDragState = {
+    pointerId:event.pointerId,
+    from:squareName,
+    current:squareName,
+    startX:event.clientX,
+    startY:event.clientY,
+    active:false
+  };
+
+}
+
+
+function moveAnnotationDrag(
+  event
+) {
+
+  if (
+    !annotationDragState ||
+    event.pointerId !== annotationDragState.pointerId
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const destination =
+    squareFromPoint(
+      event.clientX,
+      event.clientY
+    );
+
+  if (
+    destination
+  ) {
+    annotationDragState.current =
+      destination;
+  }
+
+  if (
+    !annotationDragState.active
+  ) {
+
+    const distance =
+      Math.hypot(
+        event.clientX - annotationDragState.startX,
+        event.clientY - annotationDragState.startY
+      );
+
+    if (
+      distance >= 6
+    ) {
+      annotationDragState.active =
+        true;
+    }
+  }
+
+  if (
+    annotationDragState.active &&
+    annotationDragState.current
+  ) {
+    renderAnnotations(
+      annotationDragState.from,
+      annotationDragState.current
+    );
+  }
+
+}
+
+
+function finishAnnotationDrag(
+  event
+) {
+
+  if (
+    !annotationDragState ||
+    event.pointerId !== annotationDragState.pointerId
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const state =
+    annotationDragState;
+
+  annotationDragState =
+    null;
+
+  const destination =
+    squareFromPoint(
+      event.clientX,
+      event.clientY
+    ) || state.current;
+
+  if (
+    state.active &&
+    destination &&
+    destination !== state.from
+  ) {
+    toggleAnnotationArrow(
+      state.from,
+      destination
+    );
+  }
+  else {
+    toggleAnnotationMarker(
+      state.from
+    );
+  }
+
+}
+
+
+function cancelAnnotationDrag(
+  event
+) {
+
+  if (
+    !annotationDragState ||
+    (
+      event &&
+      event.pointerId !== undefined &&
+      event.pointerId !== annotationDragState.pointerId
+    )
+  ) {
+    return;
+  }
+
+  annotationDragState =
+    null;
+
+  renderAnnotations();
+
+}
+
+
+boardEl.addEventListener(
+  "contextmenu",
+  event => {
+
+    if (
+      !isTouchStyleDevice()
+    ) {
+      event.preventDefault();
+    }
+
+  }
+);
+
+
+boardEl.addEventListener(
+  "pointerdown",
+  beginAnnotationDrag
+);
+
+
+window.addEventListener(
+  "pointermove",
+  moveAnnotationDrag,
+  { passive:false }
+);
+
+
+window.addEventListener(
+  "pointerup",
+  finishAnnotationDrag,
+  { passive:false }
+);
+
+
+window.addEventListener(
+  "pointercancel",
+  cancelAnnotationDrag
+);
 
 
 
@@ -5923,6 +6562,8 @@ function beginPieceDrag(
   ) {
     return;
   }
+
+  clearAnnotations();
 
   const piece =
     game.get(
