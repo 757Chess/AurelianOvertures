@@ -6189,15 +6189,20 @@ function renderAnnotations(
       return;
     }
 
-    // Keep the arrow tip anchored at the center of the
-    // destination square, matching familiar online-chess
-    // annotation behavior. The marker itself overlays the
-    // final portion of the shaft.
-    const endX =
-      end.x;
+    // Draw the shaft and head separately so the arrowhead
+    // lands cleanly on the destination square instead of
+    // getting swallowed by the thick rounded shaft.
+    const ux = dx / length;
+    const uy = dy / length;
 
-    const endY =
-      end.y;
+    const headLength = 42;
+    const headHalfWidth = 28;
+
+    const baseX =
+      end.x - ux * headLength;
+
+    const baseY =
+      end.y - uy * headLength;
 
     const line =
       document.createElementNS(
@@ -6221,18 +6226,52 @@ function renderAnnotations(
 
     line.setAttribute(
       "x2",
-      endX
+      baseX
     );
 
     line.setAttribute(
       "y2",
-      endY
+      baseY
     );
 
-    line.setAttribute(
-      "marker-end",
-      "url(#aurelianArrowHead)"
+    const perpX = -uy;
+    const perpY = ux;
+
+    const leftX =
+      baseX + perpX * headHalfWidth;
+
+    const leftY =
+      baseY + perpY * headHalfWidth;
+
+    const rightX =
+      baseX - perpX * headHalfWidth;
+
+    const rightY =
+      baseY - perpY * headHalfWidth;
+
+    const arrowHead =
+      document.createElementNS(
+        svgNS,
+        "polygon"
+      );
+
+    arrowHead.setAttribute(
+      "points",
+      `${end.x},${end.y} ${leftX},${leftY} ${rightX},${rightY}`
     );
+
+    arrowHead.setAttribute(
+      "fill",
+      "#c99e3d"
+    );
+
+    arrowHead.style.opacity =
+      opacity !== null
+        ? opacity
+        : ".82";
+
+    arrowHead.style.filter =
+      "drop-shadow(0 2px 2px rgba(0,0,0,.22))";
 
     if (
       opacity !== null
@@ -6243,6 +6282,10 @@ function renderAnnotations(
 
     svg.appendChild(
       line
+    );
+
+    svg.appendChild(
+      arrowHead
     );
 
   }
