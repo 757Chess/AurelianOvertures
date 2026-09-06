@@ -262,6 +262,29 @@ select {
   background:var(--green-hover);
 }
 
+@keyframes startGamePulse {
+  0%,100% {
+    box-shadow:0 0 0 0 rgba(53,92,77,0);
+    transform:scale(1);
+  }
+
+  50% {
+    box-shadow:0 0 0 7px rgba(53,92,77,.18);
+    transform:scale(1.018);
+  }
+}
+
+#newGameBtn.start-attention {
+  animation:startGamePulse 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  #newGameBtn.start-attention {
+    animation:none;
+    box-shadow:0 0 0 3px rgba(53,92,77,.14);
+  }
+}
+
 .feedback-btn {
   width:100%;
   background:#fff;
@@ -507,6 +530,7 @@ select {
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;
+  touch-action:none;
 }
 
 .light,
@@ -544,6 +568,32 @@ select {
   border-radius:50%;
   background:var(--dot);
   pointer-events:none;
+}
+
+.move-capture-ring {
+  position:absolute;
+  inset:6px;
+  border:4px solid rgba(83,36,28,.58);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:5;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.42);
+}
+
+.drag-piece {
+  position:fixed;
+  z-index:2000;
+  width:68px;
+  height:68px;
+  object-fit:contain;
+  pointer-events:none;
+  transform:translate(-50%,-50%) scale(1.06);
+  filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));
+  opacity:.96;
+}
+
+.square.drag-source .piece {
+  opacity:.24;
 }
 
 .piece {
@@ -2267,6 +2317,12 @@ let moveAnimating =
 
 let undosRemaining =
   3;
+
+let dragState =
+  null;
+
+let ignoreBoardClickUntil =
+  0;
 
 let captureToastItems =
   [];
@@ -4942,10 +4998,26 @@ function renderCoordinates(
 
 
 /* ===================================================== */
+/* START BUTTON ATTENTION                                */
+/* ===================================================== */
+
+function updateStartGameAttention() {
+
+  newGameBtn.classList.toggle(
+    "start-attention",
+    !gameStarted
+  );
+
+}
+
+
+/* ===================================================== */
 /* PREVIEW                                               */
 /* ===================================================== */
 
 function renderPreview() {
+
+  cancelPieceDrag();
 
   clearFormationAnimationTimers();
 
@@ -4973,6 +5045,9 @@ function renderPreview() {
 
   gameStarted =
     false;
+
+
+  updateStartGameAttention();
 
 
   actualPlayerColor =
@@ -5242,6 +5317,8 @@ function rematchCurrentGame() {
 
 function endCurrentGame() {
 
+  cancelPieceDrag();
+
   clearFormationAnimationTimers();
 
   clearEngineMoveTimer();
@@ -5312,6 +5389,8 @@ function endCurrentGame() {
 
 function beginGame() {
 
+  cancelPieceDrag();
+
   clearFormationAnimationTimers();
 
   clearEngineMoveTimer();
@@ -5335,6 +5414,9 @@ function beginGame() {
 
   gameStarted =
     true;
+
+
+  updateStartGameAttention();
 
 
   playerColor =
@@ -5681,6 +5763,12 @@ function drawBoard() {
       }
 
 
+      const piece =
+        game.get(
+          squareName
+        );
+
+
       if (
         legalMoves.some(
           move =>
@@ -5688,27 +5776,27 @@ function drawBoard() {
         )
       ) {
 
-        const dot =
+        const marker =
           document.createElement(
             "div"
           );
 
 
-        dot.className =
-          "move-dot";
+        marker.className =
+
+          piece &&
+          piece.color !== playerColor
+
+            ? "move-capture-ring"
+
+            : "move-dot";
 
 
         square.appendChild(
-          dot
+          marker
         );
 
       }
-
-
-      const piece =
-        game.get(
-          squareName
-        );
 
 
       if (
@@ -5740,8 +5828,29 @@ function drawBoard() {
 
 
       square.addEventListener(
+        "pointerdown",
+        function(event) {
+
+          beginPieceDrag(
+            event,
+            squareName
+          );
+
+        }
+      );
+
+
+      square.addEventListener(
         "click",
         function() {
+
+          if (
+            performance.now() <
+            ignoreBoardClickUntil
+          ) {
+            return;
+          }
+
 
           handleSquareClick(
             squareName
@@ -5761,6 +5870,392 @@ function drawBoard() {
 
 }
 
+
+
+/* ===================================================== */
+/* DRAG AND DROP                                         */
+/* ===================================================== */
+
+function beginPieceDrag(
+  event,
+  squareName
+) {
+
+  if (
+    event.button !== undefined &&
+    event.button !== 0
+  ) {
+    return;
+  }
+
+  if (
+    !isPlayerTurn()
+  ) {
+    return;
+  }
+
+  const piece =
+    game.get(
+      squareName
+    );
+
+  if (
+    !piece ||
+    piece.color !== playerColor
+  ) {
+    return;
+  }
+
+  const square =
+    event.currentTarget;
+
+  const pieceImage =
+    square.querySelector(
+      ".piece"
+    );
+
+  if (
+    !pieceImage
+  ) {
+    return;
+  }
+
+  dragState = {
+    pointerId:event.pointerId,
+    from:squareName,
+    startX:event.clientX,
+    startY:event.clientY,
+    active:false,
+    imageSrc:pieceImage.src,
+    ghost:null
+  };
+
+}
+
+
+function startActiveDrag(
+  event
+) {
+
+  if (
+    !dragState ||
+    dragState.active
+  ) {
+    return;
+  }
+
+  dragState.active =
+    true;
+
+  selectedSquare =
+    dragState.from;
+
+  legalMoves =
+    game.moves({
+      square:dragState.from,
+      verbose:true
+    });
+
+  drawBoard();
+
+  const sourceSquare =
+    boardEl.querySelector(
+      `[data-square="${dragState.from}"]`
+    );
+
+  if (
+    sourceSquare
+  ) {
+    sourceSquare.classList.add(
+      "drag-source"
+    );
+  }
+
+  const ghost =
+    document.createElement(
+      "img"
+    );
+
+  ghost.className =
+    "drag-piece";
+
+  ghost.src =
+    dragState.imageSrc;
+
+  document.body.appendChild(
+    ghost
+  );
+
+  dragState.ghost =
+    ghost;
+
+  moveDragGhost(
+    event.clientX,
+    event.clientY
+  );
+
+}
+
+
+function moveDragGhost(
+  x,
+  y
+) {
+
+  if (
+    !dragState ||
+    !dragState.ghost
+  ) {
+    return;
+  }
+
+  dragState.ghost.style.left =
+    x + "px";
+
+  dragState.ghost.style.top =
+    y + "px";
+
+}
+
+
+function clearDragGhost() {
+
+  if (
+    dragState &&
+    dragState.ghost
+  ) {
+    dragState.ghost.remove();
+  }
+
+}
+
+
+function squareFromPoint(
+  x,
+  y
+) {
+
+  const element =
+    document.elementFromPoint(
+      x,
+      y
+    );
+
+  const square =
+    element
+      ? element.closest(
+          ".square"
+        )
+      : null;
+
+  return square
+    ? square.dataset.square
+    : null;
+
+}
+
+
+function handleDragMove(
+  event
+) {
+
+  if (
+    !dragState ||
+    event.pointerId !== dragState.pointerId
+  ) {
+    return;
+  }
+
+  if (
+    !dragState.active
+  ) {
+
+    const distance =
+      Math.hypot(
+        event.clientX - dragState.startX,
+        event.clientY - dragState.startY
+      );
+
+    if (
+      distance < 6
+    ) {
+      return;
+    }
+
+    startActiveDrag(
+      event
+    );
+
+  }
+
+  if (
+    dragState &&
+    dragState.active
+  ) {
+    event.preventDefault();
+
+    moveDragGhost(
+      event.clientX,
+      event.clientY
+    );
+  }
+
+}
+
+
+function finishPieceDrag(
+  event
+) {
+
+  if (
+    !dragState ||
+    event.pointerId !== dragState.pointerId
+  ) {
+    return;
+  }
+
+  const state =
+    dragState;
+
+  if (
+    !state.active
+  ) {
+    dragState =
+      null;
+    return;
+  }
+
+  event.preventDefault();
+
+  const destination =
+    squareFromPoint(
+      event.clientX,
+      event.clientY
+    );
+
+  clearDragGhost();
+
+  dragState =
+    null;
+
+  ignoreBoardClickUntil =
+    performance.now() + 250;
+
+  const destinationMoves =
+    destination
+      ? legalMoves.filter(
+          move =>
+            move.to === destination
+        )
+      : [];
+
+  if (
+    destinationMoves.length > 0
+  ) {
+
+    const promotionMoves =
+      destinationMoves.filter(
+        move =>
+          move.promotion
+      );
+
+    if (
+      promotionMoves.length > 0
+    ) {
+      openPromotion(
+        state.from,
+        destination,
+        true
+      );
+      return;
+    }
+
+    completePlayerMove(
+      state.from,
+      destination,
+      undefined,
+      true
+    );
+
+    return;
+  }
+
+  selectedSquare =
+    state.from;
+
+  legalMoves =
+    game.moves({
+      square:state.from,
+      verbose:true
+    });
+
+  drawBoard();
+
+  if (
+    destination
+  ) {
+    animateInvalidMove(
+      state.from,
+      destination
+    );
+  }
+  else {
+    playSound(
+      "invalid"
+    );
+  }
+
+}
+
+
+function cancelPieceDrag(
+  event
+) {
+
+  if (
+    !dragState ||
+    (
+      event &&
+      event.pointerId !== undefined &&
+      event.pointerId !== dragState.pointerId
+    )
+  ) {
+    return;
+  }
+
+  const wasActive =
+    dragState.active;
+
+  clearDragGhost();
+
+  dragState =
+    null;
+
+  if (
+    wasActive
+  ) {
+    drawBoard();
+  }
+
+}
+
+
+window.addEventListener(
+  "pointermove",
+  handleDragMove,
+  { passive:false }
+);
+
+window.addEventListener(
+  "pointerup",
+  finishPieceDrag,
+  { passive:false }
+);
+
+window.addEventListener(
+  "pointercancel",
+  cancelPieceDrag
+);
 
 
 /* ===================================================== */
@@ -6037,12 +6532,14 @@ function selectSquare(
 
 function openPromotion(
   from,
-  to
+  to,
+  skipAnimation = false
 ) {
 
   promotionPending = {
     from,
-    to
+    to,
+    skipAnimation
   };
 
 
@@ -6118,6 +6615,12 @@ function choosePromotion(
     promotionPending.to;
 
 
+  const skipAnimation =
+    Boolean(
+      promotionPending.skipAnimation
+    );
+
+
   promotionPending =
     null;
 
@@ -6128,7 +6631,8 @@ function choosePromotion(
   completePlayerMove(
     from,
     to,
-    pieceType
+    pieceType,
+    skipAnimation
   );
 
 }
@@ -6137,7 +6641,8 @@ function choosePromotion(
 async function completePlayerMove(
   from,
   to,
-  promotion
+  promotion,
+  skipAnimation = false
 ) {
 
   if (
@@ -6182,11 +6687,17 @@ async function completePlayerMove(
   updateUndoButton();
 
 
-  await animateLegalMove(
-    from,
-    to,
-    plannedMove
-  );
+  if (
+    !skipAnimation
+  ) {
+
+    await animateLegalMove(
+      from,
+      to,
+      plannedMove
+    );
+
+  }
 
 
   if (
