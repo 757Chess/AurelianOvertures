@@ -569,12 +569,7 @@ select {
 }
 
 .selected::after {
-  content:"";
-  position:absolute;
-  inset:4px;
-  border:4px solid var(--selected);
-  border-radius:6px;
-  pointer-events:none;
+  content:none;
 }
 
 .check::after {
@@ -606,16 +601,39 @@ select {
     transform:scale(1);
     filter:
       drop-shadow(0 1px 2px rgba(0,0,0,.18))
-      drop-shadow(0 0 4px rgba(142,32,38,.52))
-      drop-shadow(0 0 8px rgba(142,32,38,.30));
+      drop-shadow(0 0 5px rgba(142,32,38,.56))
+      drop-shadow(0 0 10px rgba(142,32,38,.34));
   }
 
   50% {
-    transform:scale(1.055);
+    transform:scale(1.068);
     filter:
       drop-shadow(0 1px 2px rgba(0,0,0,.18))
-      drop-shadow(0 0 9px rgba(170,38,44,.86))
-      drop-shadow(0 0 18px rgba(142,32,38,.56));
+      drop-shadow(0 0 11px rgba(176,40,46,.90))
+      drop-shadow(0 0 22px rgba(142,32,38,.62));
+  }
+}
+
+.square.selected .piece {
+  animation:selectedPiecePulse 1.6s ease-in-out infinite;
+  transform-origin:center;
+}
+
+@keyframes selectedPiecePulse {
+  0%,100% {
+    transform:scale(1);
+    filter:
+      drop-shadow(0 1px 2px rgba(0,0,0,.18))
+      drop-shadow(0 0 5px rgba(201,158,61,.56))
+      drop-shadow(0 0 10px rgba(201,158,61,.34));
+  }
+
+  50% {
+    transform:scale(1.068);
+    filter:
+      drop-shadow(0 1px 2px rgba(0,0,0,.18))
+      drop-shadow(0 0 11px rgba(224,180,73,.90))
+      drop-shadow(0 0 22px rgba(201,158,61,.62));
   }
 }
 
@@ -624,8 +642,16 @@ select {
     animation:none;
     filter:
       drop-shadow(0 1px 2px rgba(0,0,0,.18))
-      drop-shadow(0 0 7px rgba(142,32,38,.72))
-      drop-shadow(0 0 13px rgba(142,32,38,.40));
+      drop-shadow(0 0 8px rgba(142,32,38,.76))
+      drop-shadow(0 0 16px rgba(142,32,38,.46));
+  }
+
+  .square.selected .piece {
+    animation:none;
+    filter:
+      drop-shadow(0 1px 2px rgba(0,0,0,.18))
+      drop-shadow(0 0 8px rgba(201,158,61,.76))
+      drop-shadow(0 0 16px rgba(201,158,61,.46));
   }
 }
 
@@ -6189,20 +6215,31 @@ function renderAnnotations(
       return;
     }
 
-    // Draw the shaft and head separately so the arrowhead
-    // lands cleanly on the destination square instead of
-    // getting swallowed by the thick rounded shaft.
-    const ux = dx / length;
-    const uy = dy / length;
+    // Offset the origin upward along the arrow direction so the
+    // arrow begins inside the starting square instead of running
+    // directly through the center of the piece. This matches the
+    // more polished chess.com-style feel the user wants.
+    const ux =
+      dx / length;
 
-    const headLength = 42;
-    const headHalfWidth = 28;
+    const uy =
+      dy / length;
 
-    const baseX =
-      end.x - ux * headLength;
+    const originInset =
+      32;
 
-    const baseY =
-      end.y - uy * headLength;
+    const x1 =
+      start.x + ux * originInset;
+
+    const y1 =
+      start.y + uy * originInset;
+
+    // Keep the tip anchored at the destination-square center.
+    const endX =
+      end.x;
+
+    const endY =
+      end.y;
 
     const line =
       document.createElementNS(
@@ -6216,62 +6253,28 @@ function renderAnnotations(
 
     line.setAttribute(
       "x1",
-      start.x
+      x1
     );
 
     line.setAttribute(
       "y1",
-      start.y
+      y1
     );
 
     line.setAttribute(
       "x2",
-      baseX
+      endX
     );
 
     line.setAttribute(
       "y2",
-      baseY
+      endY
     );
 
-    const perpX = -uy;
-    const perpY = ux;
-
-    const leftX =
-      baseX + perpX * headHalfWidth;
-
-    const leftY =
-      baseY + perpY * headHalfWidth;
-
-    const rightX =
-      baseX - perpX * headHalfWidth;
-
-    const rightY =
-      baseY - perpY * headHalfWidth;
-
-    const arrowHead =
-      document.createElementNS(
-        svgNS,
-        "polygon"
-      );
-
-    arrowHead.setAttribute(
-      "points",
-      `${end.x},${end.y} ${leftX},${leftY} ${rightX},${rightY}`
+    line.setAttribute(
+      "marker-end",
+      "url(#aurelianArrowHead)"
     );
-
-    arrowHead.setAttribute(
-      "fill",
-      "#c99e3d"
-    );
-
-    arrowHead.style.opacity =
-      opacity !== null
-        ? opacity
-        : ".82";
-
-    arrowHead.style.filter =
-      "drop-shadow(0 2px 2px rgba(0,0,0,.22))";
 
     if (
       opacity !== null
@@ -6282,10 +6285,6 @@ function renderAnnotations(
 
     svg.appendChild(
       line
-    );
-
-    svg.appendChild(
-      arrowHead
     );
 
   }
