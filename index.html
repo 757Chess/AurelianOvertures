@@ -530,7 +530,7 @@ select {
 .annotation-arrow {
   stroke:#c99e3d;
   stroke-width:18;
-  Stroke-linecap:butt;
+  stroke-linecap:butt;
   opacity:.82;
   filter:drop-shadow(0 2px 2px rgba(0,0,0,.22));
 }
@@ -565,7 +565,16 @@ select {
 }
 
 .last-move {
+  background:transparent;
+}
+
+.last-move::before {
+  content:"";
+  position:absolute;
+  inset:2px;
   background:rgba(232,202,69,.42);
+  pointer-events:none;
+  z-index:1;
 }
 
 .selected::after {
