@@ -569,12 +569,38 @@ select {
 }
 
 .last-move::before {
-  content:"";
+  content:none;
+}
+
+.move-ghost {
   position:absolute;
-  inset:.5px;
-  background:rgba(232,202,69,.42);
+  z-index:3;
+  width:92%;
+  height:92%;
+  object-fit:contain;
   pointer-events:none;
-  z-index:1;
+  opacity:.36;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.10));
+  animation:moveGhostFade 3s ease-out forwards;
+  transform-origin:center;
+}
+
+@keyframes moveGhostFade {
+  0%,66% {
+    opacity:.36;
+    transform:scale(1);
+  }
+  100% {
+    opacity:0;
+    transform:scale(.985);
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .move-ghost {
+    animation:none;
+    opacity:.28;
+  }
 }
 
 .selected::after {
@@ -2388,6 +2414,12 @@ let legalMoves =
   [];
 
 let lastMove =
+  null;
+
+let moveGhost =
+  null;
+
+let moveGhostTimer =
   null;
 
 let promotionPending =
@@ -4689,6 +4721,64 @@ function getLatestPlayerMoveIndex() {
 }
 
 
+function clearMoveGhost() {
+
+  if (
+    moveGhostTimer
+  ) {
+    clearTimeout(
+      moveGhostTimer
+    );
+    moveGhostTimer =
+      null;
+  }
+
+  moveGhost =
+    null;
+
+}
+
+
+function showMoveGhost(
+  move
+) {
+
+  clearMoveGhost();
+
+  if (
+    !move ||
+    !move.from ||
+    !move.color ||
+    !move.piece
+  ) {
+    return;
+  }
+
+  moveGhost = {
+    from:move.from,
+    color:move.color,
+    piece:move.piece
+  };
+
+  moveGhostTimer =
+    setTimeout(
+      () => {
+        moveGhost =
+          null;
+        moveGhostTimer =
+          null;
+        if (
+          boardEl
+        ) {
+          drawBoard();
+        }
+      },
+      3000
+    );
+
+}
+
+
 function updateUndoButton() {
 
   const hasPlayerMove =
@@ -4908,6 +4998,9 @@ function undoPlayerTurn() {
   restoreLastMoveHighlight();
 
 
+  clearMoveGhost();
+
+
   drawBoard();
 
   renderMoveList();
@@ -5109,6 +5202,9 @@ function updateStartGameAttention() {
 /* ===================================================== */
 
 function renderPreview() {
+
+  clearMoveGhost();
+
 
   cancelPieceDrag();
 
@@ -5481,6 +5577,9 @@ function endCurrentGame() {
 
 
 function beginGame() {
+
+  clearMoveGhost();
+
 
   cancelPieceDrag();
 
@@ -5892,6 +5991,32 @@ function drawBoard() {
 
         square.appendChild(
           marker
+        );
+
+      }
+
+
+      if (
+        moveGhost &&
+        squareName === moveGhost.from
+      ) {
+
+        const ghostImage =
+          document.createElement(
+            "img"
+          );
+
+        ghostImage.className =
+          "move-ghost";
+
+        ghostImage.src =
+          PIECE_IMAGES[
+            moveGhost.color +
+            moveGhost.piece
+          ];
+
+        square.appendChild(
+          ghostImage
         );
 
       }
@@ -8015,6 +8140,10 @@ async function playEngineMove(
 function afterMove(
   move
 ) {
+
+  showMoveGhost(
+    move
+  );
 
   if (
     move.captured &&
