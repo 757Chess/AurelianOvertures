@@ -709,6 +709,26 @@ select {
   filter:drop-shadow(0 1px 2px rgba(0,0,0,.10)) !important;
 }
 
+.drag-source-piece {
+  opacity:0 !important;
+  animation:none !important;
+  filter:none !important;
+}
+
+.drag-origin-ghost,
+.glide-origin-ghost {
+  position:absolute;
+  z-index:3;
+  width:92%;
+  height:92%;
+  object-fit:contain;
+  pointer-events:none;
+  opacity:.36;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.10));
+  transform:scale(1);
+  animation:none !important;
+}
+
 .piece {
   position:relative;
   z-index:2;
@@ -2931,6 +2951,22 @@ function animateSinglePiece(
         );
 
 
+      const glideOriginGhost =
+        document.createElement(
+          "img"
+        );
+
+      glideOriginGhost.className =
+        "glide-origin-ghost";
+
+      glideOriginGhost.src =
+        pieceImage.src;
+
+      fromEl.appendChild(
+        glideOriginGhost
+      );
+
+
       pieceImage.classList.add(
         "move-glide"
       );
@@ -2956,6 +2992,13 @@ function animateSinglePiece(
         pieceImage.classList.remove(
           "move-glide"
         );
+
+        if (
+          glideOriginGhost &&
+          glideOriginGhost.isConnected
+        ) {
+          glideOriginGhost.remove();
+        }
 
 
         resolve();
@@ -6025,6 +6068,40 @@ function drawBoard() {
       }
 
 
+      const isActiveDragSource =
+        Boolean(
+          dragState &&
+          dragState.active &&
+          squareName === dragState.from
+        );
+
+
+      if (
+        isActiveDragSource &&
+        piece
+      ) {
+
+        const dragOriginGhost =
+          document.createElement(
+            "img"
+          );
+
+        dragOriginGhost.className =
+          "drag-origin-ghost";
+
+        dragOriginGhost.src =
+          PIECE_IMAGES[
+            piece.color +
+            piece.type
+          ];
+
+        square.appendChild(
+          dragOriginGhost
+        );
+
+      }
+
+
       if (
         piece
       ) {
@@ -6036,9 +6113,13 @@ function drawBoard() {
 
 
         image.className =
-          isCaptureTarget
-            ? "piece capture-target-piece"
-            : "piece";
+          isActiveDragSource
+            ? "piece drag-source-piece"
+            : (
+                isCaptureTarget
+                  ? "piece capture-target-piece"
+                  : "piece"
+              );
 
 
         image.src =
@@ -6864,19 +6945,6 @@ function startActiveDrag(
     });
 
   drawBoard();
-
-  const sourceSquare =
-    boardEl.querySelector(
-      `[data-square="${dragState.from}"]`
-    );
-
-  if (
-    sourceSquare
-  ) {
-    sourceSquare.classList.add(
-      "drag-source"
-    );
-  }
 
   const ghost =
     document.createElement(
