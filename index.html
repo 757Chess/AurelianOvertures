@@ -6044,22 +6044,22 @@ function renderAnnotations(
 
   marker.setAttribute(
     "markerWidth",
-    "44"
+    "58"
   );
 
   marker.setAttribute(
     "markerHeight",
-    "44"
+    "52"
   );
 
   marker.setAttribute(
     "refX",
-    "38"
+    "58"
   );
 
   marker.setAttribute(
     "refY",
-    "22"
+    "26"
   );
 
   marker.setAttribute(
@@ -6080,7 +6080,7 @@ function renderAnnotations(
 
   arrowHead.setAttribute(
     "d",
-    "M 0 0 L 44 22 L 0 44 z"
+    "M 0 0 L 58 26 L 0 52 z"
   );
 
   arrowHead.setAttribute(
@@ -6189,19 +6189,15 @@ function renderAnnotations(
       return;
     }
 
-    const shorten =
-      Math.min(
-        38,
-        length * .22
-      );
-
+    // Keep the arrow tip anchored at the center of the
+    // destination square, matching familiar online-chess
+    // annotation behavior. The marker itself overlays the
+    // final portion of the shaft.
     const endX =
-      end.x -
-      (dx / length) * shorten;
+      end.x;
 
     const endY =
-      end.y -
-      (dy / length) * shorten;
+      end.y;
 
     const line =
       document.createElementNS(
