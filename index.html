@@ -4550,6 +4550,7 @@ function updateUndoButton() {
 
     gameStarted &&
     game &&
+    !game.isGameOver() &&
     hasPlayerMove &&
     undosRemaining > 0 &&
     !moveAnimating &&
@@ -4624,6 +4625,7 @@ function undoPlayerTurn() {
   if (
     !gameStarted ||
     !game ||
+    game.isGameOver() ||
     undosRemaining <= 0 ||
     moveAnimating ||
     promotionPending
