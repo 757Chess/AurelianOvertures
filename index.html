@@ -529,8 +529,8 @@ select {
 
 .annotation-arrow {
   stroke:#c99e3d;
-  stroke-width:22;
-  stroke-linecap:round;
+  stroke-width:18;
+  Stroke-linecap:butt;
   opacity:.82;
   filter:drop-shadow(0 2px 2px rgba(0,0,0,.22));
 }
@@ -6215,18 +6215,16 @@ function renderAnnotations(
       return;
     }
 
-    // Offset the origin upward along the arrow direction so the
-    // arrow begins inside the starting square instead of running
-    // directly through the center of the piece. This matches the
-    // more polished chess.com-style feel the user wants.
     const ux =
       dx / length;
 
     const uy =
       dy / length;
 
+    // Keep the shaft off the piece at the origin, similar to
+    // familiar online-chess annotations.
     const originInset =
-      32;
+      34;
 
     const x1 =
       start.x + ux * originInset;
@@ -6234,12 +6232,19 @@ function renderAnnotations(
     const y1 =
       start.y + uy * originInset;
 
-    // Keep the tip anchored at the destination-square center.
-    const endX =
-      end.x;
+    // Draw the head as its own triangle so the thick shaft can
+    // never visually swallow it.
+    const headLength =
+      42;
 
-    const endY =
-      end.y;
+    const headHalfWidth =
+      28;
+
+    const baseX =
+      end.x - ux * headLength;
+
+    const baseY =
+      end.y - uy * headLength;
 
     const line =
       document.createElementNS(
@@ -6263,18 +6268,55 @@ function renderAnnotations(
 
     line.setAttribute(
       "x2",
-      endX
+      baseX
     );
 
     line.setAttribute(
       "y2",
-      endY
+      baseY
     );
 
-    line.setAttribute(
-      "marker-end",
-      "url(#aurelianArrowHead)"
+    const perpX =
+      -uy;
+
+    const perpY =
+      ux;
+
+    const leftX =
+      baseX + perpX * headHalfWidth;
+
+    const leftY =
+      baseY + perpY * headHalfWidth;
+
+    const rightX =
+      baseX - perpX * headHalfWidth;
+
+    const rightY =
+      baseY - perpY * headHalfWidth;
+
+    const arrowHead =
+      document.createElementNS(
+        svgNS,
+        "polygon"
+      );
+
+    arrowHead.setAttribute(
+      "points",
+      `${end.x},${end.y} ${leftX},${leftY} ${rightX},${rightY}`
     );
+
+    arrowHead.setAttribute(
+      "fill",
+      "#c99e3d"
+    );
+
+    arrowHead.style.opacity =
+      opacity !== null
+        ? opacity
+        : ".82";
+
+    arrowHead.style.filter =
+      "drop-shadow(0 2px 2px rgba(0,0,0,.22))";
 
     if (
       opacity !== null
@@ -6285,6 +6327,10 @@ function renderAnnotations(
 
     svg.appendChild(
       line
+    );
+
+    svg.appendChild(
+      arrowHead
     );
 
   }
