@@ -528,19 +528,19 @@ select {
 }
 
 .annotation-arrow {
-  stroke:#8e2026;
-  stroke-width:11;
+  stroke:#c99e3d;
+  stroke-width:22;
   stroke-linecap:round;
-  opacity:.78;
-  filter:drop-shadow(0 2px 2px rgba(0,0,0,.20));
+  opacity:.82;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.22));
 }
 
 .annotation-marker {
-  fill:rgba(201,158,61,.10);
-  stroke:#c99e3d;
-  stroke-width:9;
-  opacity:.92;
-  filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));
+  fill:rgba(142,32,38,.28);
+  stroke:rgba(142,32,38,.68);
+  stroke-width:3;
+  opacity:.96;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.16));
 }
 
 .square {
@@ -6044,22 +6044,22 @@ function renderAnnotations(
 
   marker.setAttribute(
     "markerWidth",
-    "9"
+    "28"
   );
 
   marker.setAttribute(
     "markerHeight",
-    "9"
+    "28"
   );
 
   marker.setAttribute(
     "refX",
-    "7"
+    "24"
   );
 
   marker.setAttribute(
     "refY",
-    "4.5"
+    "14"
   );
 
   marker.setAttribute(
@@ -6069,7 +6069,7 @@ function renderAnnotations(
 
   marker.setAttribute(
     "markerUnits",
-    "strokeWidth"
+    "userSpaceOnUse"
   );
 
   const arrowHead =
@@ -6080,12 +6080,12 @@ function renderAnnotations(
 
   arrowHead.setAttribute(
     "d",
-    "M 0 0 L 9 4.5 L 0 9 z"
+    "M 0 0 L 28 14 L 0 28 z"
   );
 
   arrowHead.setAttribute(
     "fill",
-    "#8e2026"
+    "#c99e3d"
   );
 
   marker.appendChild(
@@ -6108,33 +6108,48 @@ function renderAnnotations(
           squareName
         );
 
-      const circle =
+      const squareHighlight =
         document.createElementNS(
           svgNS,
-          "circle"
+          "rect"
         );
 
-      circle.classList.add(
+      squareHighlight.classList.add(
         "annotation-marker"
       );
 
-      circle.setAttribute(
-        "cx",
-        center.x
+      squareHighlight.setAttribute(
+        "x",
+        center.x - 46
       );
 
-      circle.setAttribute(
-        "cy",
-        center.y
+      squareHighlight.setAttribute(
+        "y",
+        center.y - 46
       );
 
-      circle.setAttribute(
-        "r",
-        "34"
+      squareHighlight.setAttribute(
+        "width",
+        "92"
+      );
+
+      squareHighlight.setAttribute(
+        "height",
+        "92"
+      );
+
+      squareHighlight.setAttribute(
+        "rx",
+        "8"
+      );
+
+      squareHighlight.setAttribute(
+        "ry",
+        "8"
       );
 
       svg.appendChild(
-        circle
+        squareHighlight
       );
 
     }
